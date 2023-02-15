@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "sharp": "^0.31.3"
+  },
+  "devDependencies": {
+    "compress-images": "^2.0.5"
   }
 }
