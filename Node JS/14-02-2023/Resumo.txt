@@ -1,7 +1,0 @@
-
-Conteúdos vistos:
-- Módulos
-- File System (Read,Write, unlink, raname, append)
-- process.argv
-- module.exports
-- require

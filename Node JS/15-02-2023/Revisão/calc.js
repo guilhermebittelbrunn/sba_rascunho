@@ -13,6 +13,5 @@ let calc = {
     }
 }
 
-module.extends = calc;
+module.exports = calc;
 
-calc.mult(3,5);

@@ -1,0 +1,7 @@
+Assuntos estudados:
+
+-modulos
+-require 
+-file sysyem functions
+-timeout
+-arrow functions
