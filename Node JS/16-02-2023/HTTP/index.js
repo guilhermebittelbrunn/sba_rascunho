@@ -20,7 +20,7 @@ function createText(document, text) {
 
 function createServer(server, path){
 
-    http.createServer((require,response)=>{
+    http.createServer((request,response)=>{
 
         fs.readFile(path, 'utf-8', (err, data)=>{
             if(err){
@@ -48,30 +48,3 @@ function createServer(server, path){
 
 createText(document, text);
 
-
-// http.createServer((request, response)=>{
-
-//     let path = url.parse(request.url).pathname;
-//     let file = "." + path;
-
-//     fs.readFile('text.txt', (err, data)=>{
-
-//         if(err){
-//             response.writeHead(404, {"Content-Type":"text/html;charset=utf-8"});
-//             response.write('<h1>Página não encontrada</h1>');
-//             response.end();
-//         }else{
-//             response.writeHead(200, {"Content-Type":"text/html"});
-//             response.write(data);
-//             response.end();
-//         }
-//     })
-
-// }).listen(3030, (err=>{
-//     if(err)
-//     {
-//         console.log(err);
-//     }else{
-//         console.log('Servidor criado com sucesso!');
-//     }
-// }))
