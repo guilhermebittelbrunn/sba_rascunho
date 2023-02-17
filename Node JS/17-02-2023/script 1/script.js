@@ -1,17 +1,25 @@
 const express = require('express');
 const path = require('path');
-
 const app = express();
-const port = 3000;
 
-let requirepath = path.join(__dirname);
-let requirepath2 = path.join(__filename);
+let x = {
+    ok: true,
+}
 
-app.use(express.static(requirepath));
+let pathrequire = path.join(__dirname, 'cliente');
 
-app.listen(port, ()=>{
-    console.log('Server rodando na porta:' + port);
-});
-
-
-console.log(requirepath +'\n'+ requirepath2);
+app.listen(3000, (err)=>{
+    if(err){
+        console.log(err);
+    }else{
+        console.log('Servidor rodando na porta 3000')
+        app.use(express.static(pathrequire));
+        app.get('/teste' ,(req,res)=>{
+            res.send(x)
+        })
+        app.get('/index', (req,res)=>{
+            res.type("html");
+            res.send("<h1>Página index</h1>");
+        })
+    }
+})
