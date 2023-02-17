@@ -49,8 +49,6 @@ createServer();
 
 
 
-
-
 // http.createServer((req,res)=>{
     
 //     let path = url.parse(req.url).pathname;
