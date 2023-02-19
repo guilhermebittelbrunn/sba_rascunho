@@ -35,15 +35,33 @@ Carro = {
 // })
 
 
-app.get('/teste',(req,res)=>{
-    res.type('application/json');
-    let y = url.parse(req.url).query;
-    if (y == null){
+// app.get('/teste',(req,res)=>{
+//     res.type('application/json');
+//     let z = req.params.ok;
+//     let y = url.parse(req.url).query;
+//     if (y == null){
+//         res.send(Teste);
+//     }else{
+//         let dados = req.params.ok;
+//         Teste.ok = 333;
+//         res.send(req.params.ok);
+//     }
+//     res.end();
+// })
+
+app.get("/teste", (req,res)=>{
+    let a = req.query;
+    let dado = req.query.ok;
+    console.log(a, dado);
+    if (dado == null){
         res.send(Teste);
     }else{
-       res.send('socorro');
+        Teste.ok = dado;
+        res.send(Teste);
     }
-    res.end();
+    console.log(Teste);
+    console.log(req.url);
+    console.log(url.parse(req.url));
 })
 
 
