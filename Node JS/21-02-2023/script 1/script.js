@@ -98,19 +98,39 @@ function AlunosIdade(){
 
 }
 
+//3a
+
+let somaIdade = alunos.reduce((total, aluno)=>{
+    total += aluno.idade;
+    return total ;
+}, 0)
+
+//3b
+
+function calctotalletras(total, aluno){
+    total += aluno.nome.length;
+    return total; 
+}
+
+let mediadeletras = (alunos.reduce(calctotalletras, 0) / 3 ).toFixed(2);
+
+//A
 console.log("Alunos menores que 20 anos:\n" + JSON.stringify(alunosMenoresde20)+ '\n');
 console.log("Alunos com a inicial do nome com a letra 'G'\n" + JSON.stringify(alunosInicial) + '\n');
 console.log("Alunos com o ID maior que 1\n" + JSON.stringify(alunosIDmaior)+ '\n');
 
+//B
 setTimeout(()=>{
     console.log(`Lista de alunos por ID e Nome:\n ${IdNome}\n`)
 }, 3000);
-
 setTimeout(AlunosIdade, 5000);
 
+//C
+console.log((somaIdade / 3).toFixed(2));
+console.log(mediadeletras);
 
-listaA = [1,2,3,4,5];
-listaB = [6,7,8,9,0];
+// listaA = [1,2,3,4,5];
+// listaB = [6,7,8,9,0];
 
-listaC = [...listaA,...listaB];
-console.log(listaC);
+// listaC = [...listaA,...listaB];
+// console.log(listaC);
