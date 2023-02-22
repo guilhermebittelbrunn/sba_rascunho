@@ -1,7 +1,7 @@
 
-document.addEventListener('DOMContentLoaded', () => {
-    uptadtePosts();
-})
+// document.addEventListener('DOMContentLoaded', () => {
+//     uptadtePosts();
+// })
 
 function uptadtePosts() {
 
@@ -25,7 +25,7 @@ function uptadtePosts() {
         postElements += postElement;
         })
         
-        document.getElementById("mural").innerHTML = postElements;
+        document.getElementById("mural").innerHTML = "<h4>Teste</h4>";
 
     })
 
