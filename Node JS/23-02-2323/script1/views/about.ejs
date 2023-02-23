@@ -1,17 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Index</title>
+
+    
+
 </head>
 <body>
 
-    <%- include('./partials/navbar.ejs') %>
+    <%- include('./partials/navbar', {titulo: 'Página principal'}) %>
 
-    <h2>Sobre o site</h2>
 
-    <%- include ('./partials/footer.ejs') %>
+    <section>
+
+        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Rem neque, atque veritatis officiis dolorem quasi hic eaque, est incidunt vitae temporibus quam molestiae optio repellendus non perferendis. Quae, perspiciatis enim.</p>
+
+    </section>
+
+    <%- include('./partials/navbar', {titulo: 'Home'}) %>
+
+
 </body>
 </html>
