@@ -4,6 +4,11 @@ module.exports = {
             id: '12345',
             titulo: 'Acidente em rodovia',
             descricao: 'Acidente ocorre na rodovia br-101'
+        },
+        {
+            id: '67890',
+            titulo: 'Teste titulo',
+            descricao: 'Teste descricao'
         }
     ],
 
