@@ -12,7 +12,7 @@ let Exibir = function(){
         elementos = JSON.parse(json);
         elementos.forEach((elemento)=>{
             let noticia = `
-            <div class="card">
+            <div class="card" id='${elemento.id}' onclick='Apagar(this)'>
                 <div class="card-header">
                     <h3>${elemento.titulo}</h3>
                 </div>
@@ -53,3 +53,16 @@ function Adicionar(){
 
 }
 
+function Apagar(element){
+
+    let id = element.id;
+
+    const options = {
+        method: 'DELETE'
+    }
+
+    fetch('http://localhost:4000/news/noticias/' + id, options).then(res=>{
+        Exibir();
+    })
+
+}

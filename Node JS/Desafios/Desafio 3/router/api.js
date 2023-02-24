@@ -19,7 +19,7 @@ router.post('/noticias', bodyparser.json(), (req,res)=>{
 })
 
 
-router.put('/noticias/:id', (req,res)=>{
+router.delete('/noticias/:id', (req,res)=>{
 
     let id = req.params.id;
 
