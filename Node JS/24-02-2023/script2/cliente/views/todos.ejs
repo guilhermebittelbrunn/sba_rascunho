@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professores</title>
+</head>
+<body>
+    
+    <h1>professores</h1>
+
+    <% for (let professor = 0; professor < professores.length; professor++){%>
+        <div id="<%=professores[professor]._id%>">
+            <h3><%=professores[professor].nome%></h3>
+            <h4><%=professores[professor].disciplina%></h4>
+            <h4><%=professores[professor].idade%></h4>
+            <button onclick='deleteProfessor(<%= professores[professor]._id%>)'>Apagar</button>
+        </div>
+
+    <%}%>
+
+    <script>
+
+        function deleteProfessor(id){
+
+            const options = {
+                method: 'DELETE'
+            }
+
+            fetch('http://localhost:3000/professores/' + id, options).then(res=>{
+                console.log('professor deletado');
+            }).catch(err =>{
+                console.log(err)
+            })
+        }
+
+    </script>
+
+</body>
+</html>

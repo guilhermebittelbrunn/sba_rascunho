@@ -1,7 +1,6 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-
 const app = express();
 const professorSchema = new mongoose.Schema({
     nome: String,
@@ -14,9 +13,7 @@ app.get('/',(req,res)=>{
     res.send('<h1>Bem-vindo!</h1>');
 })
 
-
 mongoose.set('strictQuery', false)
-
 mongoose.connect('mongodb://127.0.0.1:27017/escola').then(res=>{
 
     console.log('Banco conectado');
@@ -34,7 +31,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/escola').then(res=>{
         
     })
 
-}).catch(err=>{
+}).catch(err=>{F
     console.log(err);
 })
 
