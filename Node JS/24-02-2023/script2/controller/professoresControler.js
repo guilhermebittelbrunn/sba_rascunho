@@ -39,12 +39,11 @@ module.exports = {
     },
 
     deleteProfessor: async(req,res)=>{
-        
         let id = req.params.id
 
         try{
-            await Professor.deleteMany({_id: id});
-            res.send('Professor deletado')
+            await Professor.findByIdAndDelete(id);
+            res.redirect('/professor/todos');
 
         }catch(err){
             console.log(err);

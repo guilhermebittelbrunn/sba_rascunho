@@ -12,30 +12,16 @@
 
     <% for (let professor = 0; professor < professores.length; professor++){%>
         <div id="<%=professores[professor]._id%>">
-            <h3><%=professores[professor].nome%></h3>
-            <h4><%=professores[professor].disciplina%></h4>
-            <h4><%=professores[professor].idade%></h4>
-            <button onclick='deleteProfessor(<%= professores[professor]._id%>)'>Apagar</button>
+            <form method='POST' action="/?_method=DELETE">
+                <h3><%=professores[professor].nome%></h3>
+                <h4><%=professores[professor].disciplina%></h4>
+                <h4><%=professores[professor].idade%></h4>
+                <input type="text" name="id" id="id" value="<%=professores[professor]._id%>" hidden>
+                <button type="submit">Apagar</button>
+            </form>
         </div>
 
     <%}%>
-
-    <script>
-
-        function deleteProfessor(id){
-
-            const options = {
-                method: 'DELETE'
-            }
-
-            fetch('http://localhost:3000/professores/' + id, options).then(res=>{
-                console.log('professor deletado');
-            }).catch(err =>{
-                console.log(err)
-            })
-        }
-
-    </script>
 
 </body>
 </html>
