@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alunos</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .container-aluno{
+            padding: 12px;
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('./templates/nav', {titulo:"Início"}) %>
+
+    <h1>Lista com todos os alunos:</h1>
+    
+        <% for(let aluno of alunos){ %>
+            
+            
+                    <h2><%=aluno.nome%></h2> 
+                    <h3><%=aluno.turma%></h3> 
+                    <input type="text" name=<%=aluno._id %> id="id" hidden>
+                    <button onclick="deleteElemet(this)" id=<%=aluno._id %>>Apagar</button>
+    
+            
+        <%}%>
+
+        <script>
+
+            function deleteElemet(element){
+    
+                let id = element.id;
+    
+                const options = {
+                    method: 'DELETE'
+                }
+    
+                fetch('http://localhost:4000/' + id, options).then(doc=>{
+                 
+                    console.log('Item deletado');
+               
+                })
+    
+            }
+    
+    
+    
+        </script>
+
+</body>
+</html>
