@@ -7,6 +7,12 @@
     <title>login</title>
 </head>
 <body>
-    <h1>Login page</h1>
+    <h2>Login page</h2>
+
+    <form action="/user/login" method="POST">
+        <input type="email" name="email" id="email" placeholder="Email" required>
+        <input type="password" name="password" id="password" placeholder="Senha" required>
+        <button>Entrar</button>
+    </form>
 </body>
 </html>
