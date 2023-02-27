@@ -25,7 +25,7 @@ module.exports = {
         let aluno = new Aluno(req.body);
         try{
            aluno.save();
-           res.redirect('/todos');
+           res.redirect('alunos/todos');
            
         }catch(err){
             res.send(err)
@@ -34,9 +34,19 @@ module.exports = {
 
     apagarAluno: async(req,res)=>{
         let id = req.params.id;
-        console.log('teste, cheguei ' + id)
-        let aluno = Aluno.find({id})
-        res.send(aluno)
+        await Aluno.deleteOne({_id:id});
+        res.send();
+    },
+
+    editarAluno: async(req,res)=>{
+        console.log('cheguei na ediçãpo')
+        let Alunoatualizado = {};
+        Alunoatualizado = req.body.nome;
+        Alunoatualizado = req.body.turma;
+
+        let id = req.params.id;
+        await Aluno.findByIdAndDelete(id, Alunoatualizado);
+
     }
 
 }

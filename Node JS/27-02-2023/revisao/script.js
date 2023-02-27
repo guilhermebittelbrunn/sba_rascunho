@@ -23,7 +23,7 @@ app.set('view engine', 'ejs');
 
 //Server
 
-app.use('/', apiRouter);
+app.use('/alunos', apiRouter);
 app.listen(port, (err)=>{
     if(err){
         console.log(err);

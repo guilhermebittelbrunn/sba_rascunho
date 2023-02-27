@@ -12,13 +12,17 @@ router.get('/', (req,res)=>{
 
 router.get('/todos', controller.mostrarAlunos);
 
+router.get('/editar', (req,res)=>{
+    res.render('editar.ejs');
+})
+
 router.get('/:nome', controller.buscarAluno);
 
 router.delete('/:id', express.urlencoded({extended:true}), controller.apagarAluno);
 
 router.post('/', express.urlencoded({extended:true}), controller.adicionarAluno);
 
-
+router.post('/editar/:id', express.urlencoded({extended:true}), controller.editarAluno);
 
 
 module.exports = router;

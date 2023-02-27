@@ -12,24 +12,37 @@
             border: 2px solid black;
         }
     </style>
+    <style>
+        section{
+            display: flex;
+            gap: 12px;
+        }
+
+        .card{
+            margin: 12px;
+            padding: 12px;
+            border: 1.5px solid black;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
     <%- include('./templates/nav', {titulo:"Início"}) %>
 
     <h1>Lista com todos os alunos:</h1>
-    
+        <section>
         <% for(let aluno of alunos){ %>
-            
-            
+
+                <div class="card">
                     <h2><%=aluno.nome%></h2> 
                     <h3><%=aluno.turma%></h3> 
-                    <input type="text" name=<%=aluno._id %> id="id" hidden>
                     <button onclick="deleteElemet(this)" id=<%=aluno._id %>>Apagar</button>
-    
+                    <a href="/alunos/editar/<%aluno._id%>">editar</a>
+                </div>
             
         <%}%>
-
+        </section>
         <script>
 
             function deleteElemet(element){
@@ -40,11 +53,13 @@
                     method: 'DELETE'
                 }
     
-                fetch('http://localhost:4000/' + id, options).then(doc=>{
+                fetch('http://localhost:4000/alunos/' + id, options).then(doc=>{
                  
                     console.log('Item deletado');
                
                 })
+
+                window.location.reload();
     
             }
     

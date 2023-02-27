@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>index</title>
+    <title>Editar</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-
     <%- include('./templates/nav',{titulo:'Aluno'})%>
 
-    <form action="/alunos" method="POST">
-        <h3>Adicionar novo aluno</h3>
+
+    <form action="/alunos/editar" method="POST">
+        <h3>Atualizar</h3>
         <input type="text" name="nome" id="nome" placeholder="Nome">
         <input type="text" name="turma" id="turma">
-        <button>Adicionar</button>
+        <button>Alterar</button>
     </form>
 
 </body>
