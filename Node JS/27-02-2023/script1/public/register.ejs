@@ -7,13 +7,14 @@
     <title>register</title>
 </head>
 <body>
+    <%- include("./style")%>
     <h2>Register</h2>
-
     <form action="/user/register" method="POST">
         <input type="text" name="nome" id="nome" placeholder="Nome" required> 
         <input type="email" name="email" id="email" placeholder="Email" required>
         <input type="password" name="password" id="password" placeholder="Senha" required>
         <button>Registrar</button>
     </form>
+    <a href="/user/login">Já possui uma conta??</a>
 </body>
 </html>

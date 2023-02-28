@@ -1,12 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const userRouter = require('./router/user');
+const adminRouter = require('./router/admin');
 const app = express();
 const mongoose = require('mongoose');
 const path = require('path');
 
 mongoose.set('strictQuery', false);
-mongoose.connect(process.env.MONGO_connect).then(res=>{
+mongoose.connect('mongodb+srv://guilherme:ZEDchuva123@cluster0.qyohwnh.mongodb.net/test').then(res=>{
     console.log('Banco rodando');
 }).catch(err=>{
     console.log(err);
@@ -15,8 +16,9 @@ mongoose.connect(process.env.MONGO_connect).then(res=>{
 app.set('views', path.join(__dirname,'public'));
 app.set('view engine', 'ejs');
 
-
-app.use('/user', express.json(), userRouter);
+app.get('/', (req,res)=>{res.render('index')});
+app.use('/user', userRouter);
+app.use('/admin', adminRouter); 
 app.listen(process.env.PORT,(err)=>{
     if(err){
         console.log(err);

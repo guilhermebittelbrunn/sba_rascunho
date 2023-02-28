@@ -1,5 +1,6 @@
 const User = require('../module/User');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
 
@@ -18,7 +19,7 @@ module.exports = {
         })
         try{
             let saveUser = await user.save();
-            res.send(saveUser);
+            res.redirect('http://localhost:3000/user')
         }catch(err){
             console.log(err);
         }
@@ -26,12 +27,16 @@ module.exports = {
     login: async function(req,res){
         const login = await User.findOne({email: req.body.email});
         if(!login){
-            res.status(400).send('E-mail ou senha inválido');
+            return res.status(400).send('E-mail ou senha inválido');
         }else{
-            let SenhaEmailMatch = bcrypt.compareSync(req.body.password == login.password);
+            let SenhaEmailMatch = bcrypt.compareSync(req.body.password, login.password);
             if(!SenhaEmailMatch){
                 return res.status(400).send('E-mail ou senha inválido');
             }
+
+            const token = jwt.sign({_id: login._id, email: login.email}, process.env.TOKEN_KEY, {expiresIn: 80});
+
+            res.header('authoriztion-token', token);
             res.send(`Bem-vindo ${login.nome}`);
         }
     },
@@ -42,5 +47,9 @@ module.exports = {
     
     loginPage: function(req,res){
         res.render('login');
+    },
+
+    indexPage: function(req,res){
+        res.render('index')   
     }
 }
