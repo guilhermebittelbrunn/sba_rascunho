@@ -7,23 +7,22 @@ module.exports = {
     register: async function (req,res){
 
         const newUser = await User.findOne({email: req.body.email});
-        
         if(newUser){
             return res.status(400).send(`E-mail: ${req.body.email} já está em uso`);
         }
-
         const user = new User({
             nome: req.body.nome,
             email: req.body.email,
             password: bcrypt.hashSync(req.body.password)
         })
         try{
-            let saveUser = await user.save();
-            res.redirect('http://localhost:3000/user')
+            await user.save();
+            res.render('index', {titulo: 'Bem-vindo!'})
         }catch(err){
-            console.log(err);
+            res.send(err);
         }
     },
+
     login: async function(req,res){
         const login = await User.findOne({email: req.body.email});
         if(!login){
@@ -34,10 +33,12 @@ module.exports = {
                 return res.status(400).send('E-mail ou senha inválido');
             }
 
-            const token = jwt.sign({_id: login._id, email: login.email}, process.env.TOKEN_KEY, {expiresIn: 80});
+            const token = jwt.sign({_id: login._id, email: login.email, admin: login.admin}, process.env.TOKEN_KEY, {expiresIn: 8000});
 
+            console.log(token);
             res.header('authoriztion-token', token);
-            res.send(`Bem-vindo ${login.nome}`);
+            console.log(req.header);
+            res.render('index', {titulo: `Seja bem-vindo ${login.nome}!!`});
         }
     },
 
@@ -50,6 +51,6 @@ module.exports = {
     },
 
     indexPage: function(req,res){
-        res.render('index')   
+        res.render('index', {titulo: 'Bem-vindo!'});   
     }
 }

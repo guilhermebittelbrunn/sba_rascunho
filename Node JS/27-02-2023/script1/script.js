@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 mongoose.set('strictQuery', false);
-mongoose.connect('mongodb+srv://guilherme:ZEDchuva123@cluster0.qyohwnh.mongodb.net/test').then(res=>{
+mongoose.connect(process.env.MONGO_CONNECT).then(res=>{
     console.log('Banco rodando');
 }).catch(err=>{
     console.log(err);
@@ -16,7 +16,7 @@ mongoose.connect('mongodb+srv://guilherme:ZEDchuva123@cluster0.qyohwnh.mongodb.n
 app.set('views', path.join(__dirname,'public'));
 app.set('view engine', 'ejs');
 
-app.get('/', (req,res)=>{res.render('index')});
+app.get('/', (req,res)=>{res.redirect('http://localhost:3000/user')});
 app.use('/user', userRouter);
 app.use('/admin', adminRouter); 
 app.listen(process.env.PORT,(err)=>{
