@@ -17,7 +17,7 @@ module.exports = {
         })
         try{
             await user.save();
-            res.render('index', {titulo: 'Bem-vindo!'})
+            res.redirect('http://localhost:3000/user')
         }catch(err){
             res.send(err);
         }
@@ -38,7 +38,7 @@ module.exports = {
             console.log(token);
             res.header('authoriztion-token', token);
             console.log(req.header);
-            res.render('index', {titulo: `Seja bem-vindo ${login.nome}!!`});
+            res.redirect('http://localhost:3000/user')
         }
     },
 
