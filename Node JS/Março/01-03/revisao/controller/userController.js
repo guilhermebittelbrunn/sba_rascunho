@@ -1,17 +1,22 @@
 const User = require('../module/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const validate = require('./validate');
 
 module.exports = {
 
     registerUser: async (req,res)=>{
 
-        let emailVerification = await User.findOne({email: req.body.email})
+        const {error} = validate.registerValidate(req.body);
 
+        if(error){
+            return res.status(400).send(error.message)
+        }
+
+        let emailVerification = await User.findOne({email: req.body.email})
         if(emailVerification){
             return res.status(400).send('E-mail já em uso');
         }
-
         const salt = 10;
         let passwordCrypt = bcrypt.hashSync(req.body.password, salt);
 
@@ -20,7 +25,6 @@ module.exports = {
             email: req.body.email,
             password: passwordCrypt
         })
-
         try{
             await user.save();
             res.send('Usuário adicionado com sucesso');
@@ -31,6 +35,12 @@ module.exports = {
     },
 
     loginUser: async (req,res)=>{
+
+        const {error} = validate.loginValidate(req.body);
+
+        if(error){
+            return res.status(400).send(error.message)
+        }
 
         let userVerification = await User.findOne({email: req.body.email})
 
