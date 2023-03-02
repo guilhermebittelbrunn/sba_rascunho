@@ -7,7 +7,6 @@ function showList(){
         return res.json();
     }).then(data =>{
         let ul = "<ul>";
-        console.log(data, ul);
         for (item of data){
             ul += `<li>${item}</li>`;
         }
