@@ -27,6 +27,7 @@ const app = express();
 const pathIndex = path.join(__dirname, 'public');
 const fs = require('fs');
 const ejs = require('ejs');
+const socket = require('socket.io');
 
 app.set('views', pathIndex);
 app.set('view engine', 'ejs');
@@ -52,7 +53,7 @@ app.get('/text', (req, res) => {
 
 
 
-app.listen(3000, (err) => {
+const server = app.listen(3000, (err) => {
     if (err) {
         console.log(err);
     } else {
@@ -60,3 +61,11 @@ app.listen(3000, (err) => {
     }
 })
 
+const io = socket(server);
+io.on('connection', (socket)=>{
+    
+    socket.broadcast.emit('hello', 'olá')
+    socket.on('hello',(data)=>{
+        console.log(data);
+    })
+})

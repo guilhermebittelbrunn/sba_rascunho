@@ -13,7 +13,17 @@
 
     </div>
 
-    <button onclick="addItem()">Adicionar</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        const socket = io("http://localhost:3000");
+        socket.on('hello', (data)=>{
+            console.log(data);
+            socket.emit('hello', 'tudo bem?');
+        })
+
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
