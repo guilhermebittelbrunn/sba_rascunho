@@ -5,18 +5,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>index</title>
+    <style>
+        #messages{
+            background-color: aliceblue;
+            width: 500px;
+            height: 700px;
+        }
+    </style>
 </head>
 <body>
     <h2>index</h2>
 
+    <section id="messages">
+
+    </section>
+
+    <form name="messages_form_name" id="message_form">
+
+        <input type="text" name="msg" id="msg">
+        <button>Enviar</button>
+
+    </form>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io("http://localhost:4000");
-        socket.on('bem-vindo', (data)=>{
-            console.log(data.msg);
-            socket.emit('ola', {msg:'olá'});
-        })
-    </script>
+    <script src="chat.js"></script>
 </body>
 </html>

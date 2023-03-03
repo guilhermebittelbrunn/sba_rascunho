@@ -25,6 +25,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         const message = document.forms['messages_form_name']['msg'].value;
         document.forms['messages_form_name']['msg'].value = '';
         socket.emit('new_message', {msg: message});
-        console.log(message);
     })
 })
+
