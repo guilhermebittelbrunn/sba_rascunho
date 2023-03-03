@@ -2,8 +2,10 @@ const socket = io('http://localhost:3000');
 
 socket.on('update_messages', (messages)=>{
 
+    console.log(messages)
+
     updateMessagesOnScreen(messages);
-    
+
 })
 
 
@@ -21,9 +23,9 @@ function updateMessagesOnScreen(messages){
 document.addEventListener('DOMContentLoaded', ()=>{
     const form = document.getElementById('message_form');
     form.addEventListener('submit', (evento)=>{
-        evento.preventDefault();
-        const message = document.forms['messages_form_name']['msg'].value;
-        document.forms['messages_form_name']['msg'].value = '';
+        evento.defaultPrevented();
+        const message = document.forms('messages_form_name')['msg'].value;
+        document.forms('messages_form_name')['msg'].value = '';
         socket.emit('new_message', {msg: message});
     })
 })
