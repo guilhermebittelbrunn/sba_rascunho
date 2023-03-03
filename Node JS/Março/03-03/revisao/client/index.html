@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index</title>
+</head>
+<body>
+    <h2>index</h2>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io("http://localhost:4000");
+        socket.on('bem-vindo', (data)=>{
+            console.log(data.msg);
+            socket.emit('ola', {msg:'olá'});
+        })
+    </script>
+</body>
+</html>
