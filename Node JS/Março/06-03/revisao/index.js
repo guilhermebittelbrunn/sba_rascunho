@@ -30,15 +30,15 @@
 //     console.log(dolar);
 // })
 
-const key = '0b0b9c5caf2a2a7fdea9672747e95678';
-const api = ` https://pokeapi.co/api/v2/pokemon/ditto`;
-fetch(api).then(res=>{
-    return res.json();
-}).then(data=>{
-    let pokeinfo = data.forms[0].url;
-    fetch(pokeinfo).then(baseinfo=>{
-        return baseinfo.json();
-    }).then(json=>{
-        console.log(json.sprites.front_default);
-    })
-})
+// const key = '0b0b9c5caf2a2a7fdea9672747e95678';
+// const api = ` https://pokeapi.co/api/v2/pokemon/ditto`;
+// fetch(api).then(res=>{
+//     return res.json();
+// }).then(data=>{
+//     let pokeinfo = data.forms[0].url;
+//     fetch(pokeinfo).then(baseinfo=>{
+//         return baseinfo.json();
+//     }).then(json=>{
+//         console.log(json.sprites.front_default);
+//     })
+// })
