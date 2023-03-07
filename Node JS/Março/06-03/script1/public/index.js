@@ -17,7 +17,7 @@ function exibirNoticias(){
         let ul = '';
         data.forEach(element=>{
             ul += `
-                    <div class="card">
+                    <div class="card" ${element._id}>
                         <div class="header_card">
                             <h3>${element.title}</h3>
                         </div>
