@@ -6,11 +6,11 @@ const app = express();
 
 
 
-async function connect(){
+async function connection(){
     await db.sync();
+    console.log('Banco conectado');
 }
- 
-connect();
+ connection();
 
 
 
