@@ -41,7 +41,7 @@ function Adicionar(){
 
     const options = {
         method: "POST",
-        headers: new Headers({'Content-Type':'Application/json'}),
+        header: new Headers({'Content-Type':'Application/json'}),
         body: JSON.stringify(objnoticia)
     }
 
