@@ -7,7 +7,7 @@ router.put('/aumentar/:id', productController.aumentarPreco);
 
 router.put('/diminuir/:id', productController.diminuirPreco);
 
-router.put('/editar/:id', express.urlencoded({extended:true}), productController.editarProduto);
+router.post('/editar/:id', express.urlencoded({extended:true}), productController.editarProduto);
 
 router.get('/:nome', productController.buscarProduto);
 

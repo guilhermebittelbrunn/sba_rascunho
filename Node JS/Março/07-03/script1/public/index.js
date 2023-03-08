@@ -92,40 +92,16 @@ function diminuirPreco(element){
 
 function editarProduto(element){
     const card = element.parentElement;
+    element.removeAttribute('onclick');
     const id = card.id;
     const edit = 
         `
-        <form action="/produto/editar/${id}">
-        <input type='text' value='${card.getAttribute('nome')}' id='edit_nome' placeholder="${card.getAttribute('nome')}">
-        <input type='text' value='' id='edit_descricao' placeholder="descrição">
-        <button type="submit">Salvar</button>
+        <form action="/produto/editar/${id}" method='post'>
+        <input type='text' name="nome" value='${card.getAttribute('nome')}' id='edit_nome' placeholder="${card.getAttribute('nome')}">
+        <input type='text' name="descricao" id='edit_descricao' placeholder="descrição">
+        <button>Salvar</button>
         </form>
         `
     card.innerHTML += edit
-    
 }
 
-// function salvarAlteracoes(id){
-
-//     console.log('salvo', id);
-
-//     let nome = document.getElementById('edit_nome').value;
-//     let descricao = document.getElementById('edit_descricao').value
-
-//     let produto = {
-//         nome: nome,
-//         descricao: descricao
-//     }
-//     console.log(produto);
-
-//     const options = {
-//         method: 'put',
-//         header: new Headers({'content-type':'application/json'}),
-//         body: JSON.stringify(produto)
-//     }
-
-
-//     fetch('http://localhost:3000/produto/editar/' + id, options).then(res=>{
-//         console.log('enviado');
-//     })
-// }

@@ -81,12 +81,21 @@ module.exports = {
     },
 
     editarProduto: async(req,res)=>{
-        let teste = req.body
         let id = req.params.id;
         let nome = req.body.nome;
         let descricao = req.body.descricao;
+        let produto = await Produto.findByPk(id);
 
-        console.log(id, nome, descricao, teste);
+
+        if (descricao != ''){
+            produto.descricao = descricao;
+        }
+
+        if (nome != ''){
+            produto.nome = nome;
+        }
+
+        await produto.save();
         res.redirect('/')
     }
     
