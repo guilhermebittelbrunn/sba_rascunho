@@ -1,45 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const Produto = require('../module/Produto');
-
-router.delete('/:id', async(req,res)=>{
-
-    let id = req.params.id
-    console.log(id);
-    const produto = await Produto.findByPk(id);
-
-    try{
-        await produto.destroy();
-    }catch(err){
-        return res.status(500).send(err);
-    }
-
-    res.send('Item apagado com sucesso');
-    
-
-})
-
-router.get('/',async(req,res)=>{
-    
-    let produtos = await Produto.findAll();
-
-    return res.send(produtos);
-
-})
+const productController = require('../controller/productController');
 
 
+router.get('/', productController.exibirProdutos);
 
-router.post('/', express.urlencoded({extended:true}), async(req,res)=>{
-    console.log(req.body);
+router.put('/aumentar/:id', productController.aumentarPreco);
 
-    await Produto.create({
-        nome: req.body.nome,
-        descricao: req.body.descricao,
-        preco: req.body.preco
-    })
-    console.log('Item adicionado com sucesso');
+router.put('/diminuir/:id', productController.diminuirPreco);
 
-    res.redirect('/')
-})
+router.get('/:nome', productController.buscarProduto);
+
+router.delete('/:id', productController.deletarProduto);
+
+router.post('/', express.urlencoded({extended:true}), productController.adicionarProduto);
+
 
 module.exports = router;
