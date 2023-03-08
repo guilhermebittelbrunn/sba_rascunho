@@ -95,7 +95,7 @@ function editarProduto(element){
     const id = card.id;
     const edit = 
         `
-        <form action="/produto/editar/id:${id}">
+        <form action="/produto/editar/${id}">
         <input type='text' value='${card.getAttribute('nome')}' id='edit_nome' placeholder="${card.getAttribute('nome')}">
         <input type='text' value='' id='edit_descricao' placeholder="descrição">
         <button type="submit">Salvar</button>
