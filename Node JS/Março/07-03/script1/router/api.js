@@ -8,8 +8,14 @@ router.delete('/:id', async(req,res)=>{
     console.log(id);
     const produto = await Produto.findByPk(id);
 
-    await produto.destroy;
+    try{
+        await produto.destroy();
+    }catch(err){
+        return res.status(500).send(err);
+    }
 
+    res.send('Item apagado com sucesso');
+    
 
 })
 

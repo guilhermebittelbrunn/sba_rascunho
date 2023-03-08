@@ -36,6 +36,7 @@ function deletarProduto(element){
     }
 
     fetch('http://localhost:3000/produto/' + id, options).then(res=>{
+        console.log('Cheguei');
         exibirProdutos();
     })
 }
