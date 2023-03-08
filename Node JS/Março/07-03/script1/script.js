@@ -16,6 +16,7 @@ db.sync().then(res=>{
 app.use(express.json());
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/produto', routerApi);
+
 app.listen(3000,(err)=>{
     if(err) console.log(err);
     else console.log('Servidor rodando na porta 3000');

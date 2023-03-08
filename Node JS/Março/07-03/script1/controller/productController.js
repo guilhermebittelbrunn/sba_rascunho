@@ -1,9 +1,7 @@
 const Produto = require('../module/Produto');
 
-
 module.exports = {
     
-
     exibirProdutos: async(req,res)=>{
     
         let produtos = await Produto.findAll();
@@ -11,7 +9,6 @@ module.exports = {
         return res.send(produtos);
     
     },
-
 
     buscarProduto: async(req,res)=>{
         let nome = req.params.nome;
@@ -31,8 +28,7 @@ module.exports = {
 
     deletarProduto: async(req,res)=>{
 
-        let id = req.params.id
-        console.log(id);
+        const id = req.params.id;
         const produto = await Produto.findByPk(id);
     
         try{
@@ -42,7 +38,6 @@ module.exports = {
         }
     
         res.send('Item apagado com sucesso');
-        
     },
 
     adicionarProduto: async(req,res)=>{
@@ -52,9 +47,8 @@ module.exports = {
             descricao: req.body.descricao,
             preco: req.body.preco
         })
-        console.log('Item adicionado com sucesso');
-    
         res.redirect('/')
+
     },
 
     aumentarPreco: async(req,res)=>{
@@ -64,27 +58,37 @@ module.exports = {
         try{
             let produto = await Produto.findByPk(id);
             produto.preco = parseFloat(produto.preco) +  1.0;
-            produto.save();
+            await produto.save();
         }catch(err){
-            console.log(err);
+            return res.status(500).send(err);
         }
-
         res.send('Preço atualizado');
 
     },
 
     diminuirPreco: async(req,res)=>{
+
         let id = req.params.id;
         
         try{
             let produto = await Produto.findByPk(id);
             produto.preco = parseFloat(produto.preco) -  1.0;
-            produto.save();
+            await produto.save();
         }catch(err){
-            console.log(err);
+            return res.status(500).send(err);
         }
-
         res.send('Preço atualizado');
+    },
+
+    editarProduto: async(req,res)=>{
+        let teste = req.body
+        let id = req.params.id;
+        let nome = req.body.nome;
+        let descricao = req.body.descricao;
+
+        console.log(id, nome, descricao, teste);
+        res.redirect('/')
     }
+    
     
 }
