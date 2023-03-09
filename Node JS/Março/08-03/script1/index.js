@@ -34,7 +34,7 @@ const obj = arr.reduce(
         //      };
         //  }
 
-        obj[item.tipo] = obj[item.tipo] || {
+        obj[item.tipo] = obj[item.tipo] ?? {
             //?? Nullish coalescing operator (??)
             total: 0,
         };
