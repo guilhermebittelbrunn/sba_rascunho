@@ -29,7 +29,7 @@ let produtos = [
     {
         titulo: 'Papel-higiênico',
         preco: 12.00,
-        categoria: 'higiêne',
+        categoria: 'higiene',
         status: {
             estoque: true,
             ativo: true
@@ -56,7 +56,7 @@ let produtos = [
     {
         titulo: 'Detergente',
         preco: 7.0,
-        categoria: 'higiêne',
+        categoria: 'higiene',
         status: {
             estoque: true,
             ativo: false
@@ -65,12 +65,34 @@ let produtos = [
 ]
 
 
-console.log('Lista de produtos: ' + produtos.map(p => p.titulo));
-console.log('Lista de alimentos:', produtos.filter(p => p.categoria ==='alimento').filter(p => p.preco >= 5).filter(p => p.status.estoque));
-console.log('Itens por inativos:', produtos.reduce((acc,p)=>{
-    if(!acc.categoria){
-        acc. = []
+// console.log('Lista de produtos: ' + produtos.map(p => p.titulo));
+// console.log('Lista de alimentos:', produtos.filter(p => p.categoria ==='alimento').filter(p => p.preco >= 5).filter(p => p.status.estoque));
+
+
+let grupo2 = produtos.reduce((acc,produto)=>{
+    if(!acc[produto.categoria]){
+        acc[produto.categoria] = [];
     }
-    acc.categoria.push(p);
+    acc[produto.categoria].push(produto);
     return acc;
-},{}));
+}, {} );
+
+console.log(grupo2.alimento == grupo2['alimento']);
+grupo2['bebidas'] = [{titulo: 'Coca-cola', preco: 8.0, categoria: 'bebida', status:{estoque: true, ativo:false}}];
+console.log(grupo2)
+
+// let alunos = [
+
+//     {matutino: [ {nome: 'Guilherme', idade: 20}, {nome: 'Roseli', idade: 16} ],},
+//     {noturno: [ {nome: 'Jéssica', idade: 30}, {nome: 'Ivan', idade: 15} ]}
+
+// ]
+
+// let alunos = {
+
+//     matutino: [ {nome: 'Guilherme', idade: 20}, {nome: 'Roseli', idade: 16} ],
+//     noturno: [ {nome: 'Jéssica', idade: 30}, {nome: 'Ivan', idade: 15} ]
+
+// }
+
+

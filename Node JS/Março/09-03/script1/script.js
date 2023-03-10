@@ -134,9 +134,6 @@ const alunosPorPeríodo = alunos.reduce((acc,aluno)=>{
         acc[aluno.período] = [];
     }
 
-    !acc[aluno.período] ??
-
-
     acc[aluno.período].push(aluno);
 
     return acc;
