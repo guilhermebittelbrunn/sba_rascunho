@@ -65,32 +65,32 @@ let Produtos = [
 ]
 
 
-console.log(Produtos);
+console.table(Produtos);
 
-//MAP 
+// MAP 
 
-// console.log(Produtos.map(item=> `${item.titulo} por apenas: R$${item.preco.toFixed(2)}`));
+console.log(Produtos.map(item=> `${item.titulo} por apenas: R$${item.preco.toFixed(2)}`));
 
-//FILTER 
+// FILTER 
 
-// console.log(Produtos.filter(item => item.preco>=15).filter(item => item['categoria'] == 'alimento'));
+console.log(Produtos.filter(item => item.preco>=15).filter(item => item['categoria'] == 'alimento'));
 
-//FIND
+//  FIND
 
-// console.log(Produtos.find(item => item.preco < 5));
-// console.log("Index: "+ Produtos.findIndex(item => item.preco < 5));
+console.log(Produtos.find(item => item.preco < 5));
+console.log("Index: "+ Produtos.findIndex(item => item.preco < 5));
 
-//REDUCE
+// REDUCE
 
-// console.log(Produtos.reduce((acc, p)=>{
-//     acc += p.preco;
-//     return acc;
-// },0))
+console.log(Produtos.reduce((acc, p)=>{
+    acc += p.preco;
+    return acc;
+},0))
 
-// console.log(Produtos.reduce((acc,p)=>{
-//     acc.push(p.titulo);
-//     return acc;
-// },[]))
+console.log(Produtos.reduce((acc,p)=>{
+    acc.push(p.titulo);
+    return acc;
+},[]))
 
 console.log(Produtos.reduce((acc,p)=>{
     if(!acc[p.status.estoque]) acc[p.status.estoque] = [];
@@ -98,16 +98,20 @@ console.log(Produtos.reduce((acc,p)=>{
     return acc
 },{}))
 
-// console.log(Produtos.reduce((acc,p)=>{
-//     acc += '\n' + '\n' + p.titulo
-//     return acc
-// }, ''))
+console.log(Produtos.reduce((acc,p)=>{
+    acc += '\n' + '\n' + p.titulo
+    return acc
+}, ''))
 
-// function agrupar(parametro){
-//     return Produtos.reduce((acc,p)=>{
-//         if(!acc[p[parametro]]) acc[p[parametro]] = [];
-//         acc[p[parametro]].push(p);
-//         return acc
-//     },{})
-// }
+function agrupar(parametro){
+    return Produtos.reduce((acc,p)=>{
+        if(!acc[p[parametro]]) acc[p[parametro]] = [];
+        acc[p[parametro]].push(p);
+        return acc
+    },{})
+}
 
+
+console.log(agrupar('categoria'));
+
+ty
