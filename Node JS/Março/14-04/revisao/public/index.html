@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index</title>
+
+    <style>
+        #edit_text {
+            display: block;
+        }
+
+        .card {
+            border: 1px solid black;
+            max-width: 10%;
+        }
+    </style>
+
+</head>
+
+<body onload="mostrarAlunos()">
+    <main>
+
+        <h2>Adicionar um aluno</h2>
+
+        <form action="/" method="post">
+            <input type="text" name="nome" id="nome" placeholder="Nome" required>
+            <input type="number" name="idade" id="idade" placeholder="Idade" required min="6" , max="24">
+            <label for="aprovado">Aprovado</label>
+            <input type="radio" name="situacao" id="situacao" required value="aprovado">
+            <label for="Reprovado">Reprovado</label>
+            <input type="radio" name="situacao" id="situacao" required value="reprovado">
+            <textarea name="observacao" id="observacao" cols="15" rows="5" placeholder="Observações"
+                style="resize:none"></textarea>
+            <label for="periodo">Período estudantil</label>
+            <select name="periodo" id="periodo" required>
+                <option value="matutino" selected>Matutino</option>
+                <option value="vespertino">Vespertino</option>
+                <option value="noturno">Noturno</option>
+            </select>
+            <button type="submit">Adicionar</button>
+        </form>
+
+        <h2>Todos os alunos</h2>
+
+        <h3>filtro:</h3>
+        <select name="filtro" id="filtro">
+            <option value="todos" selected>Todos</option>
+            <option value="aprovado">Alunos aprovados</option>
+            <option value="reprovado">Alunos reprovados</option>
+            <option value="maiordeidade">Alunos maiores de idade</option>
+            <option value="menordeidade">Alunos menores de idade</option>
+        </select>
+        <select name="filtro_periodo" id="filtro_periodo">
+            <option value="todos">Todos</option>
+            <option value="matutino">Matutino</option>
+            <option value="vespertino">Vespertino</option>
+            <option value="noturno">Noturno</option>
+        </select>
+        <button onclick="filtrarAlunos()">Buscar</button>
+
+        <section id="mural_alunos">
+
+        </section>
+
+
+        <script src="index.js"></script>
+    </main>
+</body>
+
+</html>
