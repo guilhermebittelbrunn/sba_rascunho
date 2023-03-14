@@ -5,7 +5,7 @@ const apiController = require('../controller/apiController');
 
 router.get('/todos', apiController.mostrarTodosAlunos);
 
-router.get('/:filtros', apiController.filtrarAlunos);
+router.get('/filtros', apiController.filtrarAlunos);
 
 router.post('/', apiController.inserirAluno);
 

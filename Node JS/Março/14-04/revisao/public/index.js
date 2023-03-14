@@ -40,10 +40,13 @@ function deletarAluno(aluno){
 
 function filtrarAlunos(){
 
-    const filtros = document.getElementById('filtro').value + "|" +  document.getElementById('filtro_periodo').value;
-    
+    const filtro = document.getElementById('filtro').value;
+    const filtros_periodo =  document.getElementById('filtro_periodo').value;
 
-    fetch('http://localhost:4000/' + filtros).then(res=>{
-        console.log('Enviado');
+    fetch('http://localhost:4000/filtros/?' + `filtro=${filtro}&filtro_periodo=${filtros_periodo}`).then(res=>{
+        console.log(res);
+        return res.json();
+    }).then(data=>{
+        console.log(data);
     })
 }

@@ -42,11 +42,17 @@ const Controller = {
     },
 
     filtrarAlunos: async(req,res)=>{
-        let filtro = req.params.slice('|');
-        console.log(filtro);
-        console.log('cheguei na api');
-        
-        res.send('teste')
+        const filtro = req.query.filtro;
+        const filtro_periodo = req.query.filtro_periodo
+        if(filtro === 'todos' && filtro_periodo === 'todos'){
+            this.mostrarTodosAlunos
+        }
+        let arry = await Aluno.findAll({
+            where:{
+                periodo: filtro_periodo
+            }
+        });
+        return res.send(arry);
         
     }
 
