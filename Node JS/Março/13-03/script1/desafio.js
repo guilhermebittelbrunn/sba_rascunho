@@ -42,6 +42,8 @@ let nomes = Pessoas.reduce((acc,p)=>{
     return acc;
 },'')
 
+
+
 fs.writeFile('ListaDePessoas.csv', nomes, (err)=>{
     if(err) console.log(err);
     else console.log('Arquivo criado com sucesso!')
@@ -63,5 +65,5 @@ fs.readFile('ListaDePessoas.csv', 'utf-8', (err,data)=>{
 setTimeout(()=>{
     deleteArq('ListaDePessoas.csv');
     deleteArq('Pessoas.txt')
-}, 8000);
+}, 15000);
 
