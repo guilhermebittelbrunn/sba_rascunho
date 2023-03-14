@@ -11,27 +11,21 @@ const Controller = {
             observacao: req.body.observacao,
             periodo: req.body.periodo
         }
-
         try{
             await Aluno.create(novo_aluno);
             res.redirect('/');
         }catch(err){
             return res.status(400).send(err);
         }
-
     },
 
     mostrarTodosAlunos: async(req,res)=>{
-
         let alunos = await Aluno.findAll();
         res.send(alunos);
-    
     },
 
     deletarAluno: async(req,res)=>{
-
         const id = req.params.id;
-    
         try{
             await Aluno.destroy({where:{id: id}});
             res.status(200).send('Aluno removido com sucesso');
@@ -42,19 +36,15 @@ const Controller = {
     },
 
     filtrarAlunos: async(req,res)=>{
-        const filtro = req.query.filtro;
-        const filtro_periodo = req.query.filtro_periodo
-        if(filtro === 'todos' && filtro_periodo === 'todos'){
-            this.mostrarTodosAlunos
-        }
-        let arry = await Aluno.findAll({
-            where:{
-                periodo: filtro_periodo
+        const filtro = req.params.filtro;
+        const alunos = await Aluno.findAll({
+            where: {
+                periodo: filtro
             }
-        });
-        return res.send(arry);
-        
+        })
+        res.send(alunos);
     }
+    
 
 }
 

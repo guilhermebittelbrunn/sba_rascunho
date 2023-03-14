@@ -8,13 +8,32 @@
     <title>index</title>
 
     <style>
+        main{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        form{
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
         #edit_text {
             display: block;
         }
 
         .card {
             border: 1px solid black;
-            max-width: 10%;
+            padding: 8px;
+            width: 100px;
+        }
+
+        #mural_alunos ul{
+            gap: 32px;
+            display: flex;
+            flex-wrap: nowrap;
         }
     </style>
 
@@ -46,13 +65,6 @@
         <h2>Todos os alunos</h2>
 
         <h3>filtro:</h3>
-        <select name="filtro" id="filtro">
-            <option value="todos" selected>Todos</option>
-            <option value="aprovado">Alunos aprovados</option>
-            <option value="reprovado">Alunos reprovados</option>
-            <option value="maiordeidade">Alunos maiores de idade</option>
-            <option value="menordeidade">Alunos menores de idade</option>
-        </select>
         <select name="filtro_periodo" id="filtro_periodo">
             <option value="todos">Todos</option>
             <option value="matutino">Matutino</option>
