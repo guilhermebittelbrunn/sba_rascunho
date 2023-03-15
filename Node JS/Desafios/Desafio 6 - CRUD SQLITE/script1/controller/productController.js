@@ -48,14 +48,14 @@ module.exports = {
             preco: req.body.preco,
             categoria: req.body.categoria
         })
-        res.redirect('/')
+        res.redirect('/');
 
     },
 
     alterarPreco: async(req,res)=>{
         
         const id = req.query.id;
-        const op = req.query.op
+        const op = req.query.op;
 
         try{
             const produto = await Produto.findByPk(id);
