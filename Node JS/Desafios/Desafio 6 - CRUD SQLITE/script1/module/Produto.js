@@ -17,6 +17,10 @@ const Produto = db.define('produto', {
     },
     preco:{
         type: Sequelize.DECIMAL
+    },
+    categoria:{
+        type: Sequelize.STRING,
+        allowNull: false
     }
 })
 

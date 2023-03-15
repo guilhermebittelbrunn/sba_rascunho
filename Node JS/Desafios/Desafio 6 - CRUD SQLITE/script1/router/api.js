@@ -9,7 +9,7 @@ router.put('/diminuir/:id', productController.diminuirPreco);
 
 router.post('/editar/:id', express.urlencoded({extended:true}), productController.editarProduto);
 
-router.get('/:nome', productController.buscarProduto);
+router.get('/:categoria', productController.buscarProduto);
 
 router.get('/', productController.exibirProdutos);
 

@@ -11,15 +11,15 @@ module.exports = {
     },
 
     buscarProduto: async(req,res)=>{
-        let nome = req.params.nome;
+        let categoria = req.params.categoria;
 
-        if(nome =='todos'){
+        if(categoria === 'todos'){
             let produtos = await Produto.findAll();
             return res.send(produtos);
         }
     
         try{
-            let produto = await Produto.findAll({where: {nome: nome}});
+            let produto = await Produto.findAll({where: {categoria: categoria}});
             return res.send(produto);
         }catch(err){
             return res.status(400).send(err);
@@ -45,7 +45,8 @@ module.exports = {
         await Produto.create({
             nome: req.body.nome,
             descricao: req.body.descricao,
-            preco: req.body.preco
+            preco: req.body.preco,
+            categoria: req.body.categoria
         })
         res.redirect('/')
 
