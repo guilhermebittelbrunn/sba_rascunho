@@ -6,14 +6,9 @@ router.get('/:categoria', productController.buscarProduto);
 
 router.get('/', productController.exibirProdutos);
 
-// router.put('/aumentar/:id', productController.aumentarPreco);
+router.put('/', productController.alterarPreco);
 
-router.put('/alterar/', productController.alterarPreco);
-
-
-// router.put('/diminuir/:id', productController.diminuirPreco);
-
-router.post('/editar/:id', productController.editarProduto);
+router.post('/:id', productController.editarProduto);
 
 router.post('/', productController.adicionarProduto);
 

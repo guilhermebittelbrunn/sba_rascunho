@@ -66,7 +66,7 @@ function alterarPreco(element){
     const id = element.parentElement.id;
     const op = element.id;
     
-    fetch('http://localhost:3000/produto/alterar/?' + `id=${id}&op=${op}`, {method: 'put'}).then(res=>{
+    fetch('http://localhost:3000/produto/?' + `id=${id}&op=${op}`, {method: 'put'}).then(res=>{
         buscarProdutos();
     })
 }
@@ -81,7 +81,7 @@ function editarProduto(element){
     
     const edit_field = 
         `
-        <form action="/produto/editar/${id}" method='post'>
+        <form action="/produto/${id}" method='post'>
         <input type='text' name="nome" value='${nome}' id='edit_nome' placeholder="Produto">
         <input type='text' name="descricao" value="${descricao}" id='edit_descricao' placeholder="Descrição">
         <button>Salvar</button>
