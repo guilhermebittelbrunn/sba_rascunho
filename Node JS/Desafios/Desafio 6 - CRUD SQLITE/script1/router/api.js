@@ -2,20 +2,22 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controller/productController');
 
-
-router.put('/aumentar/:id', productController.aumentarPreco);
-
-router.put('/diminuir/:id', productController.diminuirPreco);
-
-router.post('/editar/:id', express.urlencoded({extended:true}), productController.editarProduto);
-
 router.get('/:categoria', productController.buscarProduto);
 
 router.get('/', productController.exibirProdutos);
 
-router.delete('/:id', productController.deletarProduto);
+// router.put('/aumentar/:id', productController.aumentarPreco);
 
-router.post('/', express.urlencoded({extended:true}), productController.adicionarProduto);
+router.put('/alterar/', productController.alterarPreco);
+
+
+// router.put('/diminuir/:id', productController.diminuirPreco);
+
+router.post('/editar/:id', productController.editarProduto);
+
+router.post('/', productController.adicionarProduto);
+
+router.delete('/:id', productController.deletarProduto);
 
 
 module.exports = router;

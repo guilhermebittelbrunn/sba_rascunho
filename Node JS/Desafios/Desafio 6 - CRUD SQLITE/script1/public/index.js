@@ -8,6 +8,7 @@ function exibirProdutos(){
         let select = '<select id="select_field"> <option value="todos">todos</option>'
     
         criarElementos(data, lista_produtos);
+
         data = data.reduce((acc, produto)=>{
             if(!acc.find(item => item === produto.categoria)){
                 acc.push(produto.categoria);
@@ -18,7 +19,7 @@ function exibirProdutos(){
             select += `<option value="${element}">${element}</option>`
         })
         
-        filter_select.innerHTML = select + "</select>" + "<button onclick='buscarProduto()'>Buscar</button>";
+        filter_select.innerHTML = select + "</select>" + "<button onclick='buscarProdutos()'>Buscar</button>";
     })
 }
 
@@ -32,8 +33,8 @@ function criarElementos(data, local){
                     <p>${element.descricao}</p>
                     <h3>R$: ${element.preco}</h3>
                     <button onclick="deletarProduto(this)">X</button>
-                    <button onclick="aumentarPreco(this)">+</button>
-                    <button onclick="diminuirPreco(this)">-</button>
+                    <button onclick="alterarPreco(this)" id='adc'>+</button>
+                    <button onclick="alterarPreco(this)"  id='sub'>-</button>
                     <button onclick="editarProduto(this)">✏️</button>
                 </div>
             </li>
@@ -44,15 +45,12 @@ function criarElementos(data, local){
     
 function deletarProduto(element){
     const id = element.parentElement.id;
-    const options = {
-        method: 'delete'
-    }
-    fetch('http://localhost:3000/produto/' + id, options).then(res=>{
-        buscarProduto();
+    fetch('http://localhost:3000/produto/' + id, {method:'delete'}).then(res=>{
+        buscarProdutos();
     })
 }
 
-function buscarProduto(){
+function buscarProdutos(){
 
     const filter_select = document.getElementById('select_field').value;
     
@@ -64,40 +62,31 @@ function buscarProduto(){
     })
 }
 
-function aumentarPreco(element){
+function alterarPreco(element){
     const id = element.parentElement.id;
-    const options = {
-        method: 'put'
-    }
-    fetch('http://localhost:3000/produto/aumentar/' + id, options).then(res=>{
-        buscarProduto();
-    })
-}
-
-function diminuirPreco(element){
-
-    const id = element.parentElement.id;
-    const options = {
-        method: 'put'
-    }
-
-    fetch('http://localhost:3000/produto/diminuir/' + id, options).then(res=>{
-        buscarProduto();
+    const op = element.id;
+    
+    fetch('http://localhost:3000/produto/alterar/?' + `id=${id}&op=${op}`, {method: 'put'}).then(res=>{
+        buscarProdutos();
     })
 }
 
 function editarProduto(element){
     const card = element.parentElement;
-    element.removeAttribute('onclick');
+    const nome = element.parentElement.children[0].textContent;
+    const descricao = element.parentElement.children[1].textContent;
     const id = card.id;
-    const edit = 
+
+    element.removeAttribute('onclick');
+    
+    const edit_field = 
         `
         <form action="/produto/editar/${id}" method='post'>
-        <input type='text' name="nome" value='${card.getAttribute('nome')}' id='edit_nome' placeholder="${card.getAttribute('nome')}">
-        <input type='text' name="descricao" id='edit_descricao' placeholder="descrição">
+        <input type='text' name="nome" value='${nome}' id='edit_nome' placeholder="Produto">
+        <input type='text' name="descricao" value="${descricao}" id='edit_descricao' placeholder="Descrição">
         <button>Salvar</button>
         </form>
         `
-    card.innerHTML += edit
+    card.innerHTML += edit_field;
 }
 

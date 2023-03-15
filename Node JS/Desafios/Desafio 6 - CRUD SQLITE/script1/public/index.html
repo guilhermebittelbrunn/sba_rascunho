@@ -16,12 +16,18 @@
 <body onload='exibirProdutos()'>
     <main>
 
-        <h2>Insira um novo produto</h2>
+        <!-- Cabeçalho -->
+
+        <header>
+            <h2>Insira um novo produto</h2>
+        </header>
+
+        <!-- formulário  -->
 
         <form id="form_product" action="/produto" method="post">
             <input type="text" name="nome" id="nome" placeholder="Produto" required>
             <input type="text" name="descricao" id="descricao" placeholder="Descrição">
-            <input type="number" name="preco" id="preco" placeholder="Preço" required>
+            <input type="number"  name="preco" id="preco" placeholder="Preço" required>
             <select name="categoria" id="categoria" required>
                 <option value="padaria">Padaria</option>
                 <option value="alimentos">Alimentos</option>
@@ -34,18 +40,22 @@
             <button type="submit">Adicionar</button>
         </form>
 
-        
+        <section id="itens_field">
+            <!-- Cabeçalho dos itens -->
+            <h2>Lista de produtos:</h2>
+            <h3>filtro</h3>
 
-        <h2>Lista de produtos:</h2>
-        <h4>Filtro</h4>
-        <div id="filter_select">
-           
-        </div>
-        <section id="lista_produtos">
-            
-            
+            <div id="filter_select">
+                <!-- Seção de filtro  -->
+            </div>
+    
+            <section id="lista_produtos"> 
+                <!-- Exibir todos os produtos -->
+            </section>
+
         </section>
 
+        
 
         <script src="index.js"></script>
     </main>

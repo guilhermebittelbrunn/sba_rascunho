@@ -3,24 +3,24 @@ const Produto = require('../module/Produto');
 module.exports = {
     
     exibirProdutos: async(req,res)=>{
-    
-        let produtos = await Produto.findAll();
-    
+
+        const produtos = await Produto.findAll();
         return res.send(produtos);
-    
+
     },
 
     buscarProduto: async(req,res)=>{
-        let categoria = req.params.categoria;
+        const categoria = req.params.categoria;
+        let produtos; 
 
         if(categoria === 'todos'){
-            let produtos = await Produto.findAll();
+            produtos = await Produto.findAll();
             return res.send(produtos);
         }
     
         try{
-            let produto = await Produto.findAll({where: {categoria: categoria}});
-            return res.send(produto);
+            produtos = await Produto.findAll({where: {categoria: categoria}});
+            return res.send(produtos);
         }catch(err){
             return res.status(400).send(err);
         }
@@ -52,53 +52,36 @@ module.exports = {
 
     },
 
-    aumentarPreco: async(req,res)=>{
+    alterarPreco: async(req,res)=>{
         
-        let id = req.params.id;
-        
+        const id = req.query.id;
+        const op = req.query.op
+
         try{
-            let produto = await Produto.findByPk(id);
-            produto.preco = parseFloat(produto.preco) +  1.0;
+            const produto = await Produto.findByPk(id);
+            if(op === 'adc'){
+                produto.preco = parseFloat(produto.preco) + 1.0;
+            }else{
+                produto.preco = parseFloat(produto.preco) - 1.0;
+            }
             await produto.save();
         }catch(err){
-            return res.status(500).send(err);
+            return res.status(400).send(err);
         }
         res.send('Preço atualizado');
-
-    },
-
-    diminuirPreco: async(req,res)=>{
-
-        let id = req.params.id;
         
-        try{
-            let produto = await Produto.findByPk(id);
-            produto.preco = parseFloat(produto.preco) -  1.0;
-            await produto.save();
-        }catch(err){
-            return res.status(500).send(err);
-        }
-        res.send('Preço atualizado');
     },
 
     editarProduto: async(req,res)=>{
-        let id = req.params.id;
-        let nome = req.body.nome;
-        let descricao = req.body.descricao;
-        let produto = await Produto.findByPk(id);
+        const id = req.params.id;
+        const nome = req.body.nome;
+        const descricao = req.body.descricao;
+        const produto = await Produto.findByPk(id);
 
-
-        if (descricao != ''){
-            produto.descricao = descricao;
-        }
-
-        if (nome != ''){
-            produto.nome = nome;
-        }
+        produto.descricao = descricao || produto.descricao;
+        produto.nome = nome || produto.nome;
 
         await produto.save();
         res.redirect('/')
     }
-    
-    
 }
