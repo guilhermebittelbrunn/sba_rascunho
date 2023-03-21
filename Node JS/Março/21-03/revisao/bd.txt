@@ -1,0 +1,7 @@
+CREATE OF REPLACE TRIGGER update_employee
+       AFTER UPDATE job_id, department_id ON employees
+       FOR EACH ROW
+    BEGIN
+        add_job_history(:old.employees_id, :old.hire_date, sysdate, :old.job,;department_id);
+    END;
+    
