@@ -1,12 +1,19 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const pathPublic = path.join(__dirname, 'public');
+const api = require('./router/api');
+const db = require('./db/db');
+
+db.sync()
+    .then((res) => {
+        console.log('database running');
+    })
+    .catch((err) => {
+        console.log(`error: ${err}`);
+    });
 
 app.use(express.static(path.join(__dirname, './public')));
-app.get('/teste', (req, res) => {
-    res.send({ ok: true });
-});
+app.use('/api', api);
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/aa.html'));
 });
