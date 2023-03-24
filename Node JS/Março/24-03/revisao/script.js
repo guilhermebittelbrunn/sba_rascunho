@@ -4,6 +4,9 @@ const path = require('path');
 const api = require('./router/api');
 const db = require('./db/db');
 
+app.set('Views');
+app.set('view Engine', 'ejs');
+
 db.sync()
     .then((res) => {
         console.log('database running');
