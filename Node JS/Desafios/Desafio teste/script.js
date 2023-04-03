@@ -12,169 +12,150 @@ const jasper = require('node-jasper')({
 
 const report = {
     report: 'relatorio', //File
-    data: {
-        nome: 'Guilherme',
-        idade: 21,
-        turma: '1A',
+    data: {},
+    dataset: {
+        Turmas: [
+            {
+                turma: '1A',
+                quantidade: 12,
+            },
+            {
+                turma: '1B',
+                quantidade: 15,
+            },
+            {
+                turma: '2A',
+                quantidade: 23,
+            },
+            {
+                turma: '2B',
+                quantidade: 8,
+            },
+            {
+                turma: '2A',
+                quantidade: 23,
+            },
+            {
+                turma: '2B',
+                quantidade: 8,
+            },
+            {
+                turma: '2A',
+                quantidade: 23,
+            },
+            {
+                turma: '2B',
+                quantidade: 8,
+            },
+        ],
+        Alunos: [
+            {
+                nome: 'Guilherme',
+                idade: 20,
+                turma: '2A',
+                notas: [10, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Jessica',
+                idade: 17,
+                turma: '5A',
+                notas: [30, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Ivan',
+                idade: 21,
+                turma: '3B',
+                notas: [10, 10, 20],
+                aprovado: false,
+            },
+            {
+                nome: 'Guilherme',
+                idade: 20,
+                turma: '2A',
+                notas: [10, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Jessica',
+                idade: 17,
+                turma: '5A',
+                notas: [30, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Ivan',
+                idade: 21,
+                turma: '3B',
+                notas: [10, 10, 20],
+                aprovado: false,
+            },
+            {
+                nome: 'Guilherme',
+                idade: 20,
+                turma: '2A',
+                notas: [10, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Jessica',
+                idade: 17,
+                turma: '5A',
+                notas: [30, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Ivan',
+                idade: 21,
+                turma: '3B',
+                notas: [10, 10, 20],
+                aprovado: false,
+            },
+            {
+                nome: 'Guilherme',
+                idade: 20,
+                turma: '2A',
+                notas: [10, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Jessica',
+                idade: 17,
+                turma: '5A',
+                notas: [30, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Ivan',
+                idade: 21,
+                turma: '3B',
+                notas: [10, 10, 20],
+                aprovado: false,
+            },
+            {
+                nome: 'Guilherme',
+                idade: 20,
+                turma: '2A',
+                notas: [10, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Jessica',
+                idade: 17,
+                turma: '5A',
+                notas: [30, 20, 30],
+                aprovado: true,
+            },
+            {
+                nome: 'Ivan',
+                idade: 21,
+                turma: '3B',
+                notas: [10, 10, 20],
+                aprovado: false,
+            },
+        ],
     },
-    dataset: [
-        {
-            endereco: 'Rua ficticia, número inexistente, bairro imaginário',
-            telefone: '(00) 0000-0000',
-            Alunos: [
-                {
-                    nome: 'Guilherme',
-                    idade: 20,
-                    turma: '1A',
-                },
-                {
-                    nome: 'Ivan',
-                    idade: 18,
-                    turma: '3B',
-                },
-                {
-                    nome: 'Roseli',
-                    idade: 21,
-                    turma: '4A',
-                },
-                {
-                    nome: 'Jessica',
-                    idade: 17,
-                    turma: '2B',
-                },
-                {
-                    nome: 'Camilly',
-                    idade: 15,
-                    turma: '1B',
-                },
-                {
-                    nome: 'Guilherme',
-                    idade: 20,
-                    turma: '1A',
-                },
-                {
-                    nome: 'Ivan',
-                    idade: 18,
-                    turma: '3B',
-                },
-                {
-                    nome: 'Roseli',
-                    idade: 21,
-                    turma: '4A',
-                },
-                {
-                    nome: 'Jessica',
-                    idade: 17,
-                    turma: '2B',
-                },
-                {
-                    nome: 'Camilly',
-                    idade: 15,
-                    turma: '1B',
-                },
-                {
-                    nome: 'Guilherme',
-                    idade: 20,
-                    turma: '1A',
-                },
-                {
-                    nome: 'Ivan',
-                    idade: 18,
-                    turma: '3B',
-                },
-                {
-                    nome: 'Roseli',
-                    idade: 21,
-                    turma: '4A',
-                },
-                {
-                    nome: 'Jessica',
-                    idade: 17,
-                    turma: '2B',
-                },
-                {
-                    nome: 'Camilly',
-                    idade: 15,
-                    turma: '1B',
-                },
-                {
-                    nome: 'Guilherme',
-                    idade: 20,
-                    turma: '1A',
-                },
-                {
-                    nome: 'Ivan',
-                    idade: 18,
-                    turma: '3B',
-                },
-                {
-                    nome: 'Roseli',
-                    idade: 21,
-                    turma: '4A',
-                },
-                {
-                    nome: 'Jessica',
-                    idade: 17,
-                    turma: '2B',
-                },
-                {
-                    nome: 'Camilly',
-                    idade: 15,
-                    turma: '1B',
-                },
-                {
-                    nome: 'Guilherme',
-                    idade: 20,
-                    turma: '1A',
-                },
-                {
-                    nome: 'Ivan',
-                    idade: 18,
-                    turma: '3B',
-                },
-                {
-                    nome: 'Roseli',
-                    idade: 21,
-                    turma: '4A',
-                },
-                {
-                    nome: 'Jessica',
-                    idade: 17,
-                    turma: '2B',
-                },
-                {
-                    nome: 'Camilly',
-                    idade: 15,
-                    turma: '1B',
-                },
-                {
-                    nome: 'Guilherme',
-                    idade: 20,
-                    turma: '1A',
-                },
-                {
-                    nome: 'Ivan',
-                    idade: 18,
-                    turma: '3B',
-                },
-                {
-                    nome: 'Roseli',
-                    idade: 21,
-                    turma: '4A',
-                },
-                {
-                    nome: 'Jessica',
-                    idade: 17,
-                    turma: '2B',
-                },
-                {
-                    nome: 'Camilly',
-                    idade: 15,
-                    turma: '1B',
-                },
-            ],
-        },
-    ],
 };
 
 setTimeout(() => {
