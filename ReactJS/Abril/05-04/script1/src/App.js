@@ -1,25 +1,36 @@
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+const marca = {
+    nome: 'MarketPlace',
+};
+
+function Message() {
+    return (
+        <nav
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '8px',
+                backgroundColor: '#2f2f2f',
+                color: 'white',
+            }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+            <h3>{marca.nome}</h3>
+            <ul
+                style={{
+                    display: 'flex',
+                    listStyle: 'none',
+                    gap: '8px',
+                }}
+            >
+                <li>Home</li>
+                <li>Products</li>
+                <li>About</li>
+                <li>Contacts</li>
+            </ul>
+        </nav>
+    );
 }
 
-export default App;
+export default Message;
