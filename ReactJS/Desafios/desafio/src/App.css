@@ -1,0 +1,108 @@
+* {
+    padding: 0%;
+    margin: 0%;
+    box-sizing: border-box;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+body {
+    background: linear-gradient(to top, #121212, #212b46);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    width: 95%;
+    max-width: 600px;
+}
+
+main section {
+    margin: auto;
+    text-align: center;
+}
+
+main section h2 {
+    color: white;
+    text-shadow: .4px .4px whitesmoke;
+    font-size: 42px;
+    text-transform: uppercase;
+    margin: 24px;
+}
+
+.cep_input_field {
+    display: flex;
+    padding: 24px;
+    align-items: center;
+    flex-direction: column;
+}
+
+.cep_input_field div {
+    display: flex;
+    justify-content: center;
+    border: 1px solid black;
+    width: 80%;
+}
+
+.cep_input_field input {
+    font-size: 22px;
+    width: 100%;
+    padding: 4px 8px;
+    border: none;
+    outline: none;
+}
+
+.cep_input_field button {
+    cursor: pointer;
+    border: none;
+    background-color: darkred;
+    padding: 8px;
+    color: white;
+}
+
+.api_cep_section {
+    border-radius: 4px;
+    background-color: aliceblue;
+    width: 100%;
+
+}
+
+.api_cep_section h3 {
+    color: aliceblue;
+    text-shadow: .3px .3px whitesmoke;
+    font-size: 36px;
+    width: 100%;
+    padding: 12px 0px;
+    background-color: darkred;
+}
+
+.api_cep_section ul {
+    list-style: none;
+    padding: 24px 0px;
+}
+
+.api_cep_section ul li {
+    font-size: 24px;
+    margin: 12px;
+    border-bottom: 2px solid darkred
+}
+
+@media screen and (max-width: 600px) {
+    .api_cep_section {
+        width: 90%;
+    }
+
+    .cep_input_field div {
+        width: 90%;
+    }
+
+    main section h2 {
+        font-size: 32px;
+    }
+
+    .api_cep_section h3 {
+        font-size: 24px;
+    }
+}

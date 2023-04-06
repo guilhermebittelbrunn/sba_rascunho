@@ -70,4 +70,20 @@ function Application(prop) {
     );
 }
 
+// fetch('https://economia.awesomeapi.com.br/last/USD')
+//     .then((res) => {
+//         return res.json();
+//     })
+//     .then((data) => {
+//         console.log(data);
+//     });
+
+fetch('https://cdn.apicep.com/file/apicep/06233-030.json')
+    .then((res) => {
+        return res.json();
+    })
+    .then((data) => {
+        console.log(data);
+    });
+
 export default Application;
