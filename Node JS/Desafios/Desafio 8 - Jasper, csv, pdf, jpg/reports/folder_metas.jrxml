@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.1.final using JasperReports Library version 6.20.1-7584acb244139816654f64e2fd57a00d3e31921e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="2bd139f5-324f-48a4-a164-434791ec0ab7">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="PARAM" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="cota" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<pageHeader>
+		<band>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="842">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<image scaleImage="FillFrame">
+				<reportElement x="0" y="0" width="595" height="842" uuid="83114e72-a1d8-41e4-8df8-f53b6201375f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["folder_metas_bg.JPG.jpg"]]></imageExpression>
+			</image>
+			<frame>
+				<reportElement x="130" y="170" width="330" height="60" uuid="e1db3a76-7558-4222-a200-aca3564b64b6"/>
+				<textField textAdjust="ScaleFont">
+					<reportElement x="0" y="0" width="330" height="60" forecolor="#03558F" uuid="0ce19ce8-a4b0-4686-ba97-cc80a1a73ac8"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="geomanist" size="21" isBold="true" isItalic="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="130" y="300" width="330" height="30" uuid="480e0e1d-f77c-4dc5-816a-08706b5b0f78"/>
+				<textField>
+					<reportElement x="0" y="0" width="330" height="30" forecolor="#03558F" uuid="d6558569-6aff-43b6-a5fc-22b112a54a49"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Geomanist Ultra" size="21" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cota}  + " PEÇAS"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>
