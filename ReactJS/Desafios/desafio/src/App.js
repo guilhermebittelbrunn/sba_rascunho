@@ -1,7 +1,7 @@
 import './App.css';
 import moment from 'moment';
 
-export function App(prop) {
+export function SearchCep(prop) {
     return (
         <>
             <section className="cep_input_field">
@@ -16,10 +16,9 @@ export function App(prop) {
 }
 
 export function CepDetail(prop) {
-    console.log(prop);
     return (
         <>
-            <App function={prop.function} />
+            <SearchCep function={prop.function} />
             <section className="api_cep_section">
                 <h3>CEP {prop.cep_info.code}</h3>
                 <ul>
