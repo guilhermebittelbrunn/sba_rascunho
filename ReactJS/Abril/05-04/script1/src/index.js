@@ -2,8 +2,21 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { NavBar } from './App';
 import { ProductsContainer } from './App';
+import { SectionContainer } from './App';
+import { Timer } from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const text = `
+
+em ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
+tempor incididunt ut labore et dolore magna aliqua. Neque egestas congue quisque egestas 
+diam in. Vestibulum lectus mauris ultrices eros in cursus. Mollis nunc sed id semper risus.
+Id interdum velit laoreet id donec ultrices tincidunt arcu. 
+Enim eu turpis egestas pretiumenean pharetra. Tristique senectus et netus 
+et malesuada. Orci nulla pellentesque dignissim
+enim. Egest
+`;
 
 const links = [
     {
@@ -17,6 +30,10 @@ const links = [
     {
         nome: 'Buy',
         url: './Buy',
+    },
+    {
+        nome: 'Contact',
+        url: './Contact/Admin',
     },
 ];
 
@@ -60,6 +77,10 @@ function Application() {
         <>
             <NavBar nome="FakeStore" links={links} />
             <ProductsContainer produtos={produtos} />
+            <SectionContainer value="about" text={text} />
+            <SectionContainer value="more" text={text} />
+            <SectionContainer value="info" text={text} />
+            <Timer />
         </>
     );
 }
