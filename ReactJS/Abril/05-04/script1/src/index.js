@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { NavBar } from './App';
-import { ProductsContainer } from './App';
-import { SectionContainer } from './App';
-import { Timer } from './App';
+import { NavBar, ProductsContainer, SectionContainer, Timer, ButtonIncrement, ButtonIncrementStorage } from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -73,12 +70,6 @@ const produtos = [
 ];
 
 function Application() {
-    let [count, setCount] = useState(0);
-
-    function increment() {
-        setCount(count + 1);
-    }
-
     return (
         <>
             <NavBar nome="FakeStore" links={links} />
@@ -87,7 +78,8 @@ function Application() {
             <SectionContainer title="more" text={text} />
             <SectionContainer title="info" text={text} />
             <Timer />
-            <button onClick={increment}>Clicked {count} times!</button>
+            <ButtonIncrement />
+            <ButtonIncrementStorage />
         </>
     );
 }

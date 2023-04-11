@@ -1,5 +1,6 @@
 import './App.css';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 export function NavBar(prop) {
     const links = prop.links.map((link) => {
@@ -44,7 +45,7 @@ export function NavBar(prop) {
     );
 }
 
-export function ProductsContainer(prop) {
+export function ProductsButton() {
     let [count, setCount] = useState(0);
 
     function sum() {
@@ -53,16 +54,28 @@ export function ProductsContainer(prop) {
     function sub() {
         setCount((count -= 1));
     }
+    return (
+        <>
+            <br></br>
+            <span>Itens: {count}</span>
+            <br></br>
+            <button onClick={sum}>+</button>
+            <button onClick={sub}>-</button>
+        </>
+    );
+}
 
+export function ProductsContainer(prop) {
     const produtos = prop.produtos.map((produto, k) => {
         return (
-            <li key={k} id={k}>
-                {produto.nome} R${produto.preco}
-                <br></br>
-                <span>Itens: {count}</span>
-                <br></br>
-                <button onClick={sum}>+</button>
-                <button onClick={sub}>-</button>
+            <li
+                key={k}
+                style={{
+                    color: produto.preco > 5 ? 'red' : 'green',
+                }}
+            >
+                {produto.nome} R${String(produto.preco).padEnd('4', ',00')}
+                <ProductsButton />
             </li>
         );
     });
@@ -98,22 +111,61 @@ export function SectionContainer(prop) {
 }
 
 export function Timer() {
-    let [time, setTime] = useState(70);
+    let [time, setTime] = useState(5);
 
-    function incressTime() {
-        setTime((time -= 1));
+    function changeTime() {
+        time > 0 && setTime((time -= 1));
     }
 
-    let interval = setInterval(incressTime, 1000);
+    setInterval(() => {
+        changeTime();
+    }, 1000);
 
     let second = time % 60;
     let minute = Math.floor(time / 60);
 
     return (
         <>
-            <h3 onLoad={interval}>
+            <h3>
                 The current time is: {String(minute).padStart(2, '0')}:{String(second).padStart(2, '0')}
             </h3>
+        </>
+    );
+}
+
+export function ButtonIncrement() {
+    let [count, setCount] = useState(0);
+
+    function increment() {
+        setCount(count + 1);
+    }
+    return (
+        <>
+            <button onClick={increment}>Clicked {count} times!</button>
+            <button onClick={increment}>Clicked {count} times!</button>
+        </>
+    );
+}
+
+export function ButtonIncrementStorage() {
+    let [count, setCount] = useState(0);
+
+    function increment() {
+        setCount(count + 1);
+    }
+
+    useEffect(() => {
+        setCount((count = parseInt(localStorage.getItem('count'))));
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('count', count);
+    }, [count]);
+
+    return (
+        <>
+            <h4>Button Increment with LocalStorage count</h4>
+            <button onClick={increment}>Clicked {count} times!</button>
         </>
     );
 }
