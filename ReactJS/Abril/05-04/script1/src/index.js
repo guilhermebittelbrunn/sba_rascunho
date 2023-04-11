@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { NavBar } from './App';
 import { ProductsContainer } from './App';
@@ -73,14 +73,21 @@ const produtos = [
 ];
 
 function Application() {
+    let [count, setCount] = useState(0);
+
+    function increment() {
+        setCount(count + 1);
+    }
+
     return (
         <>
             <NavBar nome="FakeStore" links={links} />
             <ProductsContainer produtos={produtos} />
-            <SectionContainer value="about" text={text} />
-            <SectionContainer value="more" text={text} />
-            <SectionContainer value="info" text={text} />
+            <SectionContainer title="about" text={text} />
+            <SectionContainer title="more" text={text} />
+            <SectionContainer title="info" text={text} />
             <Timer />
+            <button onClick={increment}>Clicked {count} times!</button>
         </>
     );
 }

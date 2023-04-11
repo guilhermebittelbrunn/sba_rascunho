@@ -77,32 +77,22 @@ export function ProductsContainer(prop) {
 }
 
 export function SectionContainer(prop) {
-    const content = document.getElementById(prop.value);
-    let [state, setState] = useState(false);
-
-    function showContent() {
-        setState(!state);
-        if (state) {
-            return (content.innerHTML += `${String(prop.text)}`);
-        }
-        return (content.innerHTML = '');
-    }
-
     return (
         <>
-            <section
+            <details
                 style={{
                     backgroundColor: '#2f2f2f',
-                    color: 'white',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    margin: '6px 0px',
+                    width: '100%',
+                    padding: '12px 0px',
+                    margin: '4px 0px',
+                    cursor: 'pointer',
                 }}
             >
-                <h3>{prop.value}</h3>
-                <button onClick={showContent}>+</button>
-            </section>
-            <div id={prop.value}></div>
+                <summary style={{ color: 'white', marginLeft: '12px' }}>{prop.title}</summary>
+                <div style={{ width: '90%', margin: 'auto' }}>
+                    <p>{prop.text}</p>
+                </div>
+            </details>
         </>
     );
 }
