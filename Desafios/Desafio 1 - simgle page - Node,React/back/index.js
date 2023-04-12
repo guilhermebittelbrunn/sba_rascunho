@@ -1,10 +1,10 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
+
 const productRounter = require('./router/productApi');
 const db = require('./db/database');
 const Product = require('./module/Product');
-const pathIndex = path.join(__dirname, '../front/build/');
+
 const app = express();
 const PORT = 4000;
 
@@ -14,8 +14,9 @@ const PORT = 4000;
         console.log('database connect with successfully!');
 
         app.use('/product', productRounter);
-        app.get('/react', (req, res) => {
-            res.sendFile(pathIndex + 'index.html');
+        app.use(express.static(path.join(__dirname, '../front/public/index.html')));
+        app.get('*', (req, res) => {
+            res.sendFile(path.join(__dirname, '../front/public/index.html'));
         });
 
         app.listen(PORT, (err) => {
