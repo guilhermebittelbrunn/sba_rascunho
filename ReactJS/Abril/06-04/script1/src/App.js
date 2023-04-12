@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './App.css';
 
 function Links(prop) {
@@ -38,21 +39,41 @@ function NavBar(prop) {
 }
 
 function Alunos(prop) {
+    function returnAluno(aluno) {
+        prop.removerAluno(aluno);
+    }
+
     return (
         <>
-            {prop.alunos.map((aluno) => {
-                return <li>{aluno.nome}</li>;
+            {prop.alunos.map((aluno, k) => {
+                return (
+                    <li key={k}>
+                        {aluno.nome}
+                        <button onClick={() => returnAluno(aluno)}>❌</button>
+                    </li>
+                );
             })}
         </>
     );
 }
 
-function ListaDeAlunos(prop) {
+export function ListaDeAlunos(prop) {
+    const [listAlumns, setListAlumns] = useState(prop.alunos);
+
+    let removerAluno = (aluno) => {
+        let newList = listAlumns.filter((aln) => {
+            if (aln.id != aluno.id) {
+                return aln;
+            }
+        });
+        setListAlumns(newList);
+    };
+
     return (
         <section>
             <h3>Lista de {prop.listanome}:</h3>
             <ul>
-                <Alunos alunos={prop.alunos} />
+                <Alunos alunos={listAlumns} removerAluno={removerAluno} />
             </ul>
         </section>
     );
@@ -69,21 +90,30 @@ function Application(prop) {
         </>
     );
 }
+export function CountButton() {
+    const [count, setCount] = useState(0);
 
-// fetch('https://economia.awesomeapi.com.br/last/USD')
-//     .then((res) => {
-//         return res.json();
-//     })
-//     .then((data) => {
-//         console.log(data);
-//     });
+    function addCount() {
+        setCount(count + 1);
+    }
 
-fetch('https://cdn.apicep.com/file/apicep/06233-030.json')
-    .then((res) => {
-        return res.json();
-    })
-    .then((data) => {
-        console.log(data);
-    });
+    return (
+        <>
+            <button onClick={addCount}>Clicked {count} times!</button>
+            <br></br>
+            <br></br>
+        </>
+    );
+}
 
-export default Application;
+export function CountButtonSyncron(prop) {
+    return (
+        <>
+            <button onClick={prop.addCount}>Clicked {prop.count} times</button>
+            <br></br>
+            <br></br>
+        </>
+    );
+}
+
+export default CountButton;
