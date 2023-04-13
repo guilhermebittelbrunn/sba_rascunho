@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import ProductForm from './components/productForm';
+import Footer from './components/footer';
 import ProductsContainer from './components/productsContainer';
 import Modal from './components/modal';
 import Nav from './components/nav';
@@ -30,7 +30,7 @@ function Application() {
 
     useEffect(() => {
         findAllProducts();
-    }, [func]);
+    }, [func, state]);
 
     function changeState(status, func, item) {
         setState(status);
@@ -45,6 +45,7 @@ function Application() {
             <main>
                 <ProductsContainer changeState={changeState} products={products} />
             </main>
+            <Footer />
         </>
     );
 }

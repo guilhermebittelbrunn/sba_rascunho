@@ -1,4 +1,5 @@
 function ProductsContainer(props) {
+    console.log(props);
     const ulStyle = {
         border: '1px solid black',
         width: '95%',
@@ -12,13 +13,13 @@ function ProductsContainer(props) {
     };
 
     return (
-        <div style={{ width: '80%', display: 'flex', flexDirection: 'column' }}>
+        <div className="ProductsContainer">
             <h2>Our Products: </h2>
             <ul style={ulStyle}>
                 {props.products.map((p) => {
                     return (
                         <li key={p.id} id={p.id}>
-                            <Card item={p} changeState={props.changeState} />
+                            <Card item={p} changeState={props.changeState} id={p.id} />
                         </li>
                     );
                 })}
@@ -44,6 +45,7 @@ function Card(props) {
             <div className="CardButtons">
                 <button
                     onClick={() => {
+                        props.changeState(false, props.id);
                         deleteItem(props.item.id);
                     }}
                 >

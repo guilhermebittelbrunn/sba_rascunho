@@ -1,9 +1,7 @@
 import { useState } from 'react';
 
 function ProductForm(props) {
-    console.log(props);
     const [values, setValues] = useState(props.item);
-
     function haddleChange(e) {
         const value = e.target.value;
         const name = e.target.name;
@@ -11,17 +9,17 @@ function ProductForm(props) {
         console.log(values);
     }
 
-    function handleButtonProduct(e) {
+    function addProduct(e) {
         e.preventDefault();
-        if (!values.title || !values.price) {
-            return alert('Informe todos os dados');
+        if (props.func === 'Adicionar produto' && (!values.title || !values.price)) {
+            return alert('Informe todos os campos!');
         }
         const options = {
             method: props.func === 'Adicionar produto' ? 'POST' : 'PUT',
             headers: new Headers({ 'Content-type': 'application/json' }),
             body: JSON.stringify(values),
         };
-        fetch(`http://localhost:4000/product/`, options).then((res) => {
+        fetch(`http://localhost:4000/product/${props.item.id || ''}`, options).then((res) => {
             const form = document.getElementsByClassName('productForm')[0];
             for (let item of form) {
                 if (item.type === 'text' || item.type === 'number') {
@@ -49,25 +47,25 @@ function ProductForm(props) {
                     <input
                         type="text"
                         required
-                        placeholder="título"
+                        placeholder={'title'}
                         name="title"
                         onChange={haddleChange}
-                        // value={props.item.title}
+                        value={values.title}
                     ></input>
                     <input
                         type="text"
-                        placeholder="descrição"
+                        placeholder={'description'}
                         name="description"
                         onChange={haddleChange}
-                        // value={props.item.description}
+                        value={values.description}
                     ></input>
                     <input
                         type="number"
-                        placeholder="preço"
+                        placeholder={'price'}
                         required
                         name="price"
                         onChange={haddleChange}
-                        // value={props.item.price}
+                        value={values.price}
                     ></input>
                     <select required name="collection" onChange={haddleChange}>
                         <option>1A</option>
@@ -77,7 +75,7 @@ function ProductForm(props) {
                         <option>3A</option>
                         <option>3B</option>
                     </select>
-                    <button type="submit" onClick={handleButtonProduct}>
+                    <button type="submit" onClick={addProduct}>
                         {props.func === 'Adicionar produto' ? 'Adicionar' : 'Salvar'}
                     </button>
                 </form>

@@ -21,7 +21,7 @@ const Product = db.define('product', {
     },
     collection: {
         type: sequelize.CHAR(2),
-        allowNull: false,
+        defaultValue: '1A',
     },
 });
 

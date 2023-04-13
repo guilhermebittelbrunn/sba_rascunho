@@ -24,8 +24,8 @@ const controller = {
         }
     },
     edit: async (req, res) => {
-        console.log(req.body);
-        console.log(req.params.id);
+        const { title, description, price, collection } = req.body;
+        await Product.update({ title, description, price, collection }, { where: { id: req.body.id } });
         res.status(200).send(true);
     },
 };
