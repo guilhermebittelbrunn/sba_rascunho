@@ -3,15 +3,7 @@ import ProductForm from './productForm';
 function Modal(props) {
     return (
         <>
-            <ProductForm />
-            <button
-                onClick={(e) => {
-                    e.preventDefault();
-                    props.changeState(false);
-                }}
-            >
-                ❌
-            </button>
+            <ProductForm changeState={props.changeState} func={props.title} state={props.state} item={props.item} />
         </>
     );
 }

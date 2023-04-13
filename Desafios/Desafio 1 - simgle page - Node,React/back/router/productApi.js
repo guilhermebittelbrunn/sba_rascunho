@@ -10,6 +10,6 @@ productRounter.use(cors());
 productRounter.post('/', productController.create);
 productRounter.get('/', productController.show);
 productRounter.delete('/:id', productController.delete);
-productRounter.put('/:id');
+productRounter.put('/:id', productController.edit);
 
 module.exports = productRounter;

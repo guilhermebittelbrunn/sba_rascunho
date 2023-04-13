@@ -23,6 +23,11 @@ const controller = {
             return res.status(500).send(err);
         }
     },
+    edit: async (req, res) => {
+        console.log(req.body);
+        console.log(req.params.id);
+        res.status(200).send(true);
+    },
 };
 
 module.exports = controller;

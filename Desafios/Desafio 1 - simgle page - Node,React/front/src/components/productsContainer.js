@@ -13,7 +13,7 @@ function ProductsContainer(props) {
 
     return (
         <div style={{ width: '80%', display: 'flex', flexDirection: 'column' }}>
-            <h2>produtos</h2>
+            <h2>Our Products: </h2>
             <ul style={ulStyle}>
                 {props.products.map((p) => {
                     return (
@@ -28,19 +28,6 @@ function ProductsContainer(props) {
 }
 
 function Card(props) {
-    const style = {
-        backgroundColor: 'whitesmoke',
-        boxShadow: '2px 2px 2px #2f2f2f',
-        padding: '12px',
-        width: '275px',
-        height: '350px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '24px',
-        justifyContent: 'space-between',
-    };
-
     function deleteItem(item) {
         const options = {
             method: 'DELETE',
@@ -49,12 +36,12 @@ function Card(props) {
     }
 
     return (
-        <div className="Card" style={style}>
+        <div className="Card">
             <h3>{props.item.title}</h3>
-            <p>Descrição: {props.item.description}</p>
+            <p>Description: {props.item.description}</p>
             <p>Collection: {props.item.collection}</p>
             <p>Price: R${props.item.price}</p>
-            <div>
+            <div className="CardButtons">
                 <button
                     onClick={() => {
                         deleteItem(props.item.id);
@@ -64,7 +51,7 @@ function Card(props) {
                 </button>
                 <button
                     onClick={() => {
-                        props.changeState(true, props.item);
+                        props.changeState(true, 'Editar produto', props.item);
                     }}
                 >
                     ✏
