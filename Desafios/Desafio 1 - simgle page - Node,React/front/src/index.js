@@ -1,36 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import ProductForm from './components/productForm';
 import ProductsContainer from './components/productsContainer';
+import Modal from './components/modal';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 function Application() {
-    const list = [];
+    const [state, setState] = useState(false);
+    const [products, setProducts] = useState([]);
 
-    function buscar() {
+    useEffect(() => {
         fetch('http://localhost:4000/product')
             .then((res) => {
                 return res.json();
             })
             .then((data) => {
-                list.push(data);
-            })
-            .finally(() => {
-                console.log(list);
+                setProducts(data);
             });
+    }, []);
+
+    function changeState(status) {
+        console.log(status);
+        setState(status);
     }
 
     return (
         <>
-            <ProductForm />
-            <ProductsContainer
-                onLoad={buscar()}
-                list={() => {
-                    return buscar();
-                }}
-            />
+            {state ? <Modal changeState={changeState} /> : false}
+            <main>
+                <ProductForm />
+                <ProductsContainer changeState={changeState} products={products} />
+            </main>
         </>
     );
 }

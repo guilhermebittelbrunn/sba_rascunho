@@ -1,20 +1,27 @@
 const Product = require('../module/Product');
 
 const controller = {
-    showProducts: async (req, res) => {
+    show: async (req, res) => {
         const listProducts = await Product.findAll();
         res.send(listProducts);
     },
-    createProduct: async (req, res) => {
+    create: async (req, res) => {
         const { title, description, price, collection } = req.body;
-        await Product.create({
-            title,
-            description,
-            price,
-            collection,
-        });
-
-        res.redirect('/product');
+        await Product.create({ title, description, price, collection });
+        res.status(200).send(true);
+    },
+    delete: async (req, res) => {
+        const { id } = req.params;
+        try {
+            Product.destroy({
+                where: {
+                    id: id,
+                },
+            });
+            res.status(200).send(true);
+        } catch (err) {
+            return res.status(500).send(err);
+        }
     },
 };
 

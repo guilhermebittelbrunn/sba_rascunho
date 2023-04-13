@@ -7,12 +7,13 @@ const Product = require('./module/Product');
 
 const app = express();
 const PORT = 4000;
+const cors = require('cors');
 
 (async () => {
     try {
         await db.sync();
         console.log('database connect with successfully!');
-
+        app.use(cors());
         app.use('/product', productRounter);
         app.use(express.static(path.join(__dirname, '../front/public/index.html')));
         app.get('*', (req, res) => {
