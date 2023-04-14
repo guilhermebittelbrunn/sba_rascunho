@@ -79,6 +79,35 @@ main{
     text-shadow: .3px .3px .3px black;
 }
 
+.seachProducts{
+
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px
+}
+.seachProducts select option{
+    background-color: whitesmoke;
+    color: #2f2f2f;
+}
+.seachProducts select{
+    width: 200px;
+    background-color: #2f2f2f;
+    color: white;
+    font-size: 22px;
+    border: none;
+    border-radius: 4px;   
+}
+
+.seachProducts button{
+    background-color: whitesmoke;
+    width: 120px;
+    border: 2px solid #2f2f2f;
+    font-size: 22px;  
+    border-radius: 16px;
+}
+
 .Card{
     background-color: whitesmoke;
     box-shadow: 2px 2px 2px #2f2f2f;
@@ -113,6 +142,18 @@ main{
     border: none;
     border-radius: 4px;
 }
+.Card p{
+    width: 100%;
+}
+.Card span{
+
+    width: 100%;
+    margin-top: 6px;
+    display: block;
+    font-weight: bolder;
+    text-shadow: .3px .3px .3px black;
+    border-bottom: 1px solid #2f2f2f;
+}
 
 .ProductsContainer{
     width: 80%;
@@ -132,14 +173,10 @@ main{
 }
 
 footer{
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    z-index: 0;
     margin-top: 20px;
     width: 100%;
     background-color: #2f2f2f;
     text-align: center;
     color: whitesmoke;
-    height: 60px;
+    padding: 15px 0px;
 }

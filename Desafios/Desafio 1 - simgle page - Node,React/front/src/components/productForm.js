@@ -67,7 +67,7 @@ function ProductForm(props) {
                         onChange={haddleChange}
                         value={values.price}
                     ></input>
-                    <select required name="collection" onChange={haddleChange}>
+                    <select required name="collection" onChange={haddleChange} value={values.collection}>
                         <option>1A</option>
                         <option>1B</option>
                         <option>2A</option>

@@ -9,6 +9,7 @@ productRounter.use(cors());
 
 productRounter.post('/', productController.create);
 productRounter.get('/', productController.show);
+productRounter.get('/:collection', productController.filter);
 productRounter.delete('/:id', productController.delete);
 productRounter.put('/:id', productController.edit);
 

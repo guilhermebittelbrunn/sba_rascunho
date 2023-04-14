@@ -28,6 +28,13 @@ const controller = {
         await Product.update({ title, description, price, collection }, { where: { id: req.body.id } });
         res.status(200).send(true);
     },
+    filter: async (req, res) => {
+        const { collection } = req.params;
+        console.log(collection);
+        const filter = collection === 'all' ? {} : { collection: collection };
+        const products = await Product.findAll({ where: filter });
+        res.status(200).send(products);
+    },
 };
 
 module.exports = controller;

@@ -24,6 +24,17 @@ function Application() {
             });
     }
 
+    function findCollection(item) {
+        console.log(item);
+        fetch(`http://localhost:4000/product/${item}`)
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                setProducts(data);
+            });
+    }
+
     useEffect(() => {
         findAllProducts();
     }, []);
@@ -43,7 +54,7 @@ function Application() {
             {state ? <Modal item={item ?? ''} state={state} title={func} changeState={changeState} /> : false}
             <Nav title="FakeStore" links={['About', 'Products', 'Contact', 'More']} changeState={changeState} />
             <main>
-                <ProductsContainer changeState={changeState} products={products} />
+                <ProductsContainer changeState={changeState} products={products} findCollection={findCollection} />
             </main>
             <Footer />
         </>
