@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function StateButtons() {
+function StateButtons(props) {
     return (
         <div className="StateButtons">
             <ButtonString />
@@ -8,6 +8,7 @@ function StateButtons() {
             <ButtonBool />
             <ButtonArray />
             <ButtonObject />
+            <MoedaApi moeda={props.moeda} />
         </div>
     );
 }
@@ -98,19 +99,8 @@ function ButtonObject() {
     const [obj, setObj] = useState({});
     const [count, setCount] = useState(0);
 
-    const stringOBJ = { category: '1' };
-
     function addobj() {
         setCount(count + 10);
-        //setObj((preventState) => ({ ...preventState, [count]: '1' }));
-
-        // setObj((obj) => {
-        //     return {
-        //         ...obj,
-        //         endereco: 123,
-        //     };
-        // });
-
         setObj((preventValue) => {
             return { ...preventValue, [count]: '1' };
         });
@@ -122,6 +112,21 @@ function ButtonObject() {
             <button onClick={addobj}>Click-me (Object)</button>
             <p>{JSON.stringify(obj)}</p>
             <hr></hr>
+        </>
+    );
+}
+
+function MoedaApi(props) {
+    (async () => {
+        let valor = await props.moeda();
+        const h4 = document.getElementsByClassName('h4')[0];
+        h4.innerHTML = `<h1>${JSON.stringify(valor)}</h1>`;
+    })();
+
+    return (
+        <>
+            <h3>Valor da moeda</h3>
+            <h4>1</h4>
         </>
     );
 }
