@@ -9,6 +9,7 @@ function StateButtons(props) {
             <ButtonArray />
             <ButtonObject />
             <MoedaApi moeda={props.moeda} />
+            <ButtonEffect />
         </div>
     );
 }
@@ -119,7 +120,7 @@ function ButtonObject() {
 function MoedaApi(props) {
     (async () => {
         let valor = await props.moeda();
-        const h4 = document.getElementsByClassName('h4')[0];
+        const h4 = document.getElementsByClassName('h6')[0];
         h4.innerHTML = `<h1>${JSON.stringify(valor)}</h1>`;
     })();
 
@@ -127,6 +128,42 @@ function MoedaApi(props) {
         <>
             <h3>Valor da moeda</h3>
             <h4>1</h4>
+        </>
+    );
+}
+
+function ButtonEffect() {
+    const [text, setText] = useState('');
+    const handleChange = (e) => {
+        setText(e.target.value);
+    };
+    const showValue = () => {
+        if (text === '') {
+            return alert('Digite algo');
+        } else {
+            console.log({ ok: true });
+        }
+
+        if (text) {
+            return alert('Digite algo');
+        }
+        console.log({ ok: true });
+
+        if (text) return alert('Digite algo');
+        console.log({ ok: true });
+
+        text || alert('digite algo');
+        console.log({ ok: true });
+
+        (text || alert('digite algo')) && console.log({ ok: true });
+
+    };
+
+    return (
+        <>
+            <h3>Teste</h3>
+            <input type="number" onChange={handleChange}></input>
+            <button onClick={showValue}>Click</button>
         </>
     );
 }
