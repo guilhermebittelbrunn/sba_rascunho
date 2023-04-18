@@ -1,20 +1,18 @@
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 export default function RouterApp() {
     return (
         <>
-            <Router>
-                <div className="x">
-                    <Nav />
-                    <Route path="/">
-                        <About />
-                    </Route>
-                    <Route path="/products">
-                        <Products />
-                    </Route>
-                    <Footer />
-                </div>
-            </Router>
+            <BrowserRouter>
+                <Nav />
+                <Route path="/">
+                    <About />
+                </Route>
+                <Route path="/products">
+                    <Products />
+                </Route>
+                <Footer />
+            </BrowserRouter>
         </>
     );
 }
