@@ -6,6 +6,7 @@ import axios from 'axios';
 import { createStore } from 'redux';
 import reducer from './reducer/countReducer';
 import { Provider } from 'react-redux';
+import RouterApp from './router';
 
 import Header from './header';
 
@@ -66,4 +67,4 @@ function Appication() {
     );
 }
 
-root.render(<Appication />);
+root.render(<RouterApp />);
