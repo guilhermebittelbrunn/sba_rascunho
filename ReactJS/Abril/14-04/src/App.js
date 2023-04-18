@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 function StateButtons(props) {
     return (
@@ -156,7 +157,6 @@ function ButtonEffect() {
         console.log({ ok: true });
 
         (text || alert('digite algo')) && console.log({ ok: true });
-
     };
 
     return (
@@ -164,6 +164,50 @@ function ButtonEffect() {
             <h3>Teste</h3>
             <input type="number" onChange={handleChange}></input>
             <button onClick={showValue}>Click</button>
+        </>
+    );
+}
+
+export function CountButton() {
+    // const [count, setCount] = useState(0);
+    const dispatch = useDispatch();
+    const contador = useSelector((state) => {
+        return state;
+    });
+
+    function increment() {
+        //     setCount((preventValue) => {
+        //         return preventValue + 1;
+        //     });
+        return true;
+        //
+    }
+
+    function decrement() {
+        // count > 0 &&
+        //     setCount((preventValue) => {
+        //         return preventValue - 1;
+        //     });
+        return false;
+    }
+
+    return (
+        <>
+            <h3>Count button: {contador}</h3>
+            <button
+                onClick={() => {
+                    dispatch({ type: 'INCREMENT' });
+                }}
+            >
+                +
+            </button>
+            <button
+                onClick={() => {
+                    dispatch({ type: 'DECREMENT' });
+                }}
+            >
+                -
+            </button>
         </>
     );
 }

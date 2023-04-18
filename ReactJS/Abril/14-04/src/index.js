@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import App, { CountButton } from './App';
 import axios from 'axios';
+import { createStore } from 'redux';
+import reducer from './reducer/countReducer';
+import { Provider } from 'react-redux';
+
+import Header from './header';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -42,6 +47,8 @@ function Appication() {
 
     let moeda = 1;
 
+    const store = createStore(reducer);
+
     async function buscarValor() {
         const api = await axios.get('https://economia.awesomeapi.com.br/last/USD-BRL');
         const apidata = await api.data;
@@ -51,6 +58,10 @@ function Appication() {
     return (
         <>
             <App moeda={buscarValor} />;
+            <Provider store={store}>
+                <Header />
+                <CountButton />
+            </Provider>
         </>
     );
 }
