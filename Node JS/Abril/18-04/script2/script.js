@@ -117,19 +117,25 @@ let info = [];
 //Data de nascimento
 //Adicionar perguntas
 
-const nascimento = '1996-03-13';
-const nascimento_stamp = moment(nascimento).unix();
+// const nascimento_stamp = moment(nascimento).unix();
 
-const current_date = moment();
-const current_date_stamp = moment(current_date).unix();
+// const current_date = moment();
+// const current_date_stamp = moment(current_date).unix();
 
-const resultDate_stamp = current_date_stamp - nascimento_stamp;
-const resultDate = moment(resultDate_stamp);
+// const resultDate_stamp = current_date_stamp - nascimento_stamp;
+// const resultDate = moment(resultDate_stamp);
 
-console.log(nascimento, nascimento_stamp);
-console.log(current_date, current_date_stamp);
-console.log(resultDate, resultDate_stamp);
+// console.log(nascimento, nascimento_stamp);
+// console.log(current_date, current_date_stamp);
+// console.log(resultDate, resultDate_stamp);
 
-console.log(Math.floor(new Date(resultDate_stamp) / 31556952));
+// console.log(Math.floor(new Date(resultDate_stamp) / 31556952));
 
-console.log(String(Math.floor((moment() - moment(nascimento)) / 31556952)).slice(0, 2));
+// console.log(String(Math.floor((moment() - moment(nascimento)) / 31556952)).slice(0, 2));
+
+const nascimento = moment('1976-03-13');
+const data = moment();
+const diff = moment.duration(nascimento.diff(data));
+console.log(diff._milliseconds);
+
+console.log(diff._milliseconds / 3.154e10);
