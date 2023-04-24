@@ -1,5 +1,7 @@
 import styled from "styled-components"
-import { Link } from "react-router-dom"
+import { Link, useMatch } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 
  const Ul_styled = styled.ul`
         display: flex;
@@ -23,15 +25,36 @@ import { Link } from "react-router-dom"
     
 
 export default function NavBar(){
-  
+
     return(
     <Nav_styled>
         <h3>Logo</h3>
         <Ul_styled>
+            <li><Login/></li>
             <li><Link to="/">Home</Link></li>    
             <li><Link to="/about">About</Link></li>    
-            <li><Link to="/products">Products</Link></li>    
+            <li><Link to="/products">Products</Link></li>
+            <li><Link to='/contacts'>Contacts</Link></li>    
         </Ul_styled>
     </Nav_styled>
+    )
+}
+
+function Login(){
+    const login = useSelector((state)=>{
+        return state
+    })
+    const dispatch = useDispatch();
+
+    useEffect(()=>{
+        console.log(login);
+    }, [login])
+
+    return (
+        <>
+            <button onClick={()=>{
+                (login === "login" && dispatch({type: 'LOGOUT'})) || dispatch({type:'LOGIN'})
+            }}>{login === "login"? "Log-out" : "Log-in"}</button>
+        </>
     )
 }
