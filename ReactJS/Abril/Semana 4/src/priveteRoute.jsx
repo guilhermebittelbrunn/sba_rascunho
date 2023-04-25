@@ -1,17 +1,10 @@
 import { useSelector } from "react-redux"
-import { Link, Routes, Route } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 
-export default function privateRoute({children, ...rest}){
+export default function PrivateRoute({children}){
 
     const login = useSelector(state=> state);
+  
 
-    return(
-        <Routes>
-            <Route {...rest} render={({location})=>{
-                login ? (children) : <Link to={'/'}/>
-            }}>
-
-            </Route>
-        </Routes>
-    )
+    return login === 'login' ? children : <Navigate to={'/'}/>
 }

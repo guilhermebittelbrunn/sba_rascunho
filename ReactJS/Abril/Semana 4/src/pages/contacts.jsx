@@ -1,56 +1,27 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-// const data = [
-//     {
-//         id: 1,
-//         nome: 'Guilherme',
-//         turma: '2A',
-//     },
-//     {
-//         id: 2,
-//         nome: 'Jessica',
-//         turma: '2B',
-//     },
-//     {
-//         id: 3,
-//         nome: 'Roseli',
-//         turma: '1A',
-//     },
-//     {
-//         id: 4,
-//         nome: 'Ivan',
-//         turma: '1B',
-//     },
-//     {
-//         id: 5,
-//         nome: 'Camilly',
-//         turma: '3A',
-//     },
-//     {
-//         id: 6,
-//         nome: 'Heloisa',
-//         turma: '3B',
-//     },
-//     {
-//         id: 7,
-//         nome: 'Matheus',
-//         turma: '4A',
-//     },
-// ];
+const alumn_base = [
+    {
+        id: 1,
+        nome: 'Guilherme',
+        turma: '2A',
+    },
+];
 
 let index = 7;
 
 export default function Contact(){
 
-    const data = JSON.parse(localStorage.getItem('alumns'));
+    const data = JSON.parse(localStorage.getItem('alumns')) ?? alumn_base;
 
-  
+
+
     const [alumns,setAlumns] = useState(data);
     const [info,setInfo] = useState({});
 
    
     useEffect(()=>{
-        localStorage.setItem('alumns', JSON.stringify(alumns));
+         localStorage.setItem('alumns', JSON.stringify(alumns))
     }, [alumns])
 
     function addAlumn(e){
