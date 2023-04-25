@@ -1,0 +1,26 @@
+.Layout-main{
+  min-height: 100vh;
+}
+.Sider-div-title{
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.Layout-Header{
+  padding: 0;
+}
+.Layout-Content{
+  font-size: 32px;
+}
+.Layout-Content-Breadcrumb{
+  margin: 16px 0px;
+}
+
+.Layout-Content div{
+      padding: 24px;
+      min-height: 360px;
+}
+.Layout-Footer{
+  text-align: center;
+}
