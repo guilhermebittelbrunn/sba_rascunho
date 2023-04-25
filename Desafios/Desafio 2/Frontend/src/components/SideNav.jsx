@@ -3,11 +3,12 @@ import { FileOutlined, PieChartOutlined, UserOutlined, DesktopOutlined, TeamOutl
 import { Menu, Layout } from "antd";
 import useCreateLink from "../hooks/useCreateLink";
 const { Sider } = Layout;
+import { Link } from "react-router-dom";
 
 
 
 const items = [
-  useCreateLink('Teste', '1', <DesktopOutlined />),
+  useCreateLink('teste', '1', <DesktopOutlined />),
   useCreateLink('Files', '2', <FileOutlined />),
   useCreateLink('Files', '3', <FileOutlined />),
   useCreateLink('Files', '4', <FileOutlined />),
@@ -19,13 +20,11 @@ const items = [
 
 export default function SideNav(){
 
-    
-
     const [collapsed, setCollapsed] = useState(false);
 
     return(
        <>
-            {/* //Side-bar menu */}
+            {/* Side-bar menu */}
         <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
             {/* Header */}
             <div className='Sider-div-title'> </div>
