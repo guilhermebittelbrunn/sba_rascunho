@@ -8,7 +8,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ConfigProvider > 
 
-    <App />
+      <App />
 
     </ConfigProvider>
   </React.StrictMode>,
