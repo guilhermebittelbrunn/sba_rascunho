@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
 
-export default function useFetch(id){
+export default function useFetch(url){
     const [info, setInfo] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(false)
 
 
-    async function FetchPokemon(id) {
+    async function FetchPokemon(url) {
         setIsLoading((preventValue)=>{
             !preventValue
         });
         try{
-            const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+            const {data} = await axios.get(url);
             setInfo(()=>{
                 return data
             });
@@ -28,9 +28,9 @@ export default function useFetch(id){
     }
 
     useEffect(()=>{
-        FetchPokemon(id)
+        FetchPokemon(url)
       
-    },[id]);
+    },[url]);
 
 
     return{info, isLoading, error}
