@@ -36,13 +36,8 @@ const tailFormItemLayout = {
 };
 export default function Register({handleAlert}){ 
   const [user,setUser] = useState({});
- 
   const [form] = Form.useForm();
   const navigate = useNavigate();
-
-
-
-
 
   function handleChange(e){
     setUser((preventValue)=>{
@@ -50,9 +45,6 @@ export default function Register({handleAlert}){
     })
     
   }
-
- 
-
   async function handleFinish(){
     try{
         await axios.post('http://localhost:3000/user', user);

@@ -1,18 +1,33 @@
 import {Button, Form, Input, Select} from 'antd';
 import { useState } from 'react';
-
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 const { TextArea } = Input;
 
 
 export default function newProduct(){
-
   const [componentSize, setComponentSize] = useState('default');
-  const onFormLayoutChange = ({ size }) => {
-    setComponentSize(size);
-  };
-  const onChange = (e) => {
-    console.log('Change:', e.target.value);
-  };
+  const [product, setProduct] = useState({collection: '1A'});
+  const isLog = useSelector((login)=>{
+    return login
+  })
+ 
+
+  function onFormLayoutChange({size}){
+      setComponentSize(size);
+  }
+  function handleChange(e){
+     setProduct((preventValue)=>{
+      return {...preventValue, [e.target.name]:e.target.value};
+     })
+   
+  }
+
+  function handleFinish(){
+ 
+    console.log(isLog.status? 'Para o usuário: ' + isLog.user.id : 'faça login');
+  }
+
   return (
     <Form
       labelCol={{
@@ -25,16 +40,21 @@ export default function newProduct(){
       initialValues={{
         size: componentSize,
       }}
+      onFinish={handleFinish}
       onValuesChange={onFormLayoutChange}
       size={componentSize}
       style={{
         maxWidth: 600,
       }}
     >
-         <Input showCount maxLength={20} onChange={onChange} placeholder='Title' required/>
-        <TextArea showCount maxLength={100} onChange={onChange} placeholder='Description'/>
+      <Input showCount maxLength={20} onChange={handleChange} placeholder='Title' required name='title'/>
+      <TextArea showCount maxLength={100} onChange={handleChange} placeholder='Description'name='description'/>
       <Form.Item label="Collection">
-        <Select defaultValue="1A">
+        <Select defaultValue="1A" onChange={(e)=>{
+          setProduct((preventValue)=>{
+          return {...preventValue, ['collection']:e};
+        })
+        }}>
           <Select.Option value="1A">1A</Select.Option>
           <Select.Option value="1B">1B</Select.Option>
           <Select.Option value="2A">2A</Select.Option>

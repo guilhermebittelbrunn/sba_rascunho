@@ -1,8 +1,9 @@
 import {Button,Form,Input} from 'antd';
 import { useState } from 'react';
-import '../styles/login.css';
-import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import '../styles/login.css';
 
 const formItemLayout = {
   labelCol: {
@@ -34,38 +35,30 @@ const tailFormItemLayout = {
     },
   },
 };
-export default function Login(){
-
-  
+export default function Login({handleAlert}){
   const [user,setUser] = useState({});
   const [form] = Form.useForm();
-
-  
-
-  
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   function handleChange(e){
     setUser((preventValue)=>{
         return {...preventValue, [e.target.name] : e.target.value}
     })
-    console.log(user); 
   }
-
-  
 
   async function handleFinish(){
     try{
         const {data} = await axios.post('http://localhost:3000/user/log', user);
+        data.logged && 
         console.log(data);
-        // handleAlert(true, 'Loggin successful!', 'success')
+        dispatch({type: 'LOGIN', payload: data.user[0]});
+        navigate('/about')
     }catch(err){
-        // err.request.status === 400 &&  handleAlert(true, 'E-mail already in use!', 'error')
-        console.log(err);
+        err.request.status === 400 &&  handleAlert(true, 'E-mail/password incorrect!', 'error');
     }
   }
 
-  
-  
   return (
     <>
         <Form className='Form'

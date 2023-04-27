@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 
 const { Sider } = Layout;
 
-import useFetch from "../hooks/useFetch";
 
 const items = [
   useCreateLink(<Link to='/about'>Início</Link>, '1', <InfoOutlined />),
@@ -16,19 +15,9 @@ const items = [
 ];
   
 
-import axios from "axios";
-
 export default function SideNav(){
 
     const [collapsed, setCollapsed] = useState(false);
-    
-    // (async()=>{
-    //     const {info, isLoading, error} = useFetch('http://localhost:3000/product/');
-    //     console.log(info);
-    // })()
-
-
-
 
     return(
        <>

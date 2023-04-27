@@ -50,7 +50,7 @@ const controller = {
             const findUser = await User.findAll({ where: { email, password } });
             console.log(findUser);
             if (findUser[0].id) {
-                return res.status(200).send({ logged: true });
+                return res.status(200).send({ logged: true, user: findUser });
             }
             return res.status(400).send({ logged: false });
         } catch (error) {

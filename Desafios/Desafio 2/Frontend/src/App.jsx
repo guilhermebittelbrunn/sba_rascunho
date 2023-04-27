@@ -1,15 +1,14 @@
-
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import './App.css'
+import { Layout, theme } from 'antd';
 import { BrowserRouter } from 'react-router-dom';
 import Router from './Router';
-
-const { Header, Content, Footer, Sider } = Layout;
-
-
-
+import './App.css';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import SideNav from './components/SideNav';
+import loginReducer from './reducer/reducer';
 
+const {Footer} = Layout;
+const store = createStore(loginReducer);
 
 const App = () => {
 
@@ -19,14 +18,16 @@ const App = () => {
 
   return (
       <BrowserRouter>
-        <Layout className='Layout-main'>
-          <SideNav/>
-          {/* Site content */}
-          <Layout className="site-layout">
-            <Router colorBgContainer={colorBgContainer}/>
-            <Footer className='Layout-Footer'>Footer content</Footer>
+        <Provider store={store}>
+          <Layout className='Layout-main'>
+            <SideNav/>
+            {/* Site content */}
+            <Layout className="site-layout">
+              <Router colorBgContainer={colorBgContainer}/>
+              <Footer className='Layout-Footer'>Footer content</Footer>
+            </Layout>
           </Layout>
-        </Layout>
+        </Provider>
       </BrowserRouter>
   );
 };

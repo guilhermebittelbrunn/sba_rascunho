@@ -8,26 +8,24 @@ import Product from './pages/newProduct'
 import Register from './pages/register'
 
 export default function Router({colorBgContainer}){
-    const [alert,setAlert] = useState({status: false, message: '', type: ''})
+    const [alert,setAlert] = useState({status: false, message: 'Success', type:'success', close: true});
 
 
-    function handleAlert(status, message, type){
+    function handleAlert(status, message, type, close){
       setAlert({
-        status, message, type
+        status, message, type, close
       })
     }
     
     return(
       <>
-           
               <Routes>
-                <Route path='/about' element={<RouteContant title='About' element={<About/>} colorBgContainer={colorBgContainer}/>}/>
-                <Route path='/products' element={<RouteContant title='Products' element={<Products/>} colorBgContainer={colorBgContainer}/>}/>
-                <Route path='/product' element={<RouteContant title='Login' element={<Product/>} colorBgContainer={colorBgContainer}/>}/>
-                <Route path='/login' element={<RouteContant alert={alert} title='Login' element={<Login/>} colorBgContainer={colorBgContainer}/>}/>
+                <Route path='/about' element={<RouteContant alert={alert} title='About' element={<About alert={alert} handleAlert={handleAlert}/>} colorBgContainer={colorBgContainer}/>}/>
+                <Route path='/products' element={<RouteContant alert={alert} title='Products' element={<Products/>} colorBgContainer={colorBgContainer}/>}/>
+                <Route path='/product' element={<RouteContant alert={alert} title='New Product' element={<Product/>} colorBgContainer={colorBgContainer}/>}/>
+                <Route path='/login' element={<RouteContant alert={alert} title='Login' element={<Login handleAlert={handleAlert}/>} colorBgContainer={colorBgContainer}/>}/>
                 <Route path='/register' element={<RouteContant alert={alert} title='Register' element={<Register handleAlert={handleAlert}/>} colorBgContainer={colorBgContainer} />}/>
               </Routes>
-         
       </>
     )
 }
