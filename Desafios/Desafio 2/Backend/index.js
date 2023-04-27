@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const db = require('./database/db');
 const productApi = require('./router/productRouter');
+const userApi = require('./router/userRouter');
 const app = express();
 
 require('dotenv').config();
@@ -18,6 +19,7 @@ require('dotenv').config();
         app.use(express.urlencoded({ extended: true }));
         app.use(express.json());
         app.use('/product', productApi);
+        app.use('/user', userApi);
         // app.use('*', (req, res) => {
         //     res.sendFile('C:Users/ADMIN/Documents/GitHubsba_rascunho/Desafios/Desafio 2/dist/index.html');
         // });

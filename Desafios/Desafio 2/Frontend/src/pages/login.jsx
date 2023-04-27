@@ -1,5 +1,6 @@
 import {Button,Checkbox,Form,Input,Select} from 'antd';
-import '../styles/login.css'
+import '../styles/login.css';
+import { Link } from 'react-router-dom';
 
 const formItemLayout = {
   labelCol: {
@@ -83,62 +84,15 @@ export default function Login(){
             >
                 <Input.Password />
             </Form.Item>
-            <Form.Item
-                name="confirm"
-                label="Confirm Password"
-                dependencies={['password']}
-                hasFeedback
-                rules={[
-                {
-                    required: true,
-                    message: 'Please confirm your password!',
-                },
-                ({ getFieldValue }) => ({
-                    validator(_, value) {
-                    if (!value || getFieldValue('password') === value) {
-                        return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('The two passwords that you entered do not match!'));
-                    },
-                }),
-                ]}
-            >
-                <Input.Password />
-            </Form.Item>
-            <Form.Item
-                name="nickname"
-                label="Nickname"
-                tooltip="What do you want others to call you?"
-                rules={[
-                {
-                    required: true,
-                    message: 'Please input your nickname!',
-                    whitespace: true,
-                },
-                ]}
-            >
-                <Input />
-            </Form.Item>
-            <Form.Item
-                name="agreement"
-                valuePropName="checked"
-                rules={[
-                {
-                    validator: (_, value) =>
-                    value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
-                },
-                ]}
-                {...tailFormItemLayout}
-            >
-                <Checkbox>
-                I have read the <a href="">agreement</a>
-                </Checkbox>
-            </Form.Item>
+        
             <Form.Item {...tailFormItemLayout}>
                 <Button type="primary" htmlType="submit">
                 Register
                 </Button>
             </Form.Item>
+
+            <Link to={'/register'}>Don't have an account yet?  Sign Up</Link>
+            
         </Form>
     </>
   );

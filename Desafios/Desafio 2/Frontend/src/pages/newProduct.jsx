@@ -1,4 +1,4 @@
-import {Form, Input, Select} from 'antd';
+import {Button, Form, Input, Select} from 'antd';
 import { useState } from 'react';
 
 const { TextArea } = Input;
@@ -31,13 +31,25 @@ export default function newProduct(){
         maxWidth: 600,
       }}
     >
-         <Input showCount maxLength={20} onChange={onChange} />
-        <TextArea showCount maxLength={100} onChange={onChange} />
-      <Form.Item label="Select">
-        <Select>
-          <Select.Option value="demo">Demo</Select.Option>
+         <Input showCount maxLength={20} onChange={onChange} placeholder='Title' required/>
+        <TextArea showCount maxLength={100} onChange={onChange} placeholder='Description'/>
+      <Form.Item label="Collection">
+        <Select defaultValue="1A">
+          <Select.Option value="1A">1A</Select.Option>
+          <Select.Option value="1B">1B</Select.Option>
+          <Select.Option value="2A">2A</Select.Option>
+          <Select.Option value="2B">2B</Select.Option>
+          <Select.Option value="3A">3A</Select.Option>
+          <Select.Option value="3B">3B</Select.Option>
         </Select>
       </Form.Item>
+
+      
+            <Form.Item>
+                <Button type="primary" htmlType="submit">
+                Save
+                </Button>
+            </Form.Item>
     
     </Form>
   );
