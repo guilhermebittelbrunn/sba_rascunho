@@ -1,7 +1,7 @@
 import {Button,Checkbox,Form,Input,Alert, Space} from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/login.css'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
 const formItemLayout = {
@@ -34,13 +34,15 @@ const tailFormItemLayout = {
     },
   },
 };
-export default function Login(){ 
+export default function Register({handleAlert}){ 
   const [user,setUser] = useState({});
  
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const onFinish = (values) => {console.log('Received values of form: ', values)}
+
+
+
 
   function handleChange(e){
     setUser((preventValue)=>{
@@ -48,34 +50,28 @@ export default function Login(){
     })
     
   }
-//   function handleClickk(e){
-//     e.preventDefault();
-//     axios.post('http://localhost:3000/user', user).then(res=>{
-//         console.log('fui')
-//         console.log(res);
-//     })
-  async function handleClick(e){
-    e.preventDefault();
+
+ 
+
+  async function handleFinish(){
     try{
-        const data = await axios.post('http://localhost:3000/user', user);
-       
-        
-      
+        await axios.post('http://localhost:3000/user', user);
+        handleAlert(true, 'Account created with successful!', 'success')
         navigate('/login');
     }catch(err){
-        err.request.status === 400 && alert('Email em uso');
+        err.request.status === 400 &&  handleAlert(true, 'E-mail already in use!', 'error')
     }
   }
 
 
   return (
     <>
-      
-        <Form className='Form'
+             
+            <Form className='Form'
             {...formItemLayout}
             form={form}
             name="register"
-            onFinish={onFinish}
+            onFinish={handleFinish}
             initialValues={{
                 residence: ['zhejiang', 'hangzhou', 'xihu'],
                 prefix: '86',
@@ -167,7 +163,7 @@ export default function Login(){
                 </Checkbox>
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
-                <Button type="primary" htmlType="submit" onClick={handleClick}>
+                <Button type="primary" htmlType="submit" >
                 Register
                 </Button>
             </Form.Item>

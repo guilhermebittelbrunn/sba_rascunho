@@ -5,6 +5,6 @@ const controller = require('../controller/userController');
 Router.get('/', controller.get);
 Router.get('/all', controller.getAll); //Delete this in production
 Router.post('/', controller.post);
-Router.get('/hello', controller.hello);
+Router.post('/log', controller.postLogin);
 
 module.exports = Router;

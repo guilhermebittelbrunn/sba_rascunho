@@ -26,9 +26,6 @@ const controller = {
             return res.status(400).send(error);
         }
     },
-    hello: (req, res) => {
-        return res.status(200).send('Olá mundo!');
-    },
 
     post: async (req, res) => {
         const { email, password, name } = req.body;
@@ -41,6 +38,21 @@ const controller = {
             }
             await User.create({ email, password, name });
             res.status(203).send(`${name} created`);
+        } catch (error) {
+            return res.status(400).send(error);
+        }
+    },
+
+    postLogin: async (req, res) => {
+        const { email, password } = req.body;
+
+        try {
+            const findUser = await User.findAll({ where: { email, password } });
+            console.log(findUser);
+            if (findUser[0].id) {
+                return res.status(200).send({ logged: true });
+            }
+            return res.status(400).send({ logged: false });
         } catch (error) {
             return res.status(400).send(error);
         }
