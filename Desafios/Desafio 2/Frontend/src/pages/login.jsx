@@ -47,11 +47,12 @@ export default function Login({handleAlert}){
     })
   }
 
+
+
   async function handleFinish(){
     try{
         const {data} = await axios.post('http://localhost:3000/user/log', user);
         data.logged && 
-        console.log(data);
         dispatch({type: 'LOGIN', payload: data.user[0]});
         navigate('/about')
     }catch(err){

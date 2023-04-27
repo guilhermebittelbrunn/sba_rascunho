@@ -5,13 +5,14 @@ import axios from 'axios';
 const { TextArea } = Input;
 
 
-export default function newProduct(){
-  const [componentSize, setComponentSize] = useState('default');
-  const [product, setProduct] = useState({collection: '1A'});
+export default function newProduct({handleAlert}){
   const isLog = useSelector((login)=>{
     return login
   })
- 
+  const [componentSize, setComponentSize] = useState('default');
+  const [product, setProduct] = useState({IdUser: isLog.user.id,collection: '1A'});
+
+  
 
   function onFormLayoutChange({size}){
       setComponentSize(size);
@@ -23,9 +24,16 @@ export default function newProduct(){
    
   }
 
-  function handleFinish(){
- 
-    console.log(isLog.status? 'Para o usuário: ' + isLog.user.id : 'faça login');
+  async function handleFinish(){
+    isLog.status 
+    && 
+    console.log(product);
+    try{
+      const data = await axios.post('http://localhost:3000/product', product);
+      data.request.status === 201 && handleAlert(true, 'Product add with successful!', 'success', true);
+    }catch(err){
+      console.log(err);
+    }
   }
 
   return (

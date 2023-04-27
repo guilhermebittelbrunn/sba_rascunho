@@ -19,6 +19,11 @@ const Product = db.define('Product', {
         allowNull: true,
         defaultValue: 'AA',
     },
+    IdUser: {
+        type: sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: '1',
+    },
 });
 
 module.exports = Product;

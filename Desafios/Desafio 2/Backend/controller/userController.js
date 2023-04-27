@@ -37,7 +37,7 @@ const controller = {
                 return res.status(400).send('E-mail already in use');
             }
             await User.create({ email, password, name });
-            res.status(203).send(`${name} created`);
+            res.status(201).send(`${name} created`);
         } catch (error) {
             return res.status(400).send(error);
         }

@@ -21,8 +21,8 @@ export default function Router({colorBgContainer}){
       <>
               <Routes>
                 <Route path='/about' element={<RouteContant alert={alert} title='About' element={<About alert={alert} handleAlert={handleAlert}/>} colorBgContainer={colorBgContainer}/>}/>
-                <Route path='/products' element={<RouteContant alert={alert} title='Products' element={<Products/>} colorBgContainer={colorBgContainer}/>}/>
-                <Route path='/product' element={<RouteContant alert={alert} title='New Product' element={<Product/>} colorBgContainer={colorBgContainer}/>}/>
+                <Route path='/products' element={<RouteContant alert={alert} title='Products' element={<Products alert={alert} handleAlert={handleAlert}/>} colorBgContainer={colorBgContainer}/>}/>
+                <Route path='/product' element={<RouteContant alert={alert} title='New Product' element={<Product alert={alert} handleAlert={handleAlert}/>} colorBgContainer={colorBgContainer}/>}/>
                 <Route path='/login' element={<RouteContant alert={alert} title='Login' element={<Login handleAlert={handleAlert}/>} colorBgContainer={colorBgContainer}/>}/>
                 <Route path='/register' element={<RouteContant alert={alert} title='Register' element={<Register handleAlert={handleAlert}/>} colorBgContainer={colorBgContainer} />}/>
               </Routes>
