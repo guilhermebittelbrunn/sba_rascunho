@@ -30,7 +30,10 @@ export default function newProduct({handleAlert}){
     console.log(product);
     try{
       const data = await axios.post('http://localhost:3000/product', product);
-      data.request.status === 201 && handleAlert(true, 'Product add with successful!', 'success', true);
+      data.request.status === 201 
+      &&
+      setProduct({IdUser: isLog.user.id,collection: product.collection});
+      handleAlert(true, 'Product add with successful!', 'success', true);
     }catch(err){
       console.log(err);
     }
@@ -55,8 +58,8 @@ export default function newProduct({handleAlert}){
         maxWidth: 600,
       }}
     >
-      <Input showCount maxLength={20} onChange={handleChange} placeholder='Title' required name='title'/>
-      <TextArea showCount maxLength={100} onChange={handleChange} placeholder='Description'name='description'/>
+      <Input showCount maxLength={20} onChange={handleChange} placeholder='Title' required name='title' value={product['title']}/>
+      <TextArea showCount maxLength={100} onChange={handleChange} placeholder='Description'name='description' value={product['description']}/>
       <Form.Item label="Collection">
         <Select defaultValue="1A" onChange={(e)=>{
           setProduct((preventValue)=>{
