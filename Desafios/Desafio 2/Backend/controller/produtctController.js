@@ -23,6 +23,18 @@ const controller = {
             return res.status(400).send('Product not found');
         }
     },
+    put: async (req, res) => {
+        const { body } = req;
+        try {
+            await Product.update(
+                { title: body.title, description: body.description, collection: body.collection },
+                { where: { id: body.id } }
+            );
+            return res.status(200).send(true);
+        } catch (err) {
+            return res.status(400).send(err);
+        }
+    },
 };
 
 module.exports = controller;
