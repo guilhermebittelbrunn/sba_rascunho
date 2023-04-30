@@ -11,6 +11,11 @@ const paginationStyle={
   padding: '8px'
 }
 
+const tableStyle ={
+  backgroundColor: 'red',
+  width: '100%',
+}
+
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
   const [form] = Form.useForm();
@@ -204,7 +209,7 @@ export default function Products(){
   },[data]);
 
   return(
-    <Table columns={columns} components={components} size={'middle'}  
+    <Table columns={columns} components={components} size={'middle'} style={tableStyle}  
     onHeaderRow={(columns)=>{{style: paginationStyle}}}
     pagination={{style: paginationStyle}} loading={data.length === 0} owClassName={() => 'editable-row'} dataSource={data} />
   )

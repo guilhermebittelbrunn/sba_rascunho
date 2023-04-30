@@ -10,11 +10,24 @@ import loginReducer from './reducer/reducer';
 const {Footer} = Layout;
 const store = createStore(loginReducer);
 
+const footerStyle = {
+  backgroundColor: '#002140',
+  height: '48px',
+  color: 'white',
+  bottom: '0px',
+  right: '0px',
+  width: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '14px',
+}
+
 const App = () => {
 
   const {
     token: { colorBgContainer },
-  } = theme.useToken();
+      } = theme.useToken();
 
   return (
       <BrowserRouter>
@@ -24,7 +37,7 @@ const App = () => {
             {/* Site content */}
             <Layout className="site-layout">
               <Router colorBgContainer={colorBgContainer}/>
-              <Footer className='Layout-Footer'>₢Created by...</Footer>
+              <Footer className='Layout-Footer' style={footerStyle}>₢Created by...</Footer>
             </Layout>
           </Layout>
         </Provider>

@@ -18,7 +18,7 @@ let items = [
 export default function SideNav(){
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const isLog = useSelector(login=>{return login});
     
     let [links] = useState(items);

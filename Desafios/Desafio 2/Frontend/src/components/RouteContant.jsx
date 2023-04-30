@@ -3,10 +3,21 @@ import AlertSpam from './Alert';
 import '../styles/RouterContant.css'
 const { Header, Content } = Layout;
 
+const divStyle = {
+  padding: '12px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  // border: '5px solid red',
+  flexDirection: 'column',
+  width: '95%',
+  margin: '8px auto 24px'
+}
+
 export default function RouterContant({element, colorBgContainer, title, alert, description}){
 
     return(
-            <div>
+            <>
                
                 <AlertSpam status={alert.status} message={alert.message} type={alert.type} close={alert.close}/>
                 <Header className='Layout-Header'>
@@ -16,10 +27,10 @@ export default function RouterContant({element, colorBgContainer, title, alert, 
                   <Breadcrumb className='Layout-Content-Breadcrumb'>
                     <h3>{description}</h3>
                   </Breadcrumb>
-                  <div style={{backgroundColor: colorBgContainer}}>
+                  <div style={{...divStyle, backgroundColor: colorBgContainer}}>
                       {element}
                   </div>
                 </Content>
-            </div>
+            </>
     )
 }

@@ -21,7 +21,15 @@
 }
 .Layout-Content-Breadcrumb h3{
     color: #2f2f2f;
-    opacity: .5;
-    border-bottom: 2px solid #2f2f2f;
+    opacity: .4;
 }
   
+.ant-space{
+    background-color: green;
+    height: 0px;
+    margin: 0px;
+    padding: 0px;
+    gap: 0px
+};
+
+
