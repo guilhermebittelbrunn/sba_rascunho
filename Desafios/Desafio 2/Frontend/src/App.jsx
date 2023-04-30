@@ -24,7 +24,7 @@ const App = () => {
             {/* Site content */}
             <Layout className="site-layout">
               <Router colorBgContainer={colorBgContainer}/>
-              <Footer className='Layout-Footer'>Footer content</Footer>
+              <Footer className='Layout-Footer'>₢Created by...</Footer>
             </Layout>
           </Layout>
         </Provider>
@@ -32,3 +32,4 @@ const App = () => {
   );
 };
 export default App; 
+

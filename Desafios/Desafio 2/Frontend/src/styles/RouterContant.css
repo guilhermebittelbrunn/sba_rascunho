@@ -1,0 +1,27 @@
+.Layout-Header{
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: bolder;
+    color: black;
+    text-shadow: .2px .2px .2px black;
+    background-color: #001529;
+    padding: 0;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bolder;
+    text-shadow: .4px .4px .4px white;
+}
+.Layout-Content{
+    font-size: 32px;
+ 
+}
+.Layout-Content-Breadcrumb{
+    margin: 16px 0px 24px 16px;
+    font-size: 14px;
+}
+.Layout-Content-Breadcrumb h3{
+    color: #2f2f2f;
+    opacity: .5;
+    border-bottom: 2px solid #2f2f2f;
+}
+  

@@ -1,7 +1,15 @@
-import { Button, Form, Input, Popconfirm, Table, Space } from 'antd';
+import {Form, Input, Table, Space } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import '../styles/products.css'
+
+const paginationStyle={
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '8px'
+}
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -95,7 +103,7 @@ const defaultColumns = [
   {
     title: 'Title',
     dataIndex: 'title',
-    width: '30%',
+    width: '20%',
     editable: true,
   },
   {
@@ -133,7 +141,7 @@ const defaultColumns = [
       },
     ],
     onFilter: (value, record) => record.collection.startsWith(value),
-    width: '40%',
+    width: '20%',
   },
   {
      title: 'Action',
@@ -196,6 +204,8 @@ export default function Products(){
   },[data]);
 
   return(
-    <Table columns={columns} components={components}  owClassName={() => 'editable-row'} dataSource={data} />
+    <Table columns={columns} components={components} size={'middle'}  
+    onHeaderRow={(columns)=>{{style: paginationStyle}}}
+    pagination={{style: paginationStyle}} loading={data.length === 0} owClassName={() => 'editable-row'} dataSource={data} />
   )
 }
