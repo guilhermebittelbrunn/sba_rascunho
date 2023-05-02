@@ -12,7 +12,6 @@ const paginationStyle={
 }
 
 const tableStyle ={
-  backgroundColor: 'red',
   width: '100%',
 }
 

@@ -1,6 +1,7 @@
 import {Button, Form, Input, Select} from 'antd';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import '../styles/newProduct.css'
 import axios from 'axios';
 const { TextArea } = Input;
 
@@ -55,13 +56,22 @@ export default function newProduct({handleAlert}){
       onValuesChange={onFormLayoutChange}
       size={componentSize}
       style={{
-        maxWidth: 600,
+        maxWidth: '600px',
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        padding: '12px',
+        justifyItems: 'center',
+        alignItems: 'center',
+        gap: '20px',
       }}
     >
       <Input showCount maxLength={20} onChange={handleChange} placeholder='Title' required name='title' value={product['title']}/>
       <TextArea showCount maxLength={100} onChange={handleChange} placeholder='Description'name='description' value={product['description']}/>
-      <Form.Item label="Collection">
-        <Select defaultValue="1A" onChange={(e)=>{
+      <div style={{width: '100%'}}>
+      <label>Collection</label>
+      <Form.Item label="" style={{width: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'red'}}>
+        <Select style={{width: '100%'}} defaultValue="1A" onChange={(e)=>{
           setProduct((preventValue)=>{
           return {...preventValue, ['collection']:e};
         })
@@ -74,11 +84,12 @@ export default function newProduct({handleAlert}){
           <Select.Option value="3B">3B</Select.Option>
         </Select>
       </Form.Item>
+      </div>
 
       
-            <Form.Item>
+            <Form.Item className='btn-submit'>
                 <Button type="primary" htmlType="submit">
-                Save
+                  Save
                 </Button>
             </Form.Item>
     
