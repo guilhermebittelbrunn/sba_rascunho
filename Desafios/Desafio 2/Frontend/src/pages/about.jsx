@@ -12,7 +12,7 @@ export default function About({handleAlert}){
 
     return(
         <>
-        <section>
+        <section style={{fontSize: '16px'}}>
             <p>
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit illum, nobis quaerat fugit, vero quasi et dolorem sit amet cum quo est rerum consequatur libero, nihil mollitia autem voluptas. Fuga.lore
         </p>
@@ -41,7 +41,7 @@ export default function About({handleAlert}){
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit illum, nobis quaerat fugit, vero quasi et dolorem sit amet cum quo est rerum consequatur libero, nihil mollitia autem voluptas. Fuga.lore
         </p>
         </section>
-        <section>
+        <section  style={{fontSize: '16px'}}>
             <h2>Tittle</h2>
             <p>
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit illum, nobis quaerat fugit, vero quasi et dolorem sit amet cum quo est rerum consequatur libero, nihil mollitia autem voluptas. Fuga.lore

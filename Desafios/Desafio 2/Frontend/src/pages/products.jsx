@@ -173,6 +173,7 @@ export default function Products(){
       ...row,
     });
     await axios.put('http://localhost:3000/product', newData[index]);
+    findAlldata();
   };
   const components = {
     body: {
@@ -205,7 +206,7 @@ export default function Products(){
   }
   useEffect(()=>{
     isLog.status && findAlldata();
-  },[data]);
+  },[]);
 
   return(
     <Table columns={columns} components={components} size={'middle'} style={tableStyle}  

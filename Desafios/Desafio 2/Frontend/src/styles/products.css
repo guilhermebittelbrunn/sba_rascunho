@@ -1,0 +1,43 @@
+td {}
+
+@media screen and (max-width: 600px) {
+    colgroup{
+        display: none;
+    }
+    table {
+        background-color: yellow;
+    }
+
+    thead tr{
+        display: block;
+    }
+
+    thead tr {
+        border: 1px solid black;
+        margin-top: 24px;
+        width: 100%;
+    }
+
+    tbody tr td {
+        display: block;
+    }
+
+    tbody tr{
+        background-color: aqua;
+    }
+
+
+
+    .ant-table-row {
+        background-color: blue;
+        margin-top: 24px;
+        gap: 24px;
+        padding-top: 24px;
+    }
+
+    th .ant-table-cell {
+        display: hidden;
+        background-color: aqua;
+    }
+
+}

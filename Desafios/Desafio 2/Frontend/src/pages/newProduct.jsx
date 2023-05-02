@@ -46,7 +46,7 @@ export default function newProduct({handleAlert}){
         span: 4,
       }}
       wrapperCol={{
-        span: 14,
+        span: 24,
       }}
       layout="horizontal"
       initialValues={{
@@ -54,9 +54,9 @@ export default function newProduct({handleAlert}){
       }}
       onFinish={handleFinish}
       onValuesChange={onFormLayoutChange}
-      size={componentSize}
+      size={'large'}
       style={{
-        maxWidth: '600px',
+        maxWidth: '500px',
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
@@ -69,9 +69,8 @@ export default function newProduct({handleAlert}){
       <Input showCount maxLength={20} onChange={handleChange} placeholder='Title' required name='title' value={product['title']}/>
       <TextArea showCount maxLength={100} onChange={handleChange} placeholder='Description'name='description' value={product['description']}/>
       <div style={{width: '100%'}}>
-      <label>Collection</label>
-      <Form.Item label="" style={{width: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'red'}}>
-        <Select style={{width: '100%'}} defaultValue="1A" onChange={(e)=>{
+      <label style={{opacity: '.4'}}>Collection</label>
+      <Select style={{width: '100%'}} defaultValue="1A" onChange={(e)=>{
           setProduct((preventValue)=>{
           return {...preventValue, ['collection']:e};
         })
@@ -83,15 +82,13 @@ export default function newProduct({handleAlert}){
           <Select.Option value="3A">3A</Select.Option>
           <Select.Option value="3B">3B</Select.Option>
         </Select>
-      </Form.Item>
       </div>
-
-      
-            <Form.Item className='btn-submit'>
-                <Button type="primary" htmlType="submit">
+            <Form.Item className='btn-submit' style={{width: '100%'}} >
+                <Button type="primary" htmlType="submit" style={{width: '100%'}} >
                   Save
                 </Button>
             </Form.Item>
+      
     
     </Form>
   );

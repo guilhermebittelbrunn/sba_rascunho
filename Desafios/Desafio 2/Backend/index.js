@@ -20,9 +20,6 @@ require('dotenv').config();
         app.use(express.json());
         app.use('/product', productApi);
         app.use('/user', userApi);
-        // app.use('*', (req, res) => {
-        //     res.sendFile('C:Users/ADMIN/Documents/GitHubsba_rascunho/Desafios/Desafio 2/dist/index.html');
-        // });
 
         app.listen(process.env.PORT, (err) => {
             if (err) return console.log(err);

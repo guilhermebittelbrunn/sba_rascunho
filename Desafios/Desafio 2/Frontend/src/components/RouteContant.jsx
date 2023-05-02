@@ -24,8 +24,9 @@ export default function RouterContant({element, colorBgContainer, title, alert, 
                   {title}
                 </Header>
                 <Content className='Layout-Content'>
-                  <Breadcrumb className='Layout-Content-Breadcrumb' itemRender={<h4>description</h4>}>
-                    
+                  <Breadcrumb className='Layout-Content-Breadcrumb'>
+                    <Breadcrumb.Item>{title}</Breadcrumb.Item>
+                    <Breadcrumb.Item>{description}</Breadcrumb.Item>
                   </Breadcrumb>
                   <div style={{...divStyle, backgroundColor: colorBgContainer}}>
                       {element}

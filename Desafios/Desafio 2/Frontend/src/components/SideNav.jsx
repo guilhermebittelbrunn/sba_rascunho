@@ -8,9 +8,9 @@ const { Sider } = Layout;
 
 
 let items = [
-  useCreateLink(<Link to='/about'>Início</Link>, '1', <InfoOutlined />),
-  useCreateLink(<Link to='/products'>Produtos</Link>, '2', <TableOutlined />),
-  useCreateLink(<Link to="/product">Novo produto</Link>, '3', <PlusOutlined />),
+  useCreateLink(<Link to='/about'>About</Link>, '1', <InfoOutlined />),
+  useCreateLink(<Link to='/products'>Products</Link>, '2', <TableOutlined />),
+  useCreateLink(<Link to="/product">New product</Link>, '3', <PlusOutlined />),
   useCreateLink(<Link to='/login'>Login</Link>, '4', <LoginOutlined/>),
 ];
   
