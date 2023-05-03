@@ -4,6 +4,10 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import '../styles/products.css'
 
+function deleteItem(){
+  return 1
+}; 
+
 const paginationStyle={
   display: 'flex',
   justifyContent: 'center',
@@ -94,14 +98,7 @@ const EditableCell = ({
 };
 
 
-async function deleteItem(element){
-  const id = element.target.id;
-  try{
-    await axios.delete(`http://localhost:3000/product/${id}`);
-  }catch(err){
-    return console.log(err);
-  }
-}
+
 
 const defaultColumns = [
   {
@@ -163,9 +160,29 @@ export default function Products(){
   const isLog = useSelector((login)=>{return login});
   const [data, setdata] = useState([]);
 
+  
+  async function findAlldata(){
+    const {data} = await axios.get(`http://localhost:3000/product/${isLog.user.id}`);
+    const list = data.map((item, key)=>{
+      return {...item, ['key']: key}
+    })
+    setdata(list);
+  }
+
+ deleteItem = async (element)=>{
+  const id = element.target.id;
+  try{
+    const {data} = await axios.delete(`http://localhost:3000/product/${id}`);
+    data === 'Product deleted' && findAlldata();
+  }catch(err){
+    return console.log(err);
+  }
+}
+
 
   const handleSave = async (row) => {
     const newData = [...data];
+
     const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, {
@@ -197,20 +214,13 @@ export default function Products(){
     };
   });
 
-  async function findAlldata(){
-    const {data} = await axios.get(`http://localhost:3000/product/${isLog.user.id}`);
-    const list = data.map((item, key)=>{
-      return {...item, ['key']: key}
-    })
-    setdata(list);
-  }
   useEffect(()=>{
+    console.log(1);
     isLog.status && findAlldata();
   },[]);
 
   return(
     <Table columns={columns} components={components} size={'middle'} style={tableStyle}  
-    onHeaderRow={(columns)=>{{style: paginationStyle}}}
     pagination={{style: paginationStyle}} loading={data.length === 0} owClassName={() => 'editable-row'} dataSource={data} />
   )
 }
