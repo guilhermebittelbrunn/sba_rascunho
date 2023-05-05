@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+    .square{
+        @apply w-full h-48 bg-emerald-700
+    }
+    .square:hover{
+        @apply bg-emerald-900
+    }
+
