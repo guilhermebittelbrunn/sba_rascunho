@@ -35,7 +35,7 @@ function App() {
           <li>Link</li>
         </ul>
       </nav> */}
-      <h4>Positions</h4>
+      {/* <h4>Positions</h4>
       <div className="container relative h-48 bg-green-700 mx-auto md:bg-blue-700 md:text-white p-2">
         <div className="absolute right-12 bottom-12 w-12 h-12 bg-yellow-500 m-4 z-20"/>
         <div className="absolute right-8 bottom-8 w-12 h-12 bg-red-500 m-4  z-30"/>
@@ -59,11 +59,75 @@ function App() {
         <div className="w-12 h-12 bg-cyan-500 m-4"></div>
         <div className="w-12 h-12 bg-cyan-600 m-4"></div>
       </div>
+      <h4>Grid menu</h4>
+      <div className="container grid grid-cols-4 bg-orange-300">
+        <div className="col-span-4">navbar</div>
+        <div className="col-span-1  bg-gray-800 flex justify-center items-center flex-col gap-4">
+          <h3>Message / ICON</h3>
+          <ul className="flex flex-col gap-2">
+              <li><a href="#">Item</a></li>
+              <li><a href="#">Item</a></li>
+              <li><a href="#">Item</a></li>
+              <li><a href="#">Item</a></li>
+            </ul>
+        </div>
+        <div className="col-span-3  bg-gray-200 text-xs">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam similique odit unde voluptatum officiis. Nam, eligendi velit minus impedit odio vel molestiae sit ratione ipsa. Eligendi nostrum debitis tempora cupiditate?
+        Provident minus qui nulla similique at, fugit, sunt blanditiis commodi perferendis ullam consequuntur porro laboriosam facilis aliquam. Porro possimus inventore placeat sit provident deleniti! Voluptatum quidem repellat odio asperiores assumenda!
+        Magnam, maxime modi. Laudantium provident dolorem sit molestias aliquid! Tempora similique hic blanditiis doloremque sequi? Eaque hic recusandae officiis deleniti ad repudiandae modi, totam molestias et maiores error libero quibusdam.
+        </div>
+      </div>
+      */}
 
+      <nav className="flex  px-8 py-4 justify-between items-center w-full bg-black flex-row text-white">
+        <h2 className="font-bold text-2xl">Spotify</h2>
+        <ul className="flex gap-6 font-bold text-sm">
+          <li><a href="/">Premium</a></li>
+          <li><a href="/">Ajuda</a></li>
+          <li><a href="/">Baixar</a></li>
+          <li><a href="/">|</a></li>
+          <li><a href="/">Inscrever-se</a></li>
+          <li><a href="/">Log In</a></li>
+        </ul>
+      </nav>
+      <header className="flex w-full h-96  gap-6 bg-blue-500 flex-col justify-center items-center">
+        <h1 className="text-8xl text-center text-emerald-400 font-bold">Escutar muda tudo</h1>
+        <p className="text-lg text-emerald-400">Milhões de músicas e podcasts para explorar. E nem precisa de cartão de crédito</p>
+        <button className="bg-emerald-400 px-10 py-4 font-bold uppercase rounded-full text-blue-500">Obtenha o spotify free</button>
+     </header>
+     <footer className="grid w-full bg-black text-white grid-cols-8 p-12">
+        <div className="col-span-1">Spotify</div>
+        <div className="flex gap-12 col-span-5 bg-red-900 items-center justify-center">
+          <div className="flex-col">
+            <h4 className="uppercase text-slate-400 font-bold text-sm">Empresa</h4>
+            <ul className="flex-col">
+              <li><a>Item 1</a></li>
+              <li><a>Item 2</a></li>
+              <li><a>Item 3</a></li>
+            </ul>
+          </div>
+            <div className="flex-col">
+            <h4 className="uppercase text-slate-400 font-bold text-sm">Empresa</h4>
+            <ul className="flex-col">
+              <li><a>Item 1</a></li>
+              <li><a>Item 2</a></li>
+              <li><a>Item 3</a></li>
+            </ul>
+          </div>  <div className="flex-col">
+            <h4 className="uppercase text-slate-400 font-bold text-sm">Empresa</h4>
+            <ul className="flex-col">
+              <li><a>Item 1</a></li>
+              <li><a>Item 2</a></li>
+              <li><a>Item 3</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="col-span-2">links</div>
+     </footer>
 
-     
     </>
   )
 }
 
 export default App
+
