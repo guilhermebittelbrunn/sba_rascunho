@@ -11,12 +11,12 @@ export default function Header(){
                     </div>
                 <div className='flex'>
                     <div className="max-w-screen-lg flex px-4 py-12 justify-center items-center m-auto max-lg:flex-col max-lg:gap-4">
-                        <div className="content flex justify-center flex-col gap-6">
+                        <div className="content flex justify-center flex-col gap-6 mr-12">
                             <h1 className="font-extrabold text-3xl">Tá acabando: 3 meses de Premium por R$ 0,00</h1>
-                            <h2 className="text-justify">Começa hoje a ouvir música sem anúncios e offline grátis até 9 de agosto de 2023. Cancela quando quiseres.</h2>
+                            <h2 className="text-justify font-semibold text-xl">Começa hoje a ouvir música sem anúncios e offline grátis até 9 de agosto de 2023. Cancela quando quiseres.</h2>
                             <div className="btns flex-row flex gap-2 justify-start items-cente">
-                                <button className="border-solid border-gray-900 border-2 uppercase bg-gray-900 py-3 px-8 rounded-full text-xs">Experimente 3 meses por R$ 0,00</button>
-                                <button className="border-solid border-2 py-3 px-8 border-white uppercase rounded-full font-black text-xs">Ver planos</button>
+                                <button className="border-solid border-gray-900 border-2 uppercase bg-gray-900 py-3 px-8 rounded-full text-xs hover:scale-x-105 hover:bg-black">Experimente 3 meses por R$ 0,00</button>
+                                <button className="border-solid border-2 py-3 px-8 border-white uppercase rounded-full font-black text-xs hover:scale-x-105 hover:bg-fuchsia-900">Ver planos</button>
                             </div>
                             <p className='text-xs'>Somente no plano Individual. Depois é só R$ 19,90/mês. Sujeito a Termos e Condições. Disponível apenas para quem nunca usou o Premium. A oferta termina em 16/06/2023</p>
                         </div>

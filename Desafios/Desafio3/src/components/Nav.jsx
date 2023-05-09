@@ -9,13 +9,20 @@ export default function Nav(){
                      <img src={img} alt="img" className='w-28'/>
                     </div>
                     <div className='Links'>
-                        <ul className='flex gap-4'>
-                            <li><a href="/" className='hover:text-green-500'>Premium</a></li>
-                            <li><a href="/" className='hover:text-green-500'>Suporte</a></li>
-                            <li><a href="/" className='hover:text-green-500'>Baixar</a></li>
-                            <li><a href="/" className='hover:text-green-500'>|</a></li>
-                            <li><a href="/" className='hover:text-green-500'>Inscrever-se</a></li>
-                            <li><a href="/" className='hover:text-green-500'>Entrar</a></li>
+                        <ul className='flex gap-4 items-center'>
+                            <li><a href="/" className='hover:text-green-500 max-md:hidden'>Premium</a></li>
+                            <li><a href="/" className='hover:text-green-500 max-md:hidden'>Suporte</a></li>
+                            <li><a href="/" className='hover:text-green-500 max-md:hidden'>Baixar</a></li>
+                            <li><a href="/" className='hover:text-green-500 max-md:hidden'>|</a></li>
+                            <li><a href="/" className='hover:text-green-500 max-md:hidden'>Inscrever-se</a></li>
+                            <li><a href="/" className='hover:text-green-500 max-md:hidden'>Entrar</a></li>
+                            <li>
+                                <ul className='hidden flex-col gap-1 max-md:flex'>
+                                    <div className='w-5 h-0.5 rounded-lg bg-white'></div>
+                                    <div className='w-5 h-0.5 rounded-lg bg-white'></div>
+                                    <div className='w-5 h-0.5 rounded-lg bg-white'></div>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                 </div>
