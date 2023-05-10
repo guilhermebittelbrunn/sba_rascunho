@@ -8,4 +8,7 @@
     .square:hover{
         @apply bg-emerald-900
     }
+    .dark{
+        @apply bg-gray-900 text-slate-100
+    }
 

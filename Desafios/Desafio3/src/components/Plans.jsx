@@ -39,7 +39,7 @@ function Card({plan}){
                 <div className="line w-full h-0.5 bg-gray-300 my-4"/>
                 <div className="card-main h-80 max-lg:h-56">
                     {plan.benefits.map((benefit, key)=>{
-                        return <p className={`w-full flex text-base ${key} mt-1`}><BsCheck2 className='mx-2 mt-1 text-[24px]'/>{benefit}</p>
+                        return <p className={`w-full flex text-sm ${key} mt-1`}><BsCheck2 className='mx-2 mt-1 text-[24px]'/>{benefit}</p>
                     })}
                 </div>
                 <div className="card-footer text-center max-lg:mt-8">
