@@ -43,7 +43,7 @@ async function createWindow() {
     win = new BrowserWindow({
         width: 1280,
         height: 960,
-        title: 'Teste',
+        title: 'Sba system',
         backgroundColor: '#123',
         icon: join(process.env.PUBLIC, 'sba logo iimage.jpg'),
         webPreferences: {
