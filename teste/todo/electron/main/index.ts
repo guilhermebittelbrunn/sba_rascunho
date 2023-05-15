@@ -76,6 +76,7 @@ async function createWindow() {
         return { action: 'deny' };
     });
 
+
     // const menuTemplate = [];
     // const menu = Menu.buildFromTemplate(menuTemplate);
     // Menu.setApplicationMenu(menu);
