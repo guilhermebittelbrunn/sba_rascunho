@@ -11,7 +11,7 @@ export default function useFetch(cnpj){
         (async()=>{
             setLoading(true);
             try{
-                const {data} = await axios.get('https://pokeapi.co/api/v2/pokemon/ditto');
+                const {data} = await axios.get(`https://publica.cnpj.ws/cnpj/${cnpj}`);
                 setLoading(false)
                 setInfo(data);
             }catch(err){

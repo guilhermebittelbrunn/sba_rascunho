@@ -1,60 +1,15 @@
 import { useEffect, useState } from "react"
 import useFetch from "./hooks/useFetch"
-import { Tree } from 'antd';
-
-const treeData = [
-  {
-    title: 'parent 1',
-    key: '0-0',
-    children: [
-      {
-        title: 'parent 1-0',
-        key: '0-0-0',
-        disabled: true,
-        children: [
-          {
-            title: 'leaf',
-            key: '0-0-0-0',
-            disableCheckbox: true,
-          },
-          {
-            title: 'leaf',
-            key: '0-0-0-1',
-          },
-        ],
-      },
-      {
-        title: 'parent 1-1',
-        key: '0-0-1',
-        children: [
-          {
-            title: (
-              <span
-                style={{
-                  color: '#1890ff',
-                }}
-              >
-                sss
-              </span>
-            ),
-            key: '0-0-1-0',
-          },
-        ],
-      },
-    ],
-  },
-];
 
 export default function Modal({cnpj}){
     const [data, loading, error] = useFetch(cnpj)
     const [list, setList] = useState([]);
-
+    // console.log(data);
     useEffect(()=>{
         for(let key in data){
             setList((preventValue)=>{
                 return [...preventValue, [key, data[key]]]
             })
-            console.log(1);
         }
     }, [data])
 
@@ -62,31 +17,25 @@ export default function Modal({cnpj}){
 
     return(
         <>
-            <section className="bg-red-200 flex absolute justify-center items-center w-11/12 h-3/4 max-w-[600px]">
+            <section className="bg-red-200 flex absolute justify-center items-center ">
                 {loading ? 
                 <div className="w-12 h-12 rounded-full border-4 border-white border-t-black animate-spin 
                 "/> 
                 :
                 <div className="w-full p-4">
                     {
-                    //    <details> 
-                    //     <summary>{'abilities'}</summary>
-                    //     <div id="Content-info"> 
-                    //             <p> {JSON.stringify(data.abilities)} </p> 
-                    //     </div>
-                    //    </details>
                     <ul>
                         {list.map((item, k)=>{
+                            console.log(item);
                             return (
                                 <li className="text-start" key={k}>
-                                    <Detail data={item}/>
+                                    {(item[0] != 'socios' && item[0] != 'estabelecimento') &&  <Card data={item}/>}
+                                    {(item[0] != 'socios' && item[0] != 'estabelecimento') ||  <Detail data={item}/>}
                                 </li>)
                         })}
                     </ul>
                     }
-                    {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur doloribus non quidem eos nisi asperiores laudantium iure praesentium magnam suscipit dolores cum provident quia accusamus, consectetur, nihil itaque veniam officiis?
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ducimus saepe, aperiam a harum, enim eum quae repellat, doloremque delectus corrupti excepturi dignissimos? Ex tempore consequuntur at? Praesentium est eum eveniet!
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam repudiandae nobis nulla soluta ab ad placeat impedit iste aut distinctio, culpa porro nemo iusto magnam sint et? Quas, autem libero. */}
+                
                 </div>
                 }
             </section>
@@ -94,17 +43,83 @@ export default function Modal({cnpj}){
     )
 }
 
+
+function Card({data}){
+    return(
+        <div id="card" className="flex justify-between p-1 bg-blue-400 mt-2">
+          <div id="card-header">
+            {data[0]}
+          </div>
+          <div id="card-body">
+            {JSON.stringify(data[1])}
+          </div>
+        </div>
+    )
+}
+
 function Detail({data}){
-    
- 
     return(
         <>
-           <details> 
+            <details> 
                 <summary>{data[0]}</summary>
                 <div id="Content-info"> 
-                <p> {JSON.stringify(data[1])} </p> 
+                <h3> 
+                    {
+                        data[0] == 'socios' ?
+                            data[1].map((socio)=>{
+                                // console.log(socio);
+                                return <SubDetail dado={socio}/>
+                            })
+                        :              
+                            <SubDetail dado={data[1]}/>
+                    }
+                </h3> 
                 </div>
-            </details>
+            </details>  
+        </>
+    )
+}
+
+function SubDetail({dado}){
+        console.log(dado);
+        return(
+            <>
+                <details className="ml-4"> 
+                    <summary>{dado.nome || 'informações detalhadas'}</summary>
+                    <div id="Content-info"> 
+                      {<Teste info={dado}/>}
+                      
+                    </div>
+                </details>
+            </>
+        )
+} 
+
+function Teste({info}){
+    const [arr,setArr] = useState([]);
+
+    useEffect(()=>{
+       for(let key in info){
+            setArr((preventValue)=>{
+                return [...preventValue, [key, info[key]]]
+            })
+       }
+       console.log(arr);
+    }, [info])
+
+    return(
+        <>
+            <ul>
+                {arr.map(item=>{
+                    console.log(item);
+                    return(
+                        <li className="flex justify-between m-2 p-2 bg-blue-300" key={item[0]}>
+                            <div>{item[0]}</div>
+                            <div>{JSON.stringify(item[1])}</div>
+                        </li>)
+                })}
+
+            </ul>
         </>
     )
 }
