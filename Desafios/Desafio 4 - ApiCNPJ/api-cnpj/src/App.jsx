@@ -30,11 +30,11 @@ export default function App() {
           <h2 className='font-semibold uppercase text-gray-800'>Informe o CNPJ</h2>
           <div className='border-2 border-gray-100 p-1'>
             <input type="text" maxLength={18} name="cnpj" id="cnpj" placeholder="00.000.000/0000-00" value={text} onChange={handleChange} className='border-2 border-white rounded-sm p-1 outline-none text-gray-700 
-            focus:border-xl focus:border-blue-500 focus:border-opacity-40 mx-2'/>
+            focus:border-xl mx-2'/>
             <Button type="primary" className='bg-blue-600' onClick={searchCNPJ}>Buscar</Button>
           </div>
         </form>
-        {modal.status && <Modal cnpj={modal.cnpj}/>}
+        {modal.status && <Modal cnpj={modal.cnpj} setModal={setModal}/>}
       </main>
     </>
   )
