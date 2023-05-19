@@ -15,25 +15,28 @@ export default function App() {
   const searchCNPJ = (e)=>{
     e.preventDefault();
     const cnpj = text.replace(/[^\d]+/g, '');
-    cnpj.length != 14 ? 
-    toast.error('Cnpj inválido') 
-    :
+    if(cnpj.length != 14 || text == ''){
+       toast.error('Cnpj inválido') 
+        return
+    }
     setText('');
     setModal({status: !modal.status, cnpj})
   }
 
   return (
     <>
-      <main className="flex flex-col bg-slate-100 w-screen h-screen justify-center items-center text-center font-sans">
+      <main className={`flex flex-col ${!modal.status && 'h-screen'} justify-center z-10 text-center font-sans`}>
         <ToastContainer autoClose={2500}/>
-        <form className='flex flex-col gap-4 p-4 bg-white shadow-md shadow-gray-700' onSubmit={searchCNPJ}>
-          <h2 className='font-semibold uppercase text-gray-800'>Informe o CNPJ</h2>
-          <div className='border-2 border-gray-100 p-1'>
-            <input type="text" maxLength={18} name="cnpj" id="cnpj" placeholder="00.000.000/0000-00" value={text} onChange={handleChange} className='border-2 border-white rounded-sm p-1 outline-none text-gray-700 
-            focus:border-xl mx-2'/>
-            <Button type="primary" className='bg-blue-600' onClick={searchCNPJ}>Buscar</Button>
-          </div>
+        {!modal.status &&
+          <form className='flex flex-col gap-4 p-4 bg-white shadow-md shadow-gray-700 w-11/12 m-auto max-w-sm' onSubmit={searchCNPJ}>
+            <h2 className='font-semibold uppercase text-gray-800'>Informe o CNPJ</h2>
+            <div className='border-2 flex justify-between items-center border-gray-100 p-1 max-[300px]:flex-col max-[300px]:gap-2'>
+              <input type="text" maxLength={18} name="cnpj" id="cnpj" placeholder="00.000.000/0000-00" value={text} onChange={handleChange} className='border-2 border-white 
+              rounded-sm p-1 w-4/5 outline-none text-gray-700 mx-2'/>
+              <Button type="primary" className='bg-blue-600 mr-2 w-20' onClick={searchCNPJ}>Buscar</Button>
+            </div>
         </form>
+        }
         {modal.status && <Modal cnpj={modal.cnpj} setModal={setModal}/>}
       </main>
     </>
