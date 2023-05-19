@@ -8,19 +8,22 @@ export default function Modal({cnpj, setModal}){
     const [list, setList] = useState([]);
     // console.log(data);
     useEffect(()=>{
-
-        const {atualizado_em, ...rest} = data
-        let cleanData = {
-            rest,
-            atualizado_em: moment(atualizado_em).format('DD/MM/YYYY'),
-            porte: rest.porte?.descricao,
-            natureza_juridica: rest.natureza_juridica?.descricao
-        }
-        console.log('5-', cleanData);
-        for(let key in data){
-            setList((preventValue)=>{
-                return [...preventValue, [key, data[key]]]
-            })
+        if(data.length != 0){
+            const {atualizado_em, ...rest} = data
+            let cleanData = {
+                cnpj_raiz: rest.cnpj_raiz,
+                atualizado_em: moment(atualizado_em).format('DD/MM/YYYY'),
+                porte: rest.porte?.descricao,
+                natureza_juridica: rest.natureza_juridica?.descricao,
+                socios: rest.socios,
+                estabelecimento: rest.estabelecimento,
+            }
+            console.log('5-', cleanData);
+            for(let key in cleanData){
+                setList((preventValue)=>{
+                    return [...preventValue, [key, cleanData[key]]]
+                })
+            }
         }
     }, [data])
 
