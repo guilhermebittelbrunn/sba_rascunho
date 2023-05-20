@@ -19,7 +19,7 @@ export default function Modal({cnpj, setModal}){
                 responsavel_federativo: data.responsavel_federativo,
                 porte: data.porte?.descricao,
                 natureza_juridica: data.natureza_juridica?.descricao,
-                qualificação_do_responsável: data.qualificacao_do_responsavel.descricao,
+                qualificação_do_responsável: data.qualificacao_do_responsavel?.descricao,
                 capital_social: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.capital_social),
                 socios: data.socios,
                 estabelecimento: data.estabelecimento,
@@ -168,7 +168,7 @@ function EstabelecimentoDetail({info}){
     useEffect(()=>{
         let cleanInfo = {
             cnpj : info.cnpj,
-            atividade_principal: info.atividade_principal.descricao,
+            atividade_principal: info.atividade_principal?.descricao,
             atividades_secundárias : info.atividades_secundarias.descricao || 'Sem registro',
             cnpj_raiz: info.cnpj_raiz,
             cnpj_ordem: info.cnpj_ordem,
@@ -176,7 +176,7 @@ function EstabelecimentoDetail({info}){
             tipo: info.tipo,
             nome_fantasia: info.nome_fantasia,
             situação_cadastral: info.situacao_cadastral,
-            motivo_situacao_cadastral: info.motivo_situacao_cadastral,
+            motivo_situacao_cadastral: info.motivo_situacao_cadastral?.descricao ?? 'Sem registro',
             data_situação_cadastral: moment(info.data_situacao_cadastral).format('DD/MM/YYYY'),
             data_inicio_atividade: moment(info.data_inicio_atividade).format('DD/MM/YYYY'),
             pais: info.pais.nome,
@@ -186,15 +186,15 @@ function EstabelecimentoDetail({info}){
             logradouro: `${info.tipo_logradouro} ${info.logradouro}`,
             numero: info.numero,
             cep: info.cep,
-            telefone_1: `${info['DDD1']} ${info.telefone1}`,
-            telefone_2: `${info['DDD2']} ${info.telefone2}`,
+            telefone_1: `${info['DDD1'] ?? 'Sem'} ${info.telefone1 ?? 'registro'}`,
+            telefone_2: `${info['DDD2'] ?? 'Sem'} ${info.telefone2 ?? 'registro'}`,
             email: info.email,
             situacao_especial: info.situacao_especial,
             data_situação_especial: info.data_situacao_especial,
             atualizado_em: moment(info.atualizado_em).format('DD/MM/YYYY'),
-            atividade_principal: info.atividade_principal.descricao,
+            atividade_principal: info.atividade_principal?.descricao,
             estado: `${info.estado.sigla} ${info.estado.nome}`,
-            inscrição_estadual: `${info.inscricoes_estaduais.inscricao_estadual} situação: ${info.inscricoes_estaduais.ativo ? 'Ativo' : 'Inativo'} Atualizado em:${moment(info.inscricoes_estaduais.atualizado_em).format('DD/MM/YYYY')}`
+            inscrição_estadual: `Número: ${info.inscricoes_estaduais[0].inscricao_estadual ?? 'Não possui'}, situação: ${info.inscricoes_estaduais[0].ativo ? 'Ativo' : 'Inativo'}, Atualizado em: ${moment(info.inscricoes_estaduais.atualizado_em).format('DD/MM/YYYY')}`
             
 
         }
@@ -213,7 +213,7 @@ function EstabelecimentoDetail({info}){
                     console.log('3-', item);
                     return(
                         <li className="flex flex-col justify-between p-2 border-2 bg-slate-100 border-white border-b-gray-700 my-2 text-sm" key={item[0]}>
-                            <div className="uppercase font-semibold">{item[0]}</div>
+                            <div className="uppercase font-semibold">{String(item[0]).replace(/_/g, ' ')}</div>
                             <div>{item[1]  ? JSON.stringify(item[1]).replace(/"/g, '') : 'Sem registro'.replace(/"/g, '')}</div>
                         </li>)
                 })}
