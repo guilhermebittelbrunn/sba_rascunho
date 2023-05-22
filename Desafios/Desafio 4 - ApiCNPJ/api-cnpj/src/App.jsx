@@ -25,7 +25,7 @@ export default function App() {
 
   return (
     <>
-      <main className={`flex flex-col ${!modal.status && 'h-screen'} justify-center z-10 text-center font-sans`}>
+      <main className={`flex flex-col ${!modal.status && 'h-screen'} justify-center z-10 text-center font-sans pb-16`}>
         <ToastContainer autoClose={2500}/>
         {!modal.status &&
           <form className='flex flex-col gap-4 p-4 bg-white shadow-md shadow-gray-700 w-11/12 m-auto max-w-sm' onSubmit={searchCNPJ}>
