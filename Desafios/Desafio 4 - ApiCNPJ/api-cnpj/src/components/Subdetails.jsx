@@ -34,9 +34,7 @@ function SocioDetail({info}){
         }
             
        for(let key in cleanInfo){
-            setArr((preventValue)=>{
-                return [...preventValue, [key, cleanInfo[key]]]
-            })
+            setArr((preventValue)=>[...preventValue, [key, cleanInfo[key]]])
        }
     }, [info])
 
@@ -90,22 +88,22 @@ function EstabelecimentoDetail({info}){
 
         }
        for(let key in cleanInfo){
-            setArr((preventValue)=>{
-                return [...preventValue, [key, cleanInfo[key]]]
-            })
+            setArr((preventValue)=>[...preventValue, [key, cleanInfo[key]]])
        }
-
     }, [info])
 
     return(
         <>
             <ul>
                 {arr.map(item=>{
-            
                     return(
                         <li className="flex flex-col justify-between p-2 border-2 bg-slate-100 border-white border-b-gray-700 my-2 text-sm" key={item[0]}>
-                            <div className="uppercase font-semibold">{String(item[0]).replace(/_/g, ' ')}</div>
-                            <div>{item[1]  ? JSON.stringify(item[1]).replace(/"/g, '') : 'Sem registro'.replace(/"/g, '')}</div>
+                            <div className="uppercase font-semibold">
+                                {String(item[0]).replace(/_/g, ' ')}
+                            </div>
+                            <div>
+                                {item[1]  ? JSON.stringify(item[1]).replace(/"/g, '') : 'Sem registro'.replace(/"/g, '')}
+                            </div>
                         </li>)
                 })}
             </ul>

@@ -1,23 +1,23 @@
 import moment from "moment/moment"
-import useFetch from "./hooks/useFetch"
+import useFetch from "../hooks/useFetch.jsx"
 import { useEffect, useState } from "react"
 import {CloseOutlined} from '@ant-design/icons'
 import { Button } from 'antd';
-import Card from "./components/Card";
-import Detail from "./components/Details";
-import Error from "./components/Error";
+import Card from "./Card";
+import Detail from "./Details";
+import Error from "./Error";
 
 export default function Modal({cnpj, setModal}){
     const [data, loading, error] = useFetch(cnpj)
     const [list, setList] = useState([]);
-    
+
     useEffect(()=>{
         if(data.length != 0){
-            let cleanData = {
+            const cleanData = {
                 razao_social: data.razao_social,
                 cnpj_raiz: data.cnpj_raiz,
                 atualizado_em: moment(data.atualizado_em).format('DD/MM/YYYY'),
-                responsavel_federativo: data.responsavel_federativo,
+                responsável_federativo: data.responsavel_federativo,
                 porte: data.porte?.descricao,
                 natureza_jurídica: data.natureza_juridica?.descricao,
                 qualificação_do_responsável: data.qualificacao_do_responsavel?.descricao,
@@ -29,9 +29,7 @@ export default function Modal({cnpj, setModal}){
             }
     
             for(let key in cleanData){
-                setList((preventValue)=>{
-                    return [...preventValue, [key, cleanData[key]]]
-                })
+                setList((preventValue)=>[...preventValue, [key, cleanData[key]]])
             }
             console.log(error);
         }
@@ -44,10 +42,9 @@ export default function Modal({cnpj, setModal}){
                 <div className="w-12 h-12 rounded-full m-auto border-4 mt-24 border-white border-t-black animate-spin 
                 "/> 
                 :
-                !error ? 
+                error ? 
                 <Error cnpj={cnpj} error={error} setModal={setModal}/> : 
                     <div>
-                
                         <div className="bg-white max-w-[800px] w-11/12 z-0 p-4 m-auto shadow-md shadow-gray-700 relative">
                             <h1 className="font-bold text-gray-700">CNPJ BUSCADO: {cnpj}</h1>
                             <CloseOutlined className="absolute right-4 top-4 transition-all hover:scale-125 hover:cursor-pointer" onClick={()=>{setModal(false)}}/>

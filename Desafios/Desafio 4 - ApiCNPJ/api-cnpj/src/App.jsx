@@ -2,7 +2,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from "react-toastify";
 import { useState } from "react"
 import { Button } from 'antd';
-import Modal from './modal';
+import Modal from './components/Modal.jsx';
 
 export default function App() {
   const [text,setText] = useState('');
