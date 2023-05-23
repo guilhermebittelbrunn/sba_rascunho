@@ -2,8 +2,8 @@ import {CloseOutlined} from '@ant-design/icons'
 import { Button } from 'antd';
 import { useState, useEffect } from 'react';
 
-export default function Error({cnpj, setModal, error}){
-    // const error = {response: {status: 429}}
+export default function Error({cnpj, setModal}){
+    const error = {response: {status: 429}}
     const [errorMessage, setErrorMessage] = useState('error');
 
     useEffect(()=>{
@@ -28,9 +28,9 @@ export default function Error({cnpj, setModal, error}){
                 <h1 className="font-bold">CNPJ BUSCADO: {cnpj}</h1>
                 <CloseOutlined className="absolute right-4 scale-110 top-4 transition-all hover:scale-125 hover:cursor-pointer" onClick={()=>{setModal(false)}}/>
                 <div id='error_contant' className='flex flex-col items-center gap-2'>
-                    <h2 className='mt-4 font-semibold uppercase'>Erro: {JSON.stringify(error?.response?.status)}</h2>
+                    <h2 className='mt-4 font-semibold uppercase'>Erro: {error?.response?.status}</h2>
                     <p className='max-w-[80%] text-justify'>
-                        {JSON.stringify(errorMessage)}
+                        {errorMessage}
                     </p>
                 </div>
             </div>
