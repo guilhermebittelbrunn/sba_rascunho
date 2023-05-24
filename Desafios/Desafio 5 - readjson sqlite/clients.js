@@ -2,10 +2,19 @@ const sequelize = require('sequelize');
 const db = require('./db');
 
 const Client = db.define('clients', {
-    cnpj_raiz: {
+    cnpj: {
         type: sequelize.STRING,
         primaryKey: true,
         allowNull: true,
+    },
+    json: {
+        type: sequelize.JSON,
+    },
+    situacao: {
+        type: sequelize.STRING,
+    },
+    cnpj_raiz: {
+        type: sequelize.STRING,
     },
     razao_social: {
         type: sequelize.STRING,
@@ -20,7 +29,7 @@ const Client = db.define('clients', {
         type: sequelize.STRING,
     },
     porte: {
-        type: sequelize.ABSTRACT,
+        type: sequelize.STRING,
     },
     natureza_jurifica: {
         type: sequelize.STRING,
@@ -29,9 +38,12 @@ const Client = db.define('clients', {
         type: sequelize.STRING,
     },
     socios: {
-        type: sequelize.ABSTRACT,
+        type: sequelize.STRING,
     },
     simples: {
+        type: sequelize.STRING,
+    },
+    estabelecimento: {
         type: sequelize.STRING,
     },
     // atividade_secundarias: {
