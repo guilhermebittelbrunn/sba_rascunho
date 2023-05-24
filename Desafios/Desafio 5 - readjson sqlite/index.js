@@ -22,15 +22,6 @@ const isJSON = (string) => {
     return true;
 };
 
-const reduceFilter = (param, array) => {
-    return array.reduce((acc, item) => {
-        if (acc[item[param]]) {
-            acc[item[param]] = [];
-        }
-        acc[item[param]].push(item);
-    }, {});
-};
-
 (async () => {
     try {
         //conecta o banco
@@ -57,6 +48,8 @@ const reduceFilter = (param, array) => {
                         } catch (err) {
                             console.log(colors.red(k));
                             erros.push(k);
+                        } finally {
+                            console.log(erros);
                         }
                     } catch (err) {
                         console.log('err'.red);
@@ -102,29 +95,3 @@ const reduceFilter = (param, array) => {
         console.log(err);
     }
 })();
-
-// // // const alumns = [
-// // //     { nome: 'Guilherme', idade: 20, turno: 'matutino' },
-// // //     { nome: 'Claudio', idade: 19, turno: 'vespertino' },
-// // //     { nome: 'ana', idade: 20, turno: 'matutino' },
-// // // ];
-
-// // // const teste = alumns.reduce((acc, item) => {
-// // //     if (!acc[item.turno]) {
-// // //         acc[item.turno] = [];
-// // //     }
-// // //     acc[item.turno].push(item);
-// // //     return acc;
-// // // }, {});
-
-// // // function filterParam(param) {
-// // //     return alumns.reduce((acc, item) => {
-// // //         if (!acc[item[param]]) {
-// // //             acc[item[param]] = [];
-// // //         }
-// // //         acc[item[param]].push(item);
-// // //         return acc;
-// // //     }, {});
-// // // }
-
-// // // console.log(filterParam('turno'));
