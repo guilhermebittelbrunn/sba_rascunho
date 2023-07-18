@@ -12,11 +12,10 @@ createAnimal('Yuri', 5, '7 years', AnimalType.Dog);
 function createAnimalFilter(listAnimals:any, specie:number):any{
     let listSpecie:object[] = [];
     for(let key in listAnimals){
-  
-   if(typeof listAnimals[key].specie === 'number')
-     if(listAnimals[key].specie === specie){
-        listSpecie.push(listAnimals[key])
-     }
+        if(typeof listAnimals[key].specie === 'number')
+            if(listAnimals[key].specie === specie){
+                listSpecie.push(listAnimals[key])
+            }
     }
     return listSpecie
 } 

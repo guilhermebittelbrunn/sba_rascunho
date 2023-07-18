@@ -6,6 +6,7 @@
   "scripts": {
     "start" : "tsc ./src/index.ts && node ./src/index.js",
     "start1" : "tsc ./src/index1.ts && node ./src/index1.js",
+    "start2" : "tsc ./src/index2.ts && node ./src/index2.js",
     "initTSC" : "tsc --init"
   },
   "dependencies": {
