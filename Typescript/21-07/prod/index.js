@@ -71,7 +71,45 @@
 // list.push('456');
 // console.log(list)
 // console.log(list[2])
-function teste() { return 1; }
-;
-console.log(teste['123'] = 123);
-console.log(teste);
+var AnimalType;
+(function (AnimalType) {
+    AnimalType[AnimalType["dog"] = 0] = "dog";
+    AnimalType[AnimalType["cat"] = 1] = "cat";
+    AnimalType[AnimalType["bird"] = 2] = "bird";
+    AnimalType[AnimalType["rabbit"] = 3] = "rabbit";
+    AnimalType[AnimalType["turtle"] = 4] = "turtle";
+})(AnimalType || (AnimalType = {}));
+const listAnimal = [
+    {
+        id: 1,
+        age: '7 months',
+        // name: 'Abel',
+        specie: AnimalType.rabbit
+    },
+    {
+        id: 2,
+        age: '3 months',
+        // name: 'Snopy',
+        specie: AnimalType.rabbit
+    },
+    {
+        id: 3,
+        age: '10 years',
+        // name: 'Saimon',
+        specie: AnimalType.dog
+    },
+    {
+        id: 4,
+        age: '12 years',
+        // name: 'Fred',
+        specie: AnimalType.turtle
+    },
+    {
+        id: 5,
+        age: '7 years',
+        // name: 'Yuri',
+        specie: AnimalType.dog
+    },
+];
+const newAnimal = { id: 11, age: '1 year', specie: AnimalType.cat, color: 'Brown' };
+console.log(newAnimal);
