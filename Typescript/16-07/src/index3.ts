@@ -4,17 +4,17 @@
 //     private year: number = 0;
 //     private brand: string = "";
 
-//     function getModel(this:any):string {
+//     getModel(this:any):string {
 //         return this.model
 //     }
-//     function getId(this: any):string {
+//     getId(this: any):number {
 //         return this.id
 //     }
-//     function getModel():string {
-//         return this.model
+//     getYear():number {
+//         return this.year
 //     }
-//     function getModel():string {
-//         return this.model
+//     getBrand():string {
+//         return this.brand
 //     }
 
 //     constructor(id: number, mdl: string, yr: number, brand: string) {
@@ -25,8 +25,8 @@
 //     }
 // }
 
-// const carG = new Car(1, "Cerato", 2011, "Kia");
-// console.log(carG);
+// const carG = new Car(1, "Corolla", 2011, "Kia");
+// console.log(carG.getBrand);
 
 // function createCar(model: string, id: number, year: number, brand: string): object {
 //     return {
@@ -44,25 +44,25 @@
 
 // console.log(Car.model);
 
-type setup = {
-    id: number;
-    year: number;
-    model: string;
-    brand: string;
-    sayAboutThis(): Object;
-};
+// type setup = {
+//     id: number;
+//     year: number;
+//     model: string;
+//     brand: string;
+//     sayAboutThis(): Object;
+// };
 
-const Car: setup = {
-    id: 1,
-    model: "Cerato",
-    year: 2011,
-    brand: "Kia",
-    sayAboutThis() {
-        return this;
-    },
-};
+// const Car: setup = {
+//     id: 1,
+//     model: "Cerato",
+//     year: 2011,
+//     brand: "Kia",
+//     sayAboutThis() {
+//         return this;
+//     },
+// };
 
-console.log(Car.sayAboutThis());
+// console.log(Car.sayAboutThis());
 
-const x: object = { ok: true };
-console.log(x);
+// const x: object = { ok: true };
+// console.log(x);
