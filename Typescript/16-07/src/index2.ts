@@ -1,7 +1,20 @@
-const listNumber:number[] = [10,20,30,40]
-// const listString:string[] = ['10','20','30']
-// const listBoth: (number | string)[] = [1,'2',3,'4'];
-// const listAll: any[] = [listNumber, listString, listBoth];
-const List:object[] = [{}, {}]
+type name = string
 
-console.log(List)
+interface genericObjetc{
+    id: number
+    status: boolean | object
+    name: name
+    getName():Object
+}
+
+
+
+const someObject:genericObjetc = {
+    id: 1,
+    status:false,
+    name: 'any',
+    getName(){return this.name}
+}
+
+// console.log(someObject)
+console.log(someObject.getName());
