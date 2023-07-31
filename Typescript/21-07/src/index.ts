@@ -17,60 +17,63 @@
 // // // console.log(carG)
 // // // console.log(carI)
 
-// // interface alumnSetup{
-// //     nome: string,
-// //     idade: number,
-// //     turno: string,
-// //     aprovado: boolean
-// // }
+// interface alumnSetup{
+//     nome: string,
+//     idade: number,
+//     turno: string,
+//     aprovado: boolean
+// }
 
 
-// // const Alumns:alumnSetup[] = [
-// //     {
-// //         nome: 'Guilherme',
-// //         idade: 15,
-// //         turno: 'matutino',
-// //         aprovado: true
-// //     },
-// //     {
-// //         nome: 'Jessica',
-// //         idade: 21,
-// //         turno: 'matutino',
-// //         aprovado: false
-// //     },
-// //     {
-// //         nome: 'Roseli',
-// //         idade: 13,
-// //         turno: 'noturno',
-// //         aprovado: false
-// //     },
-// //     {
-// //         nome: 'Camilly',
-// //         idade: 15,
-// //         turno: 'vespertino',
-// //         aprovado: true
-// //     },
-// //     {
-// //         nome: 'Ivan',
-// //         idade: 23,
-// //         turno: 'noturno',
-// //         aprovado: true
-// //     },
-// // ]
+// const Alumns:alumnSetup[] = [
+//     {
+//         nome: 'Guilherme',
+//         idade: 15,
+//         turno: 'matutino',
+//         aprovado: true
+//     },
+//     {
+//         nome: 'Jessica',
+//         idade: 21,
+//         turno: 'matutino',
+//         aprovado: false
+//     },
+//     {
+//         nome: 'Roseli',
+//         idade: 13,
+//         turno: 'noturno',
+//         aprovado: false
+//     },
+//     {
+//         nome: 'Camilly',
+//         idade: 15,
+//         turno: 'vespertino',
+//         aprovado: true
+//     },
+//     {
+//         nome: 'Ivan',
+//         idade: 23,
+//         turno: 'noturno',
+//         aprovado: true
+//     },
+// ]
 
+// interface accSetup{
+//     [index: string]: alumnSetup[]
+// }
 
-// // function filterAlumns(list: alumnSetup[], filterValue:string){
-// //     const listFilter:object[] = list.reduce((acc:any, item:any)=>{
-// //         if(!acc[item[filterValue]]){
-// //             acc[item[filterValue]] = [];
-// //         }
-// //         acc[item[filterValue]].push(item)
-// //         return acc
-// //     },[])
+// function filterAlumns(list: alumnSetup[], filterValue:string){
+//     const listFilter:accSetup[] = list.reduce((acc:accSetup, item:alumnSetup)=>{
+//         if(`${[item[filterValue]]}` in acc){
+//             acc[item[filterValue]] = [];
+//         }
+//         acc[item[filterValue]].push(item)
+//         return acc
+//     },[])
 
-// //     return listFilter
-// // }
-// // const list = filterAlumns(Alumns, 'aprovado')
+//     return listFilter
+// }
+// const list = filterAlumns(Alumns, 'aprovado')
 
 // // console.log(list[0])
 
@@ -152,4 +155,83 @@
 // const array_arrays2:Array<number[]> = [[10,20,30]],
 
 // console.log('err')
-throw ('err');
+// throw ('err');
+
+
+// interface CarSetup{
+//     model: string,
+//     year: number
+// }
+
+// interface Car{
+//     [index: string]: CarSetup
+// }
+
+// const craeteCar = (dono: string, model: string, year:number):Car =>{
+//     return {
+//         [dono]: {
+//             model,
+//             year
+//         }
+//     }
+// }
+
+// const CarG = craeteCar('Guilherme', 'Cerato', 2012)
+// const CarI = craeteCar('Ivan', 'Jetta', 2018)
+
+
+// console.log(CarG)
+// console.log(CarI)
+
+interface Review{
+    name: string,
+    stars?: string | number | boolean
+}
+
+const reviewR:Review = {
+    name: 'Rodrigo',
+    stars: 3
+}
+const reviewD:Review = {
+    name: 'Douglas',
+    stars: false
+}
+const reviewM:Review = {
+    name: 'Marcos',
+    stars: 3
+}
+const reviewC:Review = {
+    name: 'Cláudio',
+}
+
+const reviews:Review[] = [reviewR,reviewD]
+
+
+function replyReview(review:Review){
+    
+        switch (review.stars){
+            case 1:
+                return `${review.name} deu 1 estrela`;  
+            case 2:
+                return `${review.name} deu 2 estrela`;  
+            case 3:
+                return `${review.name} deu 3 estrela`;    
+            case 4:
+                return `${review.name} deu 4 estrela`;
+            case 5:
+                return `${review.name} deu 5 estrela`;    
+        }
+      
+  
+}
+
+reviews.forEach(review=>{
+    if("stars" in review){
+        if(typeof review.stars === 'number' || typeof review.stars === 'string'){
+            return console.log(replyReview(review))
+        }
+        else if(typeof review.stars === 'boolean'){
+            return console.log(`${review.name} não avaliou a aula`)
+        }
+    }
+})
