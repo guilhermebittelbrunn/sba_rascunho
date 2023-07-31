@@ -198,28 +198,28 @@ const reviewD:Review = {
 }
 const reviewM:Review = {
     name: 'Marcos',
-    stars: 3
+    stars: '5'
 }
 const reviewC:Review = {
     name: 'Cláudio',
 }
 
-const reviews:Review[] = [reviewR,reviewD]
+const reviews:Review[] = [reviewR,reviewD,reviewM,reviewC]
 
 
 function replyReview(review:Review){
     
-        switch (review.stars){
-            case 1:
+        switch (String(review.stars)){
+            case '1':
                 return `${review.name} deu 1 estrela`;  
-            case 2:
-                return `${review.name} deu 2 estrela`;  
-            case 3:
-                return `${review.name} deu 3 estrela`;    
-            case 4:
-                return `${review.name} deu 4 estrela`;
-            case 5:
-                return `${review.name} deu 5 estrela`;    
+            case '2':
+                return `${review.name} deu 2 estrelas`;  
+            case '3':
+                return `${review.name} deu 3 estrelas`;    
+            case '4':
+                return `${review.name} deu 4 estrelas`;
+            case '5':
+                return `${review.name} deu 5 estrelas`;    
         }
       
   
@@ -233,5 +233,7 @@ reviews.forEach(review=>{
         else if(typeof review.stars === 'boolean'){
             return console.log(`${review.name} não avaliou a aula`)
         }
+    }else{
+        console.log(`${review.name} não avaliou a aula...`)
     }
 })
