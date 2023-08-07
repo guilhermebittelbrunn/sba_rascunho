@@ -1,20 +1,20 @@
 // class Car {
-//     private model: string = '';
+//     private model: string = "";
 //     private id: number = 0;
 //     private year: number = 0;
 //     private brand: string = "";
 
-//     getModel(this:any):string {
-//         return this.model
+//     getModel(this: any): string {
+//         return this.model;
 //     }
-//     getId(this: any):number {
-//         return this.id
+//     getId(this: any): number {
+//         return this.id;
 //     }
-//     getYear():number {
-//         return this.year
+//     getYear(): number {
+//         return this.year;
 //     }
-//     getBrand():string {
-//         return this.brand
+//     getBrand(): string {
+//         return this.brand;
 //     }
 
 //     constructor(id: number, mdl: string, yr: number, brand: string) {
@@ -26,7 +26,8 @@
 // }
 
 // const carG = new Car(1, "Corolla", 2011, "Kia");
-// console.log(carG.getBrand);
+// console.log(carG);
+// console.log(carG.getBrand());
 
 // function createCar(model: string, id: number, year: number, brand: string): object {
 //     return {

@@ -1,6 +1,6 @@
 var Car = /** @class */ (function () {
     function Car(id, mdl, yr, brand) {
-        this.model = '';
+        this.model = "";
         this.id = 0;
         this.year = 0;
         this.brand = "";
@@ -24,7 +24,8 @@ var Car = /** @class */ (function () {
     return Car;
 }());
 var carG = new Car(1, "Corolla", 2011, "Kia");
-console.log(carG.getBrand());
+console.log(carG);
+console.log(carG.getBrand);
 // function createCar(model: string, id: number, year: number, brand: string): object {
 //     return {
 //         model,
