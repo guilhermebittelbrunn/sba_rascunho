@@ -3,8 +3,8 @@ const db = require('../database/db');
 const Genre = require('./Genre');
 const Movie = db.define('movie', {
     id: {
-        type: sequelize.UUID,
-        defaultValue: sequelize.UUIDV4,
+        type: sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
     },
     title: {
