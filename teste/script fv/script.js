@@ -1,22 +1,24 @@
-require('dotenv').config();
-const axios = require('axios');
-const fs = require('fs');
-const sequelize = require('sequelize');
-const filme = require('./filme');
-const genero_filme = require('./genero_filme');
-const genero = require('./genero');
-const db = require('./db_filmes');
-const moment = require('moment');
+//2018-02-06
+
+require("dotenv").config();
+const axios = require("axios");
+const fs = require("fs");
+const sequelize = require("sequelize");
+const filme = require("./filme");
+const genero_filme = require("./genero_filme");
+const genero = require("./genero");
+const db = require("./db_filmes");
+const moment = require("moment");
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const options = {
-    method: 'GET',
+    method: "GET",
     headers: {
-        accept: 'application/json',
+        accept: "application/json",
         Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmI0OWNmMzQzYzU2MmRmYmM4YjczMTlmMmZmMmI3NyIsInN1YiI6IjY0Yzk4MWE5MDAxYmJkMDEyNmE3MjAxOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ZqK6DNET911i81ING_Q6emqC5yGF_TYDy_4Uc1YDGnY',
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmI0OWNmMzQzYzU2MmRmYmM4YjczMTlmMmZmMmI3NyIsInN1YiI6IjY0Yzk4MWE5MDAxYmJkMDEyNmE3MjAxOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ZqK6DNET911i81ING_Q6emqC5yGF_TYDy_4Uc1YDGnY",
     },
 };
 
@@ -104,11 +106,11 @@ const options = {
 
 (async () => {
     let numberRegisters = 0;
-    let textW = fs.createWriteStream('./ids.txt');
-    let dateStat = '2012-10-05';
-    let dateEnd = '2012-10-19';
+    let textW = fs.createWriteStream("./ids.txt");
+    let dateStat = "2015-12-15";
+    let dateEnd = "2015-12-29";
     try {
-        while (moment(dateEnd, 'yyyy-MM-DD').format('yyyy-MM') != '2023-08') {
+        while (moment(dateEnd, "yyyy-MM-DD").format("yyyy-MM") != "2023-08") {
             const { data } = await axios.get(
                 `https://api.themoviedb.org/3/movie/changes?end_date=${dateEnd}&page=1&start_date=${dateStat}`,
                 options
@@ -119,13 +121,13 @@ const options = {
                     `https://api.themoviedb.org/3/movie/changes?end_date=${dateEnd}&page=${i}&start_date=${dateStat}`,
                     options
                 );
-                res['data']['results'].forEach((id) => {
+                res["data"]["results"].forEach((id) => {
                     textW.write(`"${id.id}",\n`);
                     numberRegisters++;
                 });
             }
-            dateStat = moment(dateStat, 'yyyy-MM-DD').add(14, 'd').format('yyyy-MM-DD');
-            dateEnd = moment(dateEnd, 'yyyy-MM-DD').add(14, 'd').format('yyyy-MM-DD');
+            dateStat = moment(dateStat, "yyyy-MM-DD").add(14, "d").format("yyyy-MM-DD");
+            dateEnd = moment(dateEnd, "yyyy-MM-DD").add(14, "d").format("yyyy-MM-DD");
             console.log(`Current date: ${dateStat}, list length: ${numberRegisters}`);
         }
     } catch (err) {
