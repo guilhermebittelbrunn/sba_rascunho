@@ -27,9 +27,9 @@ const controller = {
         }
     },
     get: async (req, res) => {
+        const { id } = req.params;
         try {
-            const { data } = await axios.get('https://api.themoviedb.org/3/movie/11?language=pt-BR', options);
-
+            const { data } = await axios.get(`https://api.themoviedb.org/3/movie/${id}?language=pt-BR`, options);
             const movie = await Movie.create({ title: data.original_title });
             data['genres'].forEach(async (genre) => {
                 const genreFilm = await Genre.findByPk(genre.id);

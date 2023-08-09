@@ -7,7 +7,7 @@ Router.get('/genre/', genre.postAll);
 Router.get('/genre/:id', genre.getFilms);
 
 Router.get('/movie/create', movie.post);
-Router.get('/movie', movie.get);
+Router.get('/movie/create/:id', movie.get);
 Router.get('/movie/:id', movie.getGenre);
 
 module.exports = Router;
