@@ -1,5 +1,7 @@
 const { Op } = require('sequelize');
 
+const fs = require('fs');
+
 const CustomError = require('../../utils/CustomError.cjs');
 
 const { Regiao, Cidade } = require('../models/index.cjs');
@@ -48,7 +50,8 @@ const RegiaoService = {
             //     },
             // ],
         });
-        return rgs;
+        const geojson = JSON.parse(rgs[0].geojson);
+        return geojson;
     },
     getRegiaoById: async (id, opt = {}) => {
         const reg = await Regiao.findByPk(id, {
