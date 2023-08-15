@@ -1,6 +1,6 @@
-const { DataTypes, db } = require('../sequelize');
-const Genre = require('./Genre');
-const Movie = db.define('movie', {
+const { DataTypes, db } = require("../sequelize");
+const Genre = require("./Genre");
+const Movie = db.define("movie", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -12,7 +12,11 @@ const Movie = db.define('movie', {
     },
     sinopse: {
         type: DataTypes.TEXT,
-        defaultValue: 'Sem sinopse',
+        defaultValue: "Sem sinopse",
+    },
+    duration: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
     },
     original_title: {
         type: DataTypes.STRING(150),
@@ -33,11 +37,11 @@ const Movie = db.define('movie', {
     },
     poster_path: {
         type: DataTypes.STRING,
-        defaultValue: 'false',
+        defaultValue: "false",
     },
     backdrop_path: {
         type: DataTypes.STRING,
-        defaultValue: 'false',
+        defaultValue: "false",
     },
     adult: {
         type: DataTypes.BOOLEAN,
@@ -49,13 +53,13 @@ const Movie = db.define('movie', {
 });
 
 Movie.belongsToMany(Genre, {
-    through: 'movieGenre',
-    foreignKey: 'idMovie',
+    through: "movieGenre",
+    foreignKey: "idMovie",
     constraints: true,
 });
 Genre.belongsToMany(Movie, {
-    through: 'movieGenre',
-    foreignKey: 'idGenre',
+    through: "movieGenre",
+    foreignKey: "idGenre",
     constraints: true,
 });
 

@@ -145,8 +145,8 @@ let count = 0;
         const dataset = JSON.parse(info);
         let list = [];
         for (let element of dataset) {
-            list.push(`https://api.themoviedb.org/3/movie/${element}?language=pt-BR`);
-            if (list.length === 300) {
+            list.push(`https://api.themoviedb.org/3/movie/${element}?language=en-US`);
+            if (list.length === 200) {
                 //métodos
                 const allResponse = await axios.all(
                     list.map(async (endpoint) => {
@@ -170,6 +170,7 @@ let count = 0;
                             const newMovie = await Movie.create({
                                 title: objt.title,
                                 sinopse: objt.overview,
+                                duration: objt.runtime,
                                 original_title: objt.original_title,
                                 vote: objt.vote_average,
                                 count_votes: objt.vote_count,
@@ -191,7 +192,7 @@ let count = 0;
                 }
                 list = [];
                 console.log(`Index ${dataset.indexOf(element)}, ${count} items inseridos, ${dataset.length} total`);
-                await sleep(5000);
+                await sleep(9000);
             }
         }
     });
