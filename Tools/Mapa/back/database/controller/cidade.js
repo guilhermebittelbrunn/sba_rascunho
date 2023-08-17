@@ -154,7 +154,7 @@ const controller = {
                         AND p3.CODREP = ${cod_rep}
                         AND p3.DT_EMISSAO = MAX(p.DT_EMISSAO)
                         ORDER BY p3.DT_EMISSAO
-                    ) AS CODIGO_PRIMEIRO_CLIENTE,
+                    ) AS CODIGO_CLIENTE,
                     (
                         SELECT FIRST 1 p3.NUMERO
                         FROM PEDIDO_001 p3
@@ -164,7 +164,7 @@ const controller = {
                         AND p3.CODREP = ${cod_rep}
                         AND p3.DT_EMISSAO = MAX(p.DT_EMISSAO)
                         ORDER BY p3.DT_EMISSAO
-                    ) AS NUMERO_PRIMEIRO_PEDIDO,
+                    ) AS NUMERO_PEDIDO,
                     (
                         SELECT FIRST 1 e.NOME
                         FROM PEDIDO_001 p4
@@ -174,7 +174,7 @@ const controller = {
                         AND p4.CODREP = ${cod_rep}
                         AND p4.DT_EMISSAO = MAX(p.DT_EMISSAO)
                         ORDER BY p4.DT_EMISSAO
-                    ) AS NOME_PRIMEIRO_CLIENTE
+                    ) AS NOME_CLIENTE
                 FROM PEDIDO_001 p
                 LEFT JOIN ENTIDADE_001 e ON e.CODCLI = p.CODCLI
                 LEFT JOIN CADCEP_001 c ON c.CEP = e.CEP
@@ -194,23 +194,33 @@ const controller = {
                 acc[row.COD_EST].push(row);
                 return acc;
             }, []);
-            const stateWithMoreCitys = [];
+            const stateWithMoreCities = [];
             for (let key in states) {
                 //exibir demais estados apenas se existirem vendas em mais de duas cidades
-                if (states[key].length > 1) stateWithMoreCitys.push(key);
+                if (states[key].length > 1) stateWithMoreCities.push(key);
             }
 
-            const cidades = await Cidade.findAll({
+            const cities = await Cidade.findAll({
                 raw: true,
                 attributes: ['GEO_JSON'],
                 where: {
                     SIGLA_UF: {
-                        [Op.in]: stateWithMoreCitys,
+                        [Op.in]: stateWithMoreCities,
                     },
                 },
             });
-            console.log(cidades.length);
-            res.send(rows);
+            const features = cities.map((cidade) => {
+                let obj = JSON.parse(cidade.GEO_JSON);
+                const index = rows.findIndex((row) => row.COD_CID == obj.properties.CD_MUN);
+                if (index !== -1) {
+                    obj.properties = { ...obj.properties, ...rows[index] };
+                }
+                return obj;
+            });
+
+            // console.log(features);
+            res.send({ type: 'FeatureCollection', features: features });
+            // res.send(cities);
         })();
     },
 };

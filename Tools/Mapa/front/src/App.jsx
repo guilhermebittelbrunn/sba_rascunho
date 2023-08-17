@@ -3,6 +3,7 @@ import { AudioOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Input, Space } from 'antd';
 import { useState } from "react";
+import useFetch from "./hooks/useFetch";
 const { Search } = Input;
 
 export default function App() {
@@ -26,8 +27,8 @@ export default function App() {
             }}
           />
       </header>
-      <main>
-        <Map/>
+      <main className="m-4 p-4">
+        {url && <Map url={url}/>}
       </main>
     </>
   )
