@@ -6,7 +6,6 @@ Router.get('/', (req, res) => {
     res.send('hello world');
 });
 
-Router.get('/post', controller_cidades.post);
 Router.get('/:id', controller_cidades.getByRC);
 
 module.exports = Router;
