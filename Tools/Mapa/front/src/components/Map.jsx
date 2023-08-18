@@ -1,29 +1,31 @@
 import { useState, useEffect, useRef } from 'react';
 import {Map, View} from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import {VectorImage, Vector as vector} from 'ol/layer'
+import {Vector as vector} from 'ol/layer'
 import {OSM, Vector} from 'ol/source';
 import {GeoJSON} from 'ol/format'
 import {Style,Stroke, Text} from 'ol/style'
-import {FullScreen, defaults} from 'ol/control'
+import {FullScreen} from 'ol/control'
 import { useGeographic } from 'ol/proj';
+import TileLayer from 'ol/layer/Tile';;
+import { Spin, Checkbox  } from 'antd'
 import json from '../../geojson'
 import useFetch from '../hooks/useFetch';
-import { Space, Spin, Checkbox  } from 'antd';
+import ContextMenu from './ContextMenu';
+import { preventDefault } from 'ol/events/Event';
 
-
-export default function MapPage({url}){
+export default function MapPage({url, handleContext, handleClick}){
     useGeographic();
 
     const {data, err, loading} = useFetch(`http://localhost:3535/api/${url}`);
     const [baseLayerEnable, setBaseLayerEnable] = useState(true);
+
     const map1 = useRef(null);
+
     
     useEffect(()=>{
      
         if(!loading){
 
-            console.log(data)
             const baseLayer = new TileLayer({source: new OSM()});
 
             const stateLayer = new vector({
@@ -45,6 +47,7 @@ export default function MapPage({url}){
                         })
                     })
                 },
+                
             });
 
             const countryLayer = new vector({
@@ -60,11 +63,6 @@ export default function MapPage({url}){
                         color: "rgba(30,30,30)",
                         width: 1,
                     }),
-                    // text: (feature)=>{
-                    //     new Text({
-                    //         text: feature.getProperties().NM_MUN,
-                    //     })
-                    // }
                 })
                 },
             });
@@ -83,51 +81,60 @@ export default function MapPage({url}){
                         stateLayer
                     ],
                     target: 'map',
-                    controls: [
-                    new FullScreen({
-                            source: 'fullscreen',
-                        }),
-                    ],
-                    
-                    
+                    controls: []
+                  
             });
 
+            map.on('click', (e)=>{
+                console.log(e.pixel)
+                    map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
+                        let coordinate = e.coordinate;
+                        let featureTitle = feature.getProperties()
+                        // console.log(featureTitle)
+                })
+            })
+
+           map.addEventListener('contextmenu', (e)=>{
+                e.preventDefault();
+                console.log(e.target)
+                const x = map.getPixelFromCoordinate(map.coordinateToPixelTransform_)
+                // (2) [582.0934625518081, 162.02027570669958]
+              
+                console.log(map.getFeaturesAtPixel(x))
+
+           })
+
+    
             map1.current = map;
             baseLayer.setProperties({visible: baseLayerEnable})
-            map.on('click', (e)=>{
-            map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
-                let coordinate = e.coordinate;
-                let featureTitle = feature.getProperties()
-                console.log(coordinate, featureTitle)
-            })
-            })
+
+
 
             return () => {
                 map1.current.setTarget(null);
             };
         }
-
-  },[data, baseLayerEnable])
-
-
+          
+    },[data, baseLayerEnable])
 
   return (
     <>
-    
-    
-            <section className={`relative m-auto w-[95%] h-[90vh] flex items-center ${loading && "justify-center"}`}>
+            <section className={`relative m-auto w-[95vw] h-[90vh] flex items-center ${loading && "justify-center"}`}>
                 { loading ? <Spin size='large'/> : 
                     <>
-                         <div id="options" className='bg-blue-300 w-2/12 h-full'>  
-                            <Checkbox onClick={(e)=>{setBaseLayerEnable(e.target.checked)}} checked={baseLayerEnable}>Enable base layer</Checkbox>
+                        <div id="options" className='bg-blue-300 w-2/12 h-full'>  
+                            {/* <Checkbox onClick={(e)=>{setBaseLayerEnable(e.target.checked)}} checked={baseLayerEnable}>Enable base layer</Checkbox> */}
                         </div>
                         <div>
-                            <div id='map' className='absolute top-0 bottom-0 w-10/12'/>
+                            <div id='map' onMouseDown={handleClick} tabIndex="0" className='absolute top-0 bottom-0 w-10/12'/>
+                           
                         </div>
-                            </>
+                    </>
                 }
             </section>
-       
     </>
   )
 }
+
+
+

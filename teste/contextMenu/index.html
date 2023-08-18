@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Custom Context Menu for Openlayers</title>
+    <link rel="stylesheet" href="node_modules/ol/ol.css" />
+    <link rel="stylesheet" href="node_modules/ol-contextmenu/ol-contextmenu.css" />
+    <style>
+        html,
+        body,
+        #map {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font: 1em/1.5 BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto",
+                "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+                "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+            color: #222;
+            font-weight: 400;
+        }
+
+        #map {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map" class="map"></div>
+    <script type="module" src="src/index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "openlayers-custom-context-menu",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "ol": "7.3.0",
+    "ol-contextmenu": "5.2.0"
+  }
+}
