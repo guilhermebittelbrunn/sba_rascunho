@@ -7,7 +7,7 @@ import {Style,Stroke, Text} from 'ol/style'
 import {FullScreen} from 'ol/control'
 import { useGeographic } from 'ol/proj';
 import TileLayer from 'ol/layer/Tile';;
-import { Button, Select, theme, Slider, Switch, InputNumber, Spin, Checkbox  } from 'antd';
+import { Button, Select, theme, Slider, Switch, InputNumber, Spin, Checkbox, message  } from 'antd';
 import {SettingOutlined} from '@ant-design/icons';
 import useFetch from '../hooks/useFetch';
 import ContextMenu from './ContextMenu';
@@ -18,16 +18,18 @@ import Drawer from './Drawer';
 
 
 
-export default function MapPage({url, handleContext, handleClick, setGeometry, contextMenu, geometry}){
+export default function MapPage({url, handleChangeCenterValue,handleContext, handleClick, setGeometry, contextMenu, geometry, viewSettingsValues}){
     useGeographic();
 
     const [open, setOpen] = useState(false);
     const {data, err, loading} = useFetch(`http://localhost:3535/api/${url}`);
+    const [citiesCoordinates, setCitiesCoordinates] = useState({});
     const [isFullScreen ,setIsFullscreen] = useState(false)
     const [baseLayerEnable, setBaseLayerEnable] = useState(true);
     const [selectedOption, setSelectedOption] = useState('')
     const [fontSize, setFontSize] = useState(10)
-
+    const [searchCityValue, setSearchCityValue] = useState('')
+    const [subTitle, setSubTitle] = useState('');
 
     const map1 = useRef(null);
 
@@ -36,7 +38,7 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
             return 'rgba(221,221,223,0.7)'
         }
         const tailwindColors = {
-            0: 'rgba(221,221,223,0.7)',
+            0: 'rgba(221,221,223,0.8)',
             1: 'rgb(240,253,244)',
             2: 'rgb(187,247,208)',
             3: 'rgb(74,222,128)',
@@ -63,9 +65,22 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
     } 
 
 
+    function subtitleCategory(label, option){
+        let res;
+        switch(option){
+            case 'ULTIMA_VENDA':
+                res = moment(label).format('DD/MM/YYYY');
+                break
+            default: 
+                res = label
+        }
+        return res
+    }
+
+
+
     useEffect(()=>{
         
-     
         if(!loading){
 
             const baseLayer = new TileLayer({source: new OSM()});
@@ -84,7 +99,10 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
                             width: 1,
                         }),
                         text: new Text({
-                            text: feature.getProperties().NM_MUN,
+                            text: subTitle === '' ? feature.getProperties().NM_MUN : 
+                            (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
+                            feature.getProperties().NM_MUN),
+                            // subTitle
                             // text: JSON.stringify(feature.getProperties().QUANTIDADE_VENDAS),
                             scale: fontSize / 10
                         }),
@@ -112,16 +130,19 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
                 },
             });
 
-            const fullscreen = new FullScreen({source: 'fullscreen'})
-        
-            const map = new Map({
-                    view: new View({
+            const ViewMap = new View({
                         extent: [-75, -35, -32, 6],
-                        center: [-50, -16],
-                        zoom: 4,
+                        center: data.features[0].geometry.coordinates[0][0],
+                        zoom: viewSettingsValues.zoom,
                         maxZoom: 12,
-                        minZoom: 6
-                    }),
+                        minZoom: 4
+            })
+   
+            if(viewSettingsValues.type === 'changed')  ViewMap.setCenterInternal(viewSettingsValues.center);
+      
+            const fullscreen = new FullScreen({source: 'fullscreen'})
+            const map = new Map({
+                    view: ViewMap,
                     layers: [
                         baseLayer,
                         countryLayer,
@@ -162,19 +183,45 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
                 setIsFullscreen(false)
             })
 
+            if(searchCityValue !== ''){
+                const rawValue = searchCityValue.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
+                const index = citiesCoordinates[rawValue];
+                if(!index && !loading) message.error('Cidade não encontrada na região do representante');
+                else if(index){
+                    map.getView().setCenter(index[0])
+                    map.getView().setZoom(10)
+                }
+            }
             map1.current = map;
+        
+            ViewMap.on('change:center', (e)=>{handleChangeCenterValue(e.oldValue, e.target.values_.zoom, 'changed')})
             baseLayer.setProperties({visible: baseLayerEnable})
 
-            return () => {
+            return () => {  
                 map1.current.setTarget(null);
             };
         }
           
-    },[data, baseLayerEnable, selectedOption, fontSize])
+    },[data, baseLayerEnable, selectedOption, fontSize, searchCityValue, subTitle])
 
 
     useEffect(()=>{
-        setSelectedOption('')
+        setSelectedOption('');
+        setSearchCityValue('');
+        setSubTitle('');
+        if(!loading){
+            const cities = data['features'].reduce((acc,city)=>{
+                const rawCityName = city.properties.NM_MUN.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
+                // console.log(rawCityName.normalize('NFD').replace(/[\u0300-\u036f]/g, ""));
+                if(!acc[rawCityName]){
+                    acc[rawCityName] = [];
+                }
+                acc[rawCityName].push(city.geometry.coordinates[0][0]);
+                return acc
+            }, {})
+            setCitiesCoordinates(cities);
+        }
+    
     },[data])
 
   return (
@@ -184,16 +231,16 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
                     <div id="fullscreen" className={`fullscreen relative m-auto flex items-center w-[100%] h-[90vh] max-lg:flex-col`}>
       
                         <div className={`w-full relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
-                            <div type="primary" id="settings" onClick={()=>{setOpen(true);}} style={{transform: 'translateY(300%)'}} 
-                                className={`hover:cursor-pointer hover:bg-slate-400 transition-opacity rounded-r-lg 
+                            <div type="primary" id="settings" onClick={()=>{setOpen(true);}} style={{transform: 'translateY(300%)', transition: 'all .4s'}} 
+                                className={`hover:cursor-pointer hover:bg-slate-400  rounded-r-lg 
                                 hover:w-12 absolute left-50 top-50 h-28 p-2 flex justify-center items-center w-8 bg-slate-300 z-20 opacity-80
                                 `}>
                                 <SettingOutlined className='text-gray-900 text-lg font-black'/>
                             </div>
-                            <div id='map' onMouseDown={handleClick} className='absolute top-0 bottom-0 w-full h-full' onContextMenu={(e)=>{handleContext(e)}}/> 
+                            <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full' onContextMenu={(e)=>{handleContext(e)}}/> 
                         </div>
                        {isFullScreen && <ContextMenu contextMenu={contextMenu} geometry={geometry}/>}
-                        <Drawer open={open}  setOpen={setOpen} selectedOption={selectedOption} setSelectedOption={setSelectedOption} baseLayerEnable={baseLayerEnable} setFontSize={setFontSize} fontSize={fontSize} setBaseLayerEnable={setBaseLayerEnable}/>
+                        <Drawer open={open} setSubTitle={setSubTitle} setSearchCityValue={setSearchCityValue} setOpen={setOpen} selectedOption={selectedOption} setSelectedOption={setSelectedOption} baseLayerEnable={baseLayerEnable} setFontSize={setFontSize} fontSize={fontSize} setBaseLayerEnable={setBaseLayerEnable}/>
                     </div>
                    
            

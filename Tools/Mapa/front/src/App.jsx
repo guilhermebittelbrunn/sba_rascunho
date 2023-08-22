@@ -1,9 +1,10 @@
 import Map from "./components/Map"
 import { AudioOutlined } from '@ant-design/icons';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Input, Space, AutoComplete } from 'antd';
 import { useState } from "react";
 import useFetch from "./hooks/useFetch";
+import { useGeographic } from 'ol/proj';
 import ContextMenu from "./components/ContextMenu";
 import InputDate from './components/InputDate';
 import moment from "moment";
@@ -38,10 +39,16 @@ const searchResult = (query) =>
 
 
 export default function App() {
+
+  useGeographic();
+
+
   const [url, setUrl] = useState('');
   const [contextMenu, setContextMenu] = useState({status: false, layerX: 0, layerY: 0})
   const [geometry, setGeometry] = useState({});  
+  const [viewSettingsValues, setViewSettingsValues] = useState({center: [-56,-14], zoom: 6, type: 'start'})
   const [options, setOptions] = useState([]);
+  
   const handleSearch = (value) => {
     setOptions(value ? searchResult(value) : []);
   };
@@ -53,6 +60,13 @@ export default function App() {
 
   }
   
+  function handleChangeCenterValue(currentCenter, zoomLevel, type){
+    setViewSettingsValues(preventValue=>{
+      return {center: currentCenter, zoom: zoomLevel, type}
+    })
+  }
+
+
   function onSearch(value){
     setUrl(value);
   }
@@ -70,6 +84,12 @@ export default function App() {
         return {...preventValue,status: false}
     })
   }
+
+  useEffect(()=>{
+    setViewSettingsValues(preventValue=>{
+          return {center: [-56,-14], zoom: 6, type: 'start'}
+    })
+  }, [url])
 
   return(
     <div>
@@ -101,7 +121,7 @@ export default function App() {
         </form>
       </header>
       <main className="m-auto p-4" style={{width: '95%'}}>
-        {url && <Map url={url} handleContext={handleContext} handleClick={handleClick} setGeometry={setGeometry} geometry={geometry} contextMenu={contextMenu}/>}
+          {url && <Map url={url} handleContext={handleContext} handleClick={handleClick} setGeometry={setGeometry} geometry={geometry} contextMenu={contextMenu} viewSettingsValues={viewSettingsValues} handleChangeCenterValue={handleChangeCenterValue}/>}
          <ContextMenu geometry={geometry} contextMenu={contextMenu}/>
       </main>
     </div>
