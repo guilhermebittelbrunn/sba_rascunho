@@ -49,7 +49,9 @@ export default function App() {
     console.log('onSelect', value);
   };
 
+  function handleSubmit(){
 
+  }
   
   function onSearch(value){
     setUrl(value);
@@ -72,7 +74,7 @@ export default function App() {
   return(
     <div>
       <header>
-        <form className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
+        <form onSubmit={(e)=>{e.preventDefault()}} className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
           {/* <AutoComplete
             popupMatchSelectWidth={252}
             style={{

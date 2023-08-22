@@ -51,6 +51,7 @@ export default function InputDate({initialDate}){
                 style={{ visibility: "hidden", width: 0, marginRight: '-18px'}}
                 onOpenChange={(open) => {setOpen(open)}}
                 onChange={handleClickDataPicker}
+                defaultValue={initialDate}
             />
             <button className='py-[3px] px-2 outline-blue-700 text-blue-600 border-[1px] border-blue-600' onClick={() =>{setOpen(!open)}}><CalendarOutlined/></button>
         </div>

@@ -1,5 +1,6 @@
-import { Button, Select, theme, Slider, Switch, InputNumber, Checkbox } from 'antd';
+import { Button, Select, theme, Slider, Switch, InputNumber, Checkbox, Drawer as DrawerAntd } from 'antd';
 import { useState, useEffect } from 'react';
+
 
 const optionsSelect = [
         {
@@ -21,7 +22,7 @@ const optionsSelect = [
       ]
 
 
-export default function Drawer({open, setSelectedOption, selectedOption, baseLayerEnable, setBaseLayerEnable, setFontSize, fontSize}){
+export default function Drawer({open, setOpen,setSelectedOption, selectedOption, baseLayerEnable, setBaseLayerEnable, setFontSize, fontSize}){
     
     
 
@@ -30,7 +31,7 @@ export default function Drawer({open, setSelectedOption, selectedOption, baseLay
     return(
         
         <>
-            <Drawer
+            <DrawerAntd
                             title="Opções"
                             placement="left"
                             closable={true}
@@ -64,7 +65,7 @@ export default function Drawer({open, setSelectedOption, selectedOption, baseLay
 
                             </div>
 
-            </Drawer>   
+            </DrawerAntd>   
         </>
     )    
 }

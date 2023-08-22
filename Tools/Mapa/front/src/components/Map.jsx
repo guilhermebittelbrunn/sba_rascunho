@@ -86,8 +86,8 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
                         text: new Text({
                             text: feature.getProperties().NM_MUN,
                             // text: JSON.stringify(feature.getProperties().QUANTIDADE_VENDAS),
-                            font: `${fontSize}px sans-serif bold`
-                        })
+                            scale: fontSize / 10
+                        }),
                     })
                 },
                 className: 'stateLayer',
@@ -193,7 +193,7 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
                             <div id='map' onMouseDown={handleClick} className='absolute top-0 bottom-0 w-full h-full' onContextMenu={(e)=>{handleContext(e)}}/> 
                         </div>
                        {isFullScreen && <ContextMenu contextMenu={contextMenu} geometry={geometry}/>}
-                        <Drawer open={open} selectedOption={selectedOption} setSelectedOption={setSelectedOption} baseLayerEnable={baseLayerEnable} setFontSize={setFontSize} fontSize={fontSize} setBaseLayerEnable={setBaseLayerEnable}/>
+                        <Drawer open={open}  setOpen={setOpen} selectedOption={selectedOption} setSelectedOption={setSelectedOption} baseLayerEnable={baseLayerEnable} setFontSize={setFontSize} fontSize={fontSize} setBaseLayerEnable={setBaseLayerEnable}/>
                     </div>
                    
            
