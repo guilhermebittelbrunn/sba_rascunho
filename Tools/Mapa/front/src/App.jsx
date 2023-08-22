@@ -5,6 +5,8 @@ import { Input, Space, AutoComplete } from 'antd';
 import { useState } from "react";
 import useFetch from "./hooks/useFetch";
 import ContextMenu from "./components/ContextMenu";
+import InputDate from './components/InputDate';
+import moment from "moment";
 const { Search } = Input;
 
 
@@ -70,16 +72,7 @@ export default function App() {
   return(
     <div>
       <header>
-        <Search
-            placeholder="Código representante"
-            maxLength={4}
-            minLength={4}
-            allowClear
-            onSearch={onSearch}
-            style={{
-              width: 240,
-            }}
-          />
+        <form className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
           {/* <AutoComplete
             popupMatchSelectWidth={252}
             style={{
@@ -91,6 +84,19 @@ export default function App() {
           >
             <Input.Search size="large" placeholder="input here" enterButton />
           </AutoComplete> */}
+          <div className="flex flex-col"> 
+            <label className="font-semibold" htmlFor="date_init">Data inicial</label>
+            <InputDate name='date_init' initialDate={moment().add(-1, 'y').format('DD/MM/YYYY')}/>
+          </div>
+          <div className="flex flex-col"> 
+            <label className="font-semibold" htmlFor="date_end">Data final</label>
+            <InputDate name="date_end" initialDate={moment().format('DD/MM/YYYY')}/>
+          </div>
+          <div className="flex flex-col"> 
+            <label className="font-semibold" htmlFor="rc">Representante</label>
+            <Search name="rc" placeholder="Código representante" maxLength={4} minLength={4} allowClear={false} onSearch={onSearch} className="w-[240px] outline-none max-md:w-[440px]"/>
+          </div>
+        </form>
       </header>
       <main className="m-auto p-4" style={{width: '95%'}}>
         {url && <Map url={url} handleContext={handleContext} handleClick={handleClick} setGeometry={setGeometry} geometry={geometry} contextMenu={contextMenu}/>}

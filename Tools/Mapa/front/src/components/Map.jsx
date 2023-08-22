@@ -7,54 +7,30 @@ import {Style,Stroke, Text} from 'ol/style'
 import {FullScreen} from 'ol/control'
 import { useGeographic } from 'ol/proj';
 import TileLayer from 'ol/layer/Tile';;
-import { Spin, Checkbox  } from 'antd'
-import json from '../../geojson'
-import useFetch from '../hooks/useFetch';
-import { Button, Drawer, Select } from 'antd';
-import ContextMenu from './ContextMenu';
-import { Layout, theme } from 'antd';
+import { Button, Select, theme, Slider, Switch, InputNumber, Spin, Checkbox  } from 'antd';
 import {SettingOutlined} from '@ant-design/icons';
+import useFetch from '../hooks/useFetch';
+import ContextMenu from './ContextMenu';
+import json from '../../geojson'
+import moment from 'moment/moment';
+import Drawer from './Drawer';
 
 
-const optionsSelect = [
-        {
-          value: '',
-          label: 'Sem categoria',
-        },
-        {
-          value: 'ULTIMA_VENDA',
-          label: 'Por data',
-        },
-        {
-          value: 'QUANTIDADE_VENDAS',
-          label: 'N° vendas',
-        },
-        {
-          value: 'QUANTIDADE_CLIENTES_CIDADE',
-          label: 'N° clientes',
-        },
-      ]
+
 
 export default function MapPage({url, handleContext, handleClick, setGeometry, contextMenu, geometry}){
     useGeographic();
-    const { token } = theme.useToken();
-
-    const handleChange = (value) => {
-       setSelectedOption(value)
-       console.log(selectedOption)
-    };
 
     const [open, setOpen] = useState(false);
     const {data, err, loading} = useFetch(`http://localhost:3535/api/${url}`);
-    const [baseLayerEnable, setBaseLayerEnable] = useState(true);
     const [isFullScreen ,setIsFullscreen] = useState(false)
+    const [baseLayerEnable, setBaseLayerEnable] = useState(true);
     const [selectedOption, setSelectedOption] = useState('')
+    const [fontSize, setFontSize] = useState(10)
+
 
     const map1 = useRef(null);
 
-    
-
-    
     function colorCategory(label, option){
         if(!label[option]){
             return 'rgba(221,221,223,0.7)'
@@ -70,11 +46,15 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
         let x;
         switch (option){
             case 'QUANTIDADE_VENDAS':
-                x = Math.floor(label[option] / 2)
-                x = tailwindColors[x]
+                x = label[option] / 2
+                x = x > 5 ? 5 : x
+                x = x > 0 && x < 1 ? 1 : x
+                x = tailwindColors[Math.floor(x)]
             case 'QUANTIDADE_CLIENTES_CIDADE':
-                x = Math.floor(label[option] / 1.5)
-                x = tailwindColors[x]
+                x = label[option] / 1.5
+                x = x > 5 ? 5 : x
+                x = (x > 0 && x < 1) ? 1 : x
+                x = tailwindColors[Math.floor(x)]
             case 'ULTIMA_VENDA':
                 return x
         }
@@ -104,8 +84,9 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
                             width: 1,
                         }),
                         text: new Text({
-                            text: JSON.stringify(feature.getProperties().QUANTIDADE_VENDAS),
-                            font: 'sans-serif bold'
+                            text: feature.getProperties().NM_MUN,
+                            // text: JSON.stringify(feature.getProperties().QUANTIDADE_VENDAS),
+                            font: `${fontSize}px sans-serif bold`
                         })
                     })
                 },
@@ -189,12 +170,12 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
             };
         }
           
-    },[data, baseLayerEnable, selectedOption])
+    },[data, baseLayerEnable, selectedOption, fontSize])
 
 
     useEffect(()=>{
-        console.log(isFullScreen)
-    },[isFullScreen])
+        setSelectedOption('')
+    },[data])
 
   return (
    
@@ -212,24 +193,7 @@ export default function MapPage({url, handleContext, handleClick, setGeometry, c
                             <div id='map' onMouseDown={handleClick} className='absolute top-0 bottom-0 w-full h-full' onContextMenu={(e)=>{handleContext(e)}}/> 
                         </div>
                        {isFullScreen && <ContextMenu contextMenu={contextMenu} geometry={geometry}/>}
-                        <Drawer
-                            title="Opções"
-                            placement="left"
-                            closable={true}
-                            onClose={()=>{setOpen(false);}}
-                            open={open}
-                            getContainer={false}
-                
-                        >
-                            <div className='w-full flex flex-col gap-4 justify-center'>
-                                    <Checkbox  onClick={(e)=>{setBaseLayerEnable(e.target.checked)}} checked={baseLayerEnable}>Enable base layer</Checkbox>
-                                    <div className='flex flex-col'>
-                                        <label className='font-bold text-base' htmlFor='category'>Layer category</label>
-                                        <Select defaultActiveFirstOption={true} name='category' options={optionsSelect} defaultValue="Sem categoria" className='w-[160px]' onChange={handleChange}/>
-                                    </div>
-                            </div>
-
-                        </Drawer>       
+                        <Drawer open={open} selectedOption={selectedOption} setSelectedOption={setSelectedOption} baseLayerEnable={baseLayerEnable} setFontSize={setFontSize} fontSize={fontSize} setBaseLayerEnable={setBaseLayerEnable}/>
                     </div>
                    
            
