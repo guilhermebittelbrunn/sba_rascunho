@@ -61,6 +61,7 @@ export default function App() {
   }
   
   function handleChangeCenterValue(currentCenter, zoomLevel, type){
+    // console.log('changed', currentCenter, zoomLevel)
     setViewSettingsValues(preventValue=>{
       return {center: currentCenter, zoom: zoomLevel, type}
     })
@@ -107,16 +108,16 @@ export default function App() {
             <Input.Search size="large" placeholder="input here" enterButton />
           </AutoComplete> */}
           <div className="flex flex-col"> 
-            <label className="font-semibold" htmlFor="date_init">Data inicial</label>
-            <InputDate name='date_init' initialDate={moment().add(-1, 'y').format('DD/MM/YYYY')}/>
+            <h3 className="text-sm font-semibold">Data inicial</h3>
+            <InputDate initialDate={moment().add(-1, 'y').format('DD/MM/YYYY')}/>
           </div>
           <div className="flex flex-col"> 
-            <label className="font-semibold" htmlFor="date_end">Data final</label>
-            <InputDate name="date_end" initialDate={moment().format('DD/MM/YYYY')}/>
+            <h3 className="text-sm font-semibold">Data final</h3>
+            <InputDate initialDate={moment().format('DD/MM/YYYY')}/>
           </div>
           <div className="flex flex-col"> 
-            <label className="font-semibold" htmlFor="rc">Representante</label>
-            <Search name="rc" placeholder="Código representante" maxLength={4} minLength={4} allowClear={false} onSearch={onSearch} className="w-[240px] outline-none max-md:w-[440px]"/>
+            <h3 className="text-sm font-semibold">Representante</h3>
+            <Search size="middle" placeholder="Código representante" maxLength={4} minLength={4} allowClear={false} onSearch={onSearch} className="w-[240px] outline-none max-md:w-[440px]"/>
           </div>
         </form>
       </header>

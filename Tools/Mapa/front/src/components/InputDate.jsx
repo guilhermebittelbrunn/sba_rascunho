@@ -44,8 +44,8 @@ export default function InputDate({initialDate}){
     }
   
     return(
-        <div>  
-            <Input className="w-48 rounded-none max-md:w-[400px]" onChange={handleInputChange} value={date} onKeyDown={pressKeyTonInput} onBlur={handleBlurInput}/>
+        <div className="flex gap-1">  
+            <Input size="middle" className="w-48 rounded-none max-md:w-[400px]" onChange={handleInputChange} value={date} onKeyDown={pressKeyTonInput} onBlur={handleBlurInput}/>
             {/* <DatePicker
                 open={open}
                 style={{ visibility: "hidden", width: 0, marginRight: '-18px'}}
@@ -53,7 +53,7 @@ export default function InputDate({initialDate}){
                 onChange={handleClickDataPicker}
                 defaultValue={initialDate}
             /> */}
-            <button className='py-[3px] px-2 outline-blue-700 text-blue-600 border-[1px] border-blue-600' onClick={() =>{setOpen(!open)}}><CalendarOutlined/></button>
+            <button className='py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600' onClick={() =>{setOpen(!open)}}><CalendarOutlined/></button>
         </div>
 
 

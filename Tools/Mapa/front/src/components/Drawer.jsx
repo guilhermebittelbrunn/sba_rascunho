@@ -75,7 +75,7 @@ const optionsSubtitle = [
     }
 ]
 
-export default function Drawer({open, setOpen,setSelectedOption, selectedOption, baseLayerEnable, setBaseLayerEnable, setFontSize, fontSize, setSearchCityValue, setSubTitle}){
+export default function Drawer({open, setOpen,setSelectedOption, selectedOption, baseLayerEnable, setBaseLayerEnable, setFontSize, fontSize, setSearchCityValue, setSubTitle, setCountryLayerEnable, countryLayerEnable}){
 
 
     const [inputValue, setInputValue] = useState(fontSize);
@@ -142,6 +142,9 @@ export default function Drawer({open, setOpen,setSelectedOption, selectedOption,
                                     
                                     <div>
                                       <Checkbox  onClick={(e)=>{setBaseLayerEnable(e.target.checked)}} checked={baseLayerEnable}>Enable base layer</Checkbox>
+                                    </div>
+                                    <div>
+                                      <Checkbox  onClick={(e)=>{setCountryLayerEnable(e.target.checked)}} checked={countryLayerEnable}>Enable country layer</Checkbox>
                                     </div>
 
                             </div>

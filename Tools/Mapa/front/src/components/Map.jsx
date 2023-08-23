@@ -3,37 +3,22 @@ import {Map, View} from 'ol';
 import {Vector as vector} from 'ol/layer'
 import {OSM, Vector} from 'ol/source';
 import {GeoJSON} from 'ol/format'
-import {Style,Stroke, Text} from 'ol/style'
+import {Style,Stroke, Text, Fill} from 'ol/style'
 import {FullScreen} from 'ol/control'
 import { useGeographic } from 'ol/proj';
 import TileLayer from 'ol/layer/Tile';;
-import { Button, Select, theme, Slider, Switch, InputNumber, Spin, Checkbox, message  } from 'antd';
+import { Button, theme, Slider, Switch, InputNumber, Spin, Checkbox, message  } from 'antd';
 import {SettingOutlined} from '@ant-design/icons';
 import useFetch from '../hooks/useFetch';
 import ContextMenu from './ContextMenu';
 import json from '../../geojson'
 import moment from 'moment/moment';
 import Drawer from './Drawer';
-
-
-
-
-export default function MapPage({url, handleChangeCenterValue,handleContext, handleClick, setGeometry, contextMenu, geometry, viewSettingsValues}){
-    useGeographic();
+import Select from 'ol/interaction/Select.js';
+import {altKeyOnly, click, pointerMove} from 'ol/events/condition.js';
 
     const [open, setOpen] = useState(false);
-    const {data, err, loading} = useFetch(`http://localhost:3535/api/${url}`);
-    const [citiesCoordinates, setCitiesCoordinates] = useState({});
-    const [isFullScreen ,setIsFullscreen] = useState(false)
-    const [baseLayerEnable, setBaseLayerEnable] = useState(true);
-    const [selectedOption, setSelectedOption] = useState('')
-    const [fontSize, setFontSize] = useState(10)
-    const [searchCityValue, setSearchCityValue] = useState('')
-    const [subTitle, setSubTitle] = useState('');
-
-    const map1 = useRef(null);
-
-    function colorCategory(label, option){
+function colorCategory(label, option){
         if(!label[option]){
             return 'rgba(221,221,223,0.7)'
         }
@@ -71,6 +56,9 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
             case 'ULTIMA_VENDA':
                 res = moment(label).format('DD/MM/YYYY');
                 break
+            case 'AREA_KM2':
+                res = label + " km²";
+                break
             default: 
                 res = label
         }
@@ -78,6 +66,23 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
     }
 
 
+export default function MapPage({url, handleChangeCenterValue,handleContext, handleClick, setGeometry, contextMenu, geometry, viewSettingsValues}){
+    useGeographic();
+
+    const [open, setOpen] = useState(false);
+    const {data, err, loading} = useFetch(`http://localhost:3535/api/${url}`);
+    const [citiesCoordinates, setCitiesCoordinates] = useState({});
+    const [isFullScreen ,setIsFullscreen] = useState(false)
+    const [baseLayerEnable, setBaseLayerEnable] = useState(true);
+    const [countryLayerEnable, setCountryLayerEnable] = useState(true);
+    const [selectedOption, setSelectedOption] = useState('')
+    const [fontSize, setFontSize] = useState(10)
+    const [searchCityValue, setSearchCityValue] = useState('')
+    const [subTitle, setSubTitle] = useState('');
+
+    const map1 = useRef(null);
+
+    
 
     useEffect(()=>{
         
@@ -90,6 +95,7 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
                     features: new GeoJSON().readFeatures(data),
                 }),
                 style: (feature,res)=>{
+
                     return new Style({
                         fill: new Stroke({
                             color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
@@ -109,7 +115,7 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
                     })
                 },
                 className: 'stateLayer',
-              
+                properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
                 
             });
 
@@ -190,19 +196,72 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
                 else if(index){
                     map.getView().setCenter(index[0])
                     map.getView().setZoom(10)
+                    // setSearchCityValue('');
                 }
             }
             map1.current = map;
         
             ViewMap.on('change:center', (e)=>{handleChangeCenterValue(e.oldValue, e.target.values_.zoom, 'changed')})
+
+            // map.on('click', (e)=>{
+                
+            //     map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
+            //         // const newStyle = {style: (feature,res)=>{
+            //         //     return new Style({
+                        
+            //         //         stroke: new Stroke({
+            //         //             color: "rgba(30,30,30)",
+            //         //             width: 1,
+            //         //         }),
+            //         //     })
+            //         //     },}
+
+
+            //         console.log(layer.getProperties().style)                    
+                               
+            //         feature.setStyle(layer.getProperties().style)
+                    
+            //     })
+            // })
+
+            const select = new Select({
+                condition: pointerMove,
+                style: selectStyle,
+                
+            })
+
+            const selected = new Style({
+                fill: new Fill({
+                    color: '#eeeeee',
+                }),
+                stroke: new Stroke({
+                    color: 'rgb(30, 30, 30)',
+                    width: 3,
+                }),
+            });
+
+            function selectStyle(feature) {
+                const color = (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption));
+                selected.setText(new Text({text: feature.getProperties().NM_MUN, scale: fontSize / 9}))
+                selected.getFill().setColor(color);
+                return selected
+            }
+
+            if (select === null) {
+                map.addInteraction(select);
+            }
+
+            
+
             baseLayer.setProperties({visible: baseLayerEnable})
+            countryLayer.setProperties({visible: countryLayerEnable})
 
             return () => {  
                 map1.current.setTarget(null);
             };
         }
           
-    },[data, baseLayerEnable, selectedOption, fontSize, searchCityValue, subTitle])
+    },[data, baseLayerEnable, selectedOption, fontSize, searchCityValue, subTitle, countryLayerEnable])
 
 
     useEffect(()=>{
@@ -240,7 +299,11 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
                             <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full' onContextMenu={(e)=>{handleContext(e)}}/> 
                         </div>
                        {isFullScreen && <ContextMenu contextMenu={contextMenu} geometry={geometry}/>}
-                        <Drawer open={open} setSubTitle={setSubTitle} setSearchCityValue={setSearchCityValue} setOpen={setOpen} selectedOption={selectedOption} setSelectedOption={setSelectedOption} baseLayerEnable={baseLayerEnable} setFontSize={setFontSize} fontSize={fontSize} setBaseLayerEnable={setBaseLayerEnable}/>
+                        <Drawer 
+                            open={open} setSubTitle={setSubTitle} setSearchCityValue={setSearchCityValue} setOpen={setOpen} selectedOption={selectedOption} 
+                            setSelectedOption={setSelectedOption} baseLayerEnable={baseLayerEnable} setFontSize={setFontSize} fontSize={fontSize} countryLayerEnable={countryLayerEnable} 
+                            setCountryLayerEnable={setCountryLayerEnable} setBaseLayerEnable={setBaseLayerEnable}
+                        />
                     </div>
                    
            
@@ -249,6 +312,5 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
   
   )
 }
-
 
 
