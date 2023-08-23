@@ -108,12 +108,7 @@ export default function Drawer({open, setOpen,setSelectedOption, selectedOption,
 
                                     <div className='flex flex-col'>
                                         <label className='font-bold text-sm' htmlFor='category'>Category layer</label>
-                                        {/* <select name="" id="" className='border-[1px] w-44 rounded-lg border-gray-300 px-2 py-1 outline-none'>
-                                          <option value="''" className='hover:bg-gray-300'>Sem categoria</option>
-                                          <option value="ULTIMA_VENDA">Por data</option>
-                                          <option value="QUANTIDADE_VENDAS">N° vendas</option>
-                                          <option value="QUANTIDADE_CLIENTES_CIDADE">N° de clientes</option>
-                                        </select> */}
+
                                         <Select dropdownStyle={{ zIndex: 2000 }} defaultActiveFirstOption={true} name='category' options={optionsSelect} defaultValue="Sem categoria" className='w-[250px]' onChange={(value)=>{setSelectedOption(value)}}/>
                                     </div>
 

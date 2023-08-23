@@ -4,11 +4,11 @@ import {Vector as vector} from 'ol/layer'
 import {OSM, Vector} from 'ol/source';
 import {GeoJSON} from 'ol/format'
 import {Style,Stroke, Text, Fill} from 'ol/style'
-import {FullScreen} from 'ol/control'
+import {FullScreen, Zoom} from 'ol/control'
 import { useGeographic } from 'ol/proj';
 import TileLayer from 'ol/layer/Tile';;
 import { Button, theme, Slider, Switch, InputNumber, Spin, Checkbox, message  } from 'antd';
-import {SettingOutlined} from '@ant-design/icons';
+import {SettingOutlined,SelectOutlined} from '@ant-design/icons';
 import useFetch from '../hooks/useFetch';
 import ContextMenu from './ContextMenu';
 import json from '../../geojson'
@@ -17,7 +17,9 @@ import Drawer from './Drawer';
 import Select from 'ol/interaction/Select.js';
 import {altKeyOnly, click, pointerMove} from 'ol/events/condition.js';
 
-    const [open, setOpen] = useState(false);
+
+
+    // const [open, setOpen] = useState(false);
 function colorCategory(label, option){
         if(!label[option]){
             return 'rgba(221,221,223,0.7)'
@@ -79,6 +81,7 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
     const [fontSize, setFontSize] = useState(10)
     const [searchCityValue, setSearchCityValue] = useState('')
     const [subTitle, setSubTitle] = useState('');
+    const [interaction, setInteraction] = useState(false);
 
     const map1 = useRef(null);
 
@@ -86,6 +89,7 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
 
     useEffect(()=>{
         
+        if(err)return message.error(err);
         if(!loading){
 
             const baseLayer = new TileLayer({source: new OSM()});
@@ -146,7 +150,12 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
    
             if(viewSettingsValues.type === 'changed')  ViewMap.setCenterInternal(viewSettingsValues.center);
       
-            const fullscreen = new FullScreen({source: 'fullscreen'})
+        
+            const fullscreen = new FullScreen({source: 'fullscreen', className:'btn_control'});
+             
+            fullscreen.on('enterfullscreen', ()=> setIsFullscreen(true));
+            fullscreen.on('leavefullscreen', ()=> setIsFullscreen(false));
+
             const map = new Map({
                     view: ViewMap,
                     layers: [
@@ -159,37 +168,22 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
                   
             });
 
-            // map.on('click', (e)=>{
-            //     console.log('left click',e);
-            //         map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
-            //             let coordinate = e.coordinate;
-            //             let featureTitle = feature.getProperties()
-            //             // console.log(featureTitle)
-            //     })
-            // })
-
            map.addEventListener('contextmenu', (e)=>{
                 const pixels = e.pixel
-                
-                // console.log('right click', e)
+
                 map.forEachFeatureAtPixel(pixels, (feature, layer)=>{
                     const properties = feature.getProperties();
                     const layerName = layer.getClassName()
                     layerName === 'stateLayer' && setGeometry(properties)
-
                 })
-              
             })
-    
+            
+            const btnInteraction = document.getElementById('btn_interaction');
+            btnInteraction.addEventListener('click', ()=>{setInteraction(!interaction)});
 
-            fullscreen.on('enterfullscreen', ()=>{
-                setIsFullscreen(true)
-            })
-            fullscreen.on('leavefullscreen', ()=>{
-                setIsFullscreen(false)
-            })
+           
 
-            if(searchCityValue !== ''){
+            if(searchCityValue){
                 const rawValue = searchCityValue.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
                 const index = citiesCoordinates[rawValue];
                 if(!index && !loading) message.error('Cidade não encontrada na região do representante');
@@ -201,28 +195,8 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
             }
             map1.current = map;
         
-            ViewMap.on('change:center', (e)=>{handleChangeCenterValue(e.oldValue, e.target.values_.zoom, 'changed')})
+           
 
-            // map.on('click', (e)=>{
-                
-            //     map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
-            //         // const newStyle = {style: (feature,res)=>{
-            //         //     return new Style({
-                        
-            //         //         stroke: new Stroke({
-            //         //             color: "rgba(30,30,30)",
-            //         //             width: 1,
-            //         //         }),
-            //         //     })
-            //         //     },}
-
-
-            //         console.log(layer.getProperties().style)                    
-                               
-            //         feature.setStyle(layer.getProperties().style)
-                    
-            //     })
-            // })
 
             const select = new Select({
                 condition: pointerMove,
@@ -241,27 +215,26 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
             });
 
             function selectStyle(feature) {
+                feature.getProperties().NUMERO_PEDIDO
                 const color = (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption));
                 selected.setText(new Text({text: feature.getProperties().NM_MUN, scale: fontSize / 9}))
                 selected.getFill().setColor(color);
                 return selected
             }
 
-            if (select === null) {
-                map.addInteraction(select);
-            }
-
-            
-
-            baseLayer.setProperties({visible: baseLayerEnable})
-            countryLayer.setProperties({visible: countryLayerEnable})
+           
+           
+            ViewMap.on('change:center', (e)=>{handleChangeCenterValue(e.oldValue, e.target.values_.zoom, 'changed')})
+            if(interaction) map.addInteraction(select);
+            baseLayer.setProperties({visible: baseLayerEnable});
+            countryLayer.setProperties({visible: countryLayerEnable});
 
             return () => {  
                 map1.current.setTarget(null);
             };
         }
           
-    },[data, baseLayerEnable, selectedOption, fontSize, searchCityValue, subTitle, countryLayerEnable])
+    },[data, baseLayerEnable, selectedOption, fontSize, searchCityValue, subTitle, countryLayerEnable, interaction])
 
 
     useEffect(()=>{
@@ -296,6 +269,9 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
                                 `}>
                                 <SettingOutlined className='text-gray-900 text-lg font-black'/>
                             </div>
+                            <button id='btn_interaction' className='absolute left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50'style={{transform: 'translate(10%, 120%)', transition: 'all .4s'}}>
+                                <SelectOutlined />
+                            </button>
                             <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full' onContextMenu={(e)=>{handleContext(e)}}/> 
                         </div>
                        {isFullScreen && <ContextMenu contextMenu={contextMenu} geometry={geometry}/>}
@@ -305,8 +281,6 @@ export default function MapPage({url, handleChangeCenterValue,handleContext, han
                             setCountryLayerEnable={setCountryLayerEnable} setBaseLayerEnable={setBaseLayerEnable}
                         />
                     </div>
-                   
-           
                 }
             </section>
   

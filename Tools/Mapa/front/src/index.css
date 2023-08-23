@@ -48,3 +48,21 @@
 #settings:hover {
     background-color: 'red';
 }
+
+.btn_control{
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    padding: 4px;
+    color: rgb(31, 41, 55);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.btn_control button{
+    border: 1.6px solid rgb(241, 245, 249);
+    background-color:rgb(241, 245, 249);
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+}
