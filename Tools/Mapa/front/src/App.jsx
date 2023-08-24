@@ -1,13 +1,13 @@
 import Map from "./components/Map"
-import { AudioOutlined } from '@ant-design/icons';
 import React, { useEffect } from 'react';
 import { Input, Space, AutoComplete } from 'antd';
 import { useState } from "react";
-import useFetch from "./hooks/useFetch";
 import { useGeographic } from 'ol/proj';
 import ContextMenu from "./components/ContextMenu";
 import InputDate from './components/InputDate';
 import moment from "moment";
+import Drawer from "./components/Drawer";
+import MapaProvider from "./contexts/MapaContext";
 const { Search } = Input;
 
 
@@ -48,6 +48,7 @@ export default function App() {
   const [geometry, setGeometry] = useState({});  
   const [viewSettingsValues, setViewSettingsValues] = useState({center: [-56,-14], zoom: 6, type: 'start'})
   const [options, setOptions] = useState([]);
+  const [isFullScreen ,setIsFullscreen] = useState(false)
   
   const handleSearch = (value) => {
     setOptions(value ? searchResult(value) : []);
@@ -56,9 +57,6 @@ export default function App() {
     console.log('onSelect', value);
   };
 
-  function handleSubmit(){
-
-  }
   
   function handleChangeCenterValue(currentCenter, zoomLevel, type){
     // console.log('changed', currentCenter, zoomLevel)
@@ -74,6 +72,7 @@ export default function App() {
 
   function handleContext(e){
         e.preventDefault();
+        console.log('21')
         setContextMenu((preventValue)=> {
             return {status: !preventValue.status, pageX: e.pageX, pageY: e.pageY}
         })
@@ -96,17 +95,6 @@ export default function App() {
     <div>
       <header>
         <form onSubmit={(e)=>{e.preventDefault()}} className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
-          {/* <AutoComplete
-            popupMatchSelectWidth={252}
-            style={{
-              width: 300,
-            }}
-            options={options}
-            onSelect={onSelect}
-            onSearch={handleSearch}
-          >
-            <Input.Search size="large" placeholder="input here" enterButton />
-          </AutoComplete> */}
           <div className="flex flex-col"> 
             <h3 className="text-sm font-semibold">Data inicial</h3>
             <InputDate initialDate={moment().add(-1, 'y').format('DD/MM/YYYY')}/>
@@ -121,10 +109,24 @@ export default function App() {
           </div>
         </form>
       </header>
-      <main className="m-auto p-4" style={{width: '95%'}}>
-          {url && <Map url={url} handleContext={handleContext} handleClick={handleClick} setGeometry={setGeometry} geometry={geometry} contextMenu={contextMenu} viewSettingsValues={viewSettingsValues} handleChangeCenterValue={handleChangeCenterValue}/>}
-         <ContextMenu geometry={geometry} contextMenu={contextMenu}/>
-      </main>
+      {url && 
+      <>
+        <MapaProvider url={url}>
+           <main className="m-auto p-4" style={{width: '95%'}}> 
+                  {/* <Map url={url} handleContext={handleContext} handleClick={handleClick} setGeometry={setGeometry} geometry={geometry} contextMenu={contextMenu} viewSettingsValues={viewSettingsValues} handleChangeCenterValue={handleChangeCenterValue}/> */}
+                  
+                  <div className={`w-full relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
+                    <Map isFullScreen={isFullScreen} setIsFullscreen={setIsFullscreen} setGeometry={setGeometry} handleContext={handleContext} handleClick={handleClick}/>
+                    <Drawer/>
+                  </div>
+          
+                  <ContextMenu geometry={geometry} contextMenu={contextMenu}/>        
+               
+            </main>
+        </MapaProvider>
+      </>
+          
+      }
     </div>
   )
 }
