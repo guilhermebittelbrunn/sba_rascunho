@@ -8,7 +8,7 @@ import {FullScreen, Zoom} from 'ol/control'
 import { useGeographic } from 'ol/proj';
 import TileLayer from 'ol/layer/Tile';
 import { Button, theme, Slider, Switch, InputNumber, Spin, Checkbox, message  } from 'antd';
-import {SettingOutlined,SelectOutlined} from '@ant-design/icons';
+import {SettingOutlined,SelectOutlined, FullscreenExitOutlined,FullscreenOutlined} from '@ant-design/icons';
 import useFetch from '../hooks/useFetch';
 import ContextMenu from './ContextMenu';
 import json from '../../geojson'
@@ -28,11 +28,11 @@ import { MapaContext } from '../contexts/MapaContext';
    
 
 
-export default function MapPage({handleClick, handleChangeCenterValue, handleContext, setGeometry, contextMenu, geometry, viewSettingsValues, isFullScreen, setFullSreen}){
+export default function MapPage({handleClick, handleFullScreenAction, handleChangeCenterValue, handleContext, setGeometry, contextMenu, geometry, viewSettingsValues, isFullScreen, setFullSreen}){
     useGeographic();
 
 
-    const { map, setIsMapOn, status,setStatus,err, view,loading, setOpen, open} = useContext(MapaContext)
+    const { map, setIsMapOn, stateLayer,status,setStatus,err, view,loading, setOpen, open} = useContext(MapaContext)
     // const {data, err, loading} = useFetch(`http://localhost:3535/api/${url}`);
     // const [citiesCoordinates, setCitiesCoordinates] = useState({});
     // const [baseLayerEnable, setBaseLayerEnable] = useState(true);
@@ -65,10 +65,31 @@ export default function MapPage({handleClick, handleChangeCenterValue, handleCon
                     layerName === 'stateLayer' && setGeometry(properties)
                 })
         })
+        // map.addControl(new FullScreen({source: 'fullscreen', className:'btn_control'}));
+
+        // mapDiv.addEventListener('click', ()=>{
+        //     map.requestFullscreen().then(res=>{
+        //         console.log(res)
+        //     })
+        // })
     },[map])
 
     // useEffect(()=>{
-    //     if(!map) re
+    //     if(!map)return
+    //     const mapDiv = document.getElementById('map');
+    //     console.log(mapDiv)
+    //     map.addEventListener('click', async()=>{
+    //         try{
+    //             const res = await mapDiv.requestFullscreen();
+    //             console.log(res);
+    //         }catch(err){
+    //             console.log('err fullscreen', err);
+    //         }
+    //     })
+    // }, [loading])
+
+    // useEffect(()=>{
+    //     if(!map) return
     //     const select = new Select({
     //         condition: pointerMove,
     //         style: selectStyle,
@@ -86,13 +107,14 @@ export default function MapPage({handleClick, handleChangeCenterValue, handleCon
 
     //     function selectStyle(feature) {
     //         feature.getProperties().NUMERO_PEDIDO
-    //         const color = (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption));
-    //         selected.setText(new Text({text: feature.getProperties().NM_MUN, scale: fontSize / 9}))
-    //         selected.getFill().setColor(color);
+    //         // stateLayer.-
+    //         // const color = (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption));
+    //         // selected.setText(new Text({text: feature.getProperties().NM_MUN, scale: fontSize / 9}))
+    //         // selected.getFill().setColor(color);
     //         return selected
     //     }
 
-    //     if(interaction) map.addInteraction(select);
+    //     if(interaction) stateLayer.addInteraction(select);
     // },[interaction])
 
     
@@ -281,13 +303,18 @@ export default function MapPage({handleClick, handleChangeCenterValue, handleCon
                         <SettingOutlined className='text-gray-900 text-lg font-black'/>
                     </div>
 
-                    <button onClick={()=>setInteraction(pv=>!pv)} id='btn_interaction' className='absolute left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50'style={{transform: 'translate(10%, 120%)', transition: 'all .4s'}}>
+                    <button onClick={handleFullScreenAction} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-1 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base'style={{transform: 'translate(20%, 10%)', transition: 'all .4s'}}>
+                           {isFullScreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
+                    </button>
+                    
+                    <button onClick={()=>setInteraction(pv=>!pv)} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base'style={{transform: 'translate(20%, 150%)', transition: 'all .4s'}}>
                         <SelectOutlined />
                     </button>
                                 
+                                
                     <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/> 
                     {/* <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full' onContextMenu={(e)=>{handleContext(e)}}/>  */}
-                    {isFullScreen && <ContextMenu contextMenu={contextMenu} geometry={geometry}/>}
+                    {/* {isFullScreen && <ContextMenu contextMenu={contextMenu} geometry={geometry}/>} */}
                 </>
           
                 }

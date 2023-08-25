@@ -216,12 +216,12 @@ export default function Drawer({setSearchCityValue}){
                                     <div className='flex flex-col'>
                                         <label className='font-bold text-sm' htmlFor='category'>Category layer</label>
 
-                                        <Select dropdownStyle={{ zIndex: 2000 }} defaultActiveFirstOption={true} name='category' options={optionsSelect} defaultValue="Sem categoria" className='w-[250px]' onChange={(value)=>{setSelectedOption(value)}}/>
+                                        <Select dropdownStyle={{ zIndex: 2000 }} value={selectedOption} name='category' options={optionsSelect} defaultValue="Sem categoria" className='w-[250px]' onChange={(value)=>{setSelectedOption(value)}}/>
                                     </div>
 
                                     <div className='flex flex-col'>
                                         <label className='font-bold text-sm' htmlFor='category'>Category subtitle</label>
-                                        <Select dropdownStyle={{ zIndex: 2000 }} defaultActiveFirstOption={true} name='category' options={optionsSubtitle} defaultValue="Sem subtítulo" className='w-[250px]' onChange={(value)=>{setSubTitle(value)}}/>
+                                        <Select dropdownStyle={{ zIndex: 2000 }} value={subTitle} name='category' options={optionsSubtitle} defaultValue="Sem subtítulo" className='w-[250px]' onChange={(value)=>{setSubTitle(value)}}/>
                                     </div>
 
                                     <div className='flex flex-col'>
@@ -230,15 +230,16 @@ export default function Drawer({setSearchCityValue}){
                                             <InputNumber
                                             min={6}
                                             max={36}
+                                            maxLength={2}
                                             style={{
                                                 marginLeft: '0px',padding: '0'
                                             }}
                                             bordered={false}
                                             value={fontSize}
-                                            onChange={()=>{console.log(fontSize)}}
+                                            onChange={(v)=>{setFontSize(v)}}
                                             />
                                         </div>
-                                        <Slider min={4} max={36} defaultValue={fontSize} onChange={(value)=>{setFontSize(value)}}/>
+                                        <Slider min={4} max={36} defaultValue={fontSize} value={fontSize} onChange={(value)=>{setFontSize(value)}}/>
                                     </div>
 
                                     

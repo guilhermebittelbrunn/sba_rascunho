@@ -1,11 +1,11 @@
 import Map from "./components/Map"
 import React, { useEffect } from 'react';
-import { Input, Space, AutoComplete } from 'antd';
+import { Input, Space, AutoComplete, message } from 'antd';
 import { useState } from "react";
 import { useGeographic } from 'ol/proj';
 import ContextMenu from "./components/ContextMenu";
 import InputDate from './components/InputDate';
-import moment from "moment";
+import dayjs from "dayjs";
 import Drawer from "./components/Drawer";
 import MapaProvider from "./contexts/MapaContext";
 const { Search } = Input;
@@ -49,6 +49,7 @@ export default function App() {
   const [viewSettingsValues, setViewSettingsValues] = useState({center: [-56,-14], zoom: 6, type: 'start'})
   const [options, setOptions] = useState([]);
   const [isFullScreen ,setIsFullscreen] = useState(false)
+  const currentDate = new Date();
   
   const handleSearch = (value) => {
     setOptions(value ? searchResult(value) : []);
@@ -68,6 +69,34 @@ export default function App() {
 
   function onSearch(value){
     setUrl(value);
+  }
+
+  async function handleFullScreenAction(){
+    const main = document.getElementById('main_content');
+    setIsFullscreen(pv=>!pv);
+    if(!isFullScreen){
+      try{
+        // main.requestFullscreen().then(res=>{console.log(res, 'teste')})
+        await main.requestFullscreen();
+      }catch(err){
+        message.error('navegador incompatível com essa função');
+        console.log('err', err)
+      }finally{
+        return
+      }
+    }
+    document.exitFullscreen();
+    
+    // fullscreenEnabled() && main.exitFullscreen();
+            // console.log(mapDiv)
+            // map.addEventListener('click', async()=>{
+            //     try{
+            //         const res = await mapDiv.requestFullscreen();
+            //         console.log(res);
+            //     }catch(err){
+            //         console.log('err fullscreen', err);
+            //     }
+            // })
   }
 
   function handleContext(e){
@@ -97,11 +126,11 @@ export default function App() {
         <form onSubmit={(e)=>{e.preventDefault()}} className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
           <div className="flex flex-col"> 
             <h3 className="text-sm font-semibold">Data inicial</h3>
-            <InputDate initialDate={moment().add(-1, 'y').format('DD/MM/YYYY')}/>
+            <InputDate initialDate={dayjs(currentDate).add(-1, 'y')} type={"start"}/>
           </div>
           <div className="flex flex-col"> 
             <h3 className="text-sm font-semibold">Data final</h3>
-            <InputDate initialDate={moment().format('DD/MM/YYYY')}/>
+            <InputDate initialDate={dayjs(currentDate)}/>
           </div>
           <div className="flex flex-col"> 
             <h3 className="text-sm font-semibold">Representante</h3>
@@ -112,11 +141,12 @@ export default function App() {
       {url && 
       <>
         <MapaProvider url={url}>
-           <main className="m-auto p-4" style={{width: '95%'}}> 
+           <main id="main_content" className={`m-auto p-4 ${isFullScreen && 'absolute top-0 p-0 left-0 w-screen h-screen'}`} style={{width: '95%'}}> 
                   {/* <Map url={url} handleContext={handleContext} handleClick={handleClick} setGeometry={setGeometry} geometry={geometry} contextMenu={contextMenu} viewSettingsValues={viewSettingsValues} handleChangeCenterValue={handleChangeCenterValue}/> */}
                   
                   <div className={`w-full relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
-                    <Map isFullScreen={isFullScreen} setIsFullscreen={setIsFullscreen} setGeometry={setGeometry} handleContext={handleContext} handleClick={handleClick}/>
+                  {/* <div className={`w-screen h-screen absolute left-0 top-0 z-50`}> */}
+                    <Map handleFullScreenAction={handleFullScreenAction} isFullScreen={isFullScreen} setGeometry={setGeometry} handleContext={handleContext} handleClick={handleClick}/>
                     <Drawer/>
                   </div>
           

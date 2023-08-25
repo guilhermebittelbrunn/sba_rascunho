@@ -10,7 +10,7 @@ import { createContext, useEffect, useState } from 'react';
 import useFetch from '../hooks/useFetch';
 import json from '../../geojson'
 
-const fullscreen = new FullScreen({source: 'fullscreen', className:'btn_control'});
+// const fullscreen = new FullScreen({source: 'fullscreen', className:'btn_control'});
 
 
 export const MapaContext = createContext();
@@ -41,9 +41,11 @@ export default function MapaProvider({url, children}){
         const mapObj = new Map({
             view: view,
             layers: [],
-            controls: [fullscreen]
+            controls: []
         })
         setMap(mapObj);
+
+        // mapObj.addControl()
     },[url])
 
 
