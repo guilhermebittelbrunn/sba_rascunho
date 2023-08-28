@@ -127,6 +127,8 @@ const controller = {
             // const vencimento_init = '2023-05-10';
             // const vencimento_end = moment().format('yyyy-DD-MM');
             const cod_rep = req.params.id;
+            const { dateStart, dateEnd } = req.query;
+            console.log({ dateStart, dateEnd });
             const db = await attachFB(optionsFB);
             const rows = await db.queryFB(
                 `
@@ -180,10 +182,12 @@ const controller = {
                 LEFT JOIN CADCEP_001 c ON c.CEP = e.CEP
                 LEFT JOIN CIDADE_001 c2 ON c2.COD_CID = c.COD_CID
                 WHERE p.CODREP = ${cod_rep}
-                AND p.DT_EMISSAO >= '2022-08-01'
+                AND p.DT_EMISSAO >= ?
+                AND p.DT_EMISSAO <= ?
                 GROUP BY c2.COD_CID, c2.COD_EST, c2.NOME_CID
                 ORDER BY c2.COD_CID;
-                `
+                `,
+                [dateStart, dateEnd]
             );
             db.detach();
 

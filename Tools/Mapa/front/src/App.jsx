@@ -71,6 +71,7 @@ export default function App() {
 
   function onSearch(value){
     const {dateStart, dateEnd, rc} = value
+    console.log({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc});
     setUrl({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc});
   }
 
@@ -127,27 +128,11 @@ export default function App() {
     <div>
       <FormProvider>
         <Form onSearch={onSearch}/>
-        {/* <header>
-          <form onSubmit={(e)=>{e.preventDefault()}} className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
-            <div className="flex flex-col"> 
-              <h3 className="text-sm font-semibold">Data inicial</h3>
-              <InputDate initialDate={dayjs(currentDate).add(-1, 'y')} type={"start"}/>
-            </div>
-            <div className="flex flex-col"> 
-              <h3 className="text-sm font-semibold">Data final</h3>
-              <InputDate initialDate={dayjs(currentDate)}/>
-            </div>
-            <div className="flex flex-col"> 
-              <h3 className="text-sm font-semibold">Representante</h3>
-              <Search size="middle" placeholder="Código representante" maxLength={4} minLength={4} allowClear={false} onSearch={onSearch} className="w-[240px] outline-none max-md:w-[440px]"/>
-            </div>
-          </form>
-        </header> */}
       </FormProvider>
       {url && 
       <>
         <MapaProvider url={url}>
-           <main id="main_content" className={`m-auto p-4 ${isFullScreen && 'absolute top-0 p-0 left-0 w-screen h-screen'}`} style={{width: '95%'}}> 
+           <main id="main_content" className={`m-auto ${isFullScreen ? 'absolute top-0 p-0 left-0 w-screen h-screen' : 'p-4'}`} style={{width: '95%'}}> 
                   {/* <Map url={url} handleContext={handleContext} handleClick={handleClick} setGeometry={setGeometry} geometry={geometry} contextMenu={contextMenu} viewSettingsValues={viewSettingsValues} handleChangeCenterValue={handleChangeCenterValue}/> */}
                   
                   <div className={`w-full relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>

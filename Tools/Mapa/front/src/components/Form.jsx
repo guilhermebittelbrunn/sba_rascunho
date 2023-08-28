@@ -39,12 +39,14 @@ export default function Form({onSearch}){
           <div className="flex flex-col"> 
             <h3 className="text-sm font-semibold">Representante</h3>
             <Controller
-                render={({field, fieldSet})=>{
-                    //    <Input/>
-                    return <Search {...field} size="middle" placeholder='Código do representante' name='rc' onChange={(e)=>{field.onChange(e.target.value)}} onSearch={handleSubmit(onSearch)} maxLength={4} minLength={4} allowClear={false} className="w-[240px] outline-none max-md:w-[440px]"/>
+                render={({field, fieldState})=>{
+                  // const { invalid, isTouched, isDirty, error } = fieldState;
+                  
+                  return <Search {...field} size="middle" required={true} placeholder='Código do representante' name='rc' onChange={(e)=>{field.onChange(e.target.value)}} onSearch={handleSubmit(onSearch)} maxLength={4} minLength={4} allowClear={false} className="w-[240px] outline-none max-md:w-[440px]"/>
                 }}
                 name="rc"
                 control={control}
+                rules={{maxLength: 4, minLength: 4, required:true}}
                 > 
             </Controller>
           </div>
