@@ -193,7 +193,7 @@ const controller = {
                 }
                 acc[row.COD_EST].push(row);
                 return acc;
-            }, []);
+            }, {});
             const stateWithMoreCities = [];
             for (let key in states) {
                 //exibir demais estados apenas se existirem vendas em mais de duas cidades

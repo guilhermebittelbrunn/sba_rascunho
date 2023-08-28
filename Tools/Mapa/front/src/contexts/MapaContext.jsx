@@ -16,7 +16,7 @@ import json from '../../geojson'
 export const MapaContext = createContext();
 
 export default function MapaProvider({url, children}){
-    const {data, err, loading} = useFetch(`http://localhost:3535/api/${url}`);
+    const {data, err, loading} = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`);
     // const [selectedOption, setSelectedOption] = useState('')
     const [open, setOpen] = useState(false);
 

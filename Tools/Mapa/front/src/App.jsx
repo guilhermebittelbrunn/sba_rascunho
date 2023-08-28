@@ -8,6 +8,8 @@ import InputDate from './components/InputDate';
 import dayjs from "dayjs";
 import Drawer from "./components/Drawer";
 import MapaProvider from "./contexts/MapaContext";
+import FormProvider from "./contexts/FormContext";
+import Form from "./components/Form";
 const { Search } = Input;
 
 
@@ -49,7 +51,7 @@ export default function App() {
   const [viewSettingsValues, setViewSettingsValues] = useState({center: [-56,-14], zoom: 6, type: 'start'})
   const [options, setOptions] = useState([]);
   const [isFullScreen ,setIsFullscreen] = useState(false)
-  const currentDate = new Date();
+  
   
   const handleSearch = (value) => {
     setOptions(value ? searchResult(value) : []);
@@ -68,7 +70,8 @@ export default function App() {
 
 
   function onSearch(value){
-    setUrl(value);
+    const {dateStart, dateEnd, rc} = value
+    setUrl({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc});
   }
 
   async function handleFullScreenAction(){
@@ -122,22 +125,25 @@ export default function App() {
 
   return(
     <div>
-      <header>
-        <form onSubmit={(e)=>{e.preventDefault()}} className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
-          <div className="flex flex-col"> 
-            <h3 className="text-sm font-semibold">Data inicial</h3>
-            <InputDate initialDate={dayjs(currentDate).add(-1, 'y')} type={"start"}/>
-          </div>
-          <div className="flex flex-col"> 
-            <h3 className="text-sm font-semibold">Data final</h3>
-            <InputDate initialDate={dayjs(currentDate)}/>
-          </div>
-          <div className="flex flex-col"> 
-            <h3 className="text-sm font-semibold">Representante</h3>
-            <Search size="middle" placeholder="Código representante" maxLength={4} minLength={4} allowClear={false} onSearch={onSearch} className="w-[240px] outline-none max-md:w-[440px]"/>
-          </div>
-        </form>
-      </header>
+      <FormProvider>
+        <Form onSearch={onSearch}/>
+        {/* <header>
+          <form onSubmit={(e)=>{e.preventDefault()}} className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
+            <div className="flex flex-col"> 
+              <h3 className="text-sm font-semibold">Data inicial</h3>
+              <InputDate initialDate={dayjs(currentDate).add(-1, 'y')} type={"start"}/>
+            </div>
+            <div className="flex flex-col"> 
+              <h3 className="text-sm font-semibold">Data final</h3>
+              <InputDate initialDate={dayjs(currentDate)}/>
+            </div>
+            <div className="flex flex-col"> 
+              <h3 className="text-sm font-semibold">Representante</h3>
+              <Search size="middle" placeholder="Código representante" maxLength={4} minLength={4} allowClear={false} onSearch={onSearch} className="w-[240px] outline-none max-md:w-[440px]"/>
+            </div>
+          </form>
+        </header> */}
+      </FormProvider>
       {url && 
       <>
         <MapaProvider url={url}>

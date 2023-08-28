@@ -5,10 +5,10 @@ import dayjs from "dayjs";
 import moment from "moment";
 
 // eslint-disable-next-line react/prop-types
-export default function InputDate({initialDate, type}){
+export default function InputDate({initialDate, type, field}){
     const dateFormat = 'DD/MM/YYYY';
     const [open, setOpen] = useState(false);
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(initialDate);
     const [inputValue, setInputValue] = useState(dayjs(initialDate, dateFormat).format(dateFormat));
     // console.log()
 
@@ -50,14 +50,19 @@ export default function InputDate({initialDate, type}){
     useEffect(()=>{
         const date1 = new Date(date);
         const date2 = new Date();
-        if(type === 'start') date1 > date2 && message.error('Data inicial maior que a data atual')
+        if(type === 'start'){
+            date1 > date2 && message.error('Data inicial maior que a data atual');
+            field.onChange(date)
+        } 
+        if(type !== 'start')field.onChange(date);
+        
     },[date])
 
-  
+
     return(
         <div className="flex gap-1">  
 
-            <Input size="middle" className="w-48 rounded-none max-md:w-[400px]" onChange={(e)=>{handleInputChange(e)}} value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } onKeyDown={pressKeyTonInput} onBlur={handleBlurInput}/>
+            <Input size="middle" defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } className="w-48 rounded-none max-md:w-[400px]" onChange={(e)=>{handleInputChange(e);}} value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } onKeyDown={pressKeyTonInput} onBlur={handleBlurInput}/>
             <DatePicker
             
                 open={open}
