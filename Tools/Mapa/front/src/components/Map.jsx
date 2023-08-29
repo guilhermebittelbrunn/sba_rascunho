@@ -17,6 +17,7 @@ import Drawer from './Drawer';
 import Select from 'ol/interaction/Select.js';
 import {altKeyOnly, click, pointerMove} from 'ol/events/condition.js';
 import { MapaContext } from '../contexts/MapaContext';
+import ErrorModal from './ErrorModal';
 
 
 
@@ -32,7 +33,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleChan
     useGeographic();
 
 
-    const { map, setIsMapOn, stateLayer,status,setStatus,err, view,loading, setOpen, open} = useContext(MapaContext)
+    const { map, setIsMapOn, stateLayer,status,setStatus,err, view,loading, setOpen, open, error} = useContext(MapaContext)
     // const {data, err, loading} = useFetch(`http://localhost:3535/api/${url}`);
     // const [citiesCoordinates, setCitiesCoordinates] = useState({});
     // const [baseLayerEnable, setBaseLayerEnable] = useState(true);
@@ -53,6 +54,10 @@ export default function MapPage({handleClick, handleFullScreenAction, handleChan
                 map1.current.setTarget(null);
         };
     })
+
+    useEffect(()=>{
+        console.log(error)
+    },[error])
 
     useEffect(()=>{
         if(!map)return
@@ -296,23 +301,30 @@ export default function MapPage({handleClick, handleFullScreenAction, handleChan
             <>  
                 { loading ? <Spin size='large' className='spin'/> : 
                 <>
-                    <div type="primary" id="settings" onClick={()=>{setOpen(true);}} style={{transform: 'translateY(300%)', transition: 'all .4s'}} 
+                    {error ? <ErrorModal error={error}/> :
+                    
+                    <>
+                       <div type="primary" id="settings" onClick={()=>{setOpen(true);}} style={{transform: 'translateY(300%)', transition: 'all .4s'}} 
                         className={`hover:cursor-pointer hover:bg-slate-400  rounded-r-lg 
                         hover:w-12 absolute left-50 top-50 h-28 p-2 flex justify-center items-center w-8 bg-slate-300 z-20 opacity-80
                         `}>
                         <SettingOutlined className='text-gray-900 text-lg font-black'/>
-                    </div>
+                        </div>
 
-                    <button onClick={handleFullScreenAction} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-1 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base'style={{transform: 'translate(20%, 10%)', transition: 'all .4s'}}>
-                           {isFullScreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
-                    </button>
+                        <button onClick={handleFullScreenAction} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-1 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base'style={{transform: 'translate(20%, 10%)', transition: 'all .4s'}}>
+                            {isFullScreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
+                        </button>
+                        
+                        <button onClick={()=>setInteraction(pv=>!pv)} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base'style={{transform: 'translate(20%, 150%)', transition: 'all .4s'}}>
+                            <SelectOutlined />
+                        </button>
+                                    
+                                    
+                        <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/> 
+                        
+                    </>
                     
-                    <button onClick={()=>setInteraction(pv=>!pv)} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base'style={{transform: 'translate(20%, 150%)', transition: 'all .4s'}}>
-                        <SelectOutlined />
-                    </button>
-                                
-                                
-                    <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/> 
+                    }
                     {/* <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full' onContextMenu={(e)=>{handleContext(e)}}/>  */}
                     {/* {isFullScreen && <ContextMenu contextMenu={contextMenu} geometry={geometry}/>} */}
                 </>

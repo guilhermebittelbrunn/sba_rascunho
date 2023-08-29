@@ -127,7 +127,7 @@ export default function Drawer({setSearchCityValue}){
     const {map, baseLayer, countryLayer, stateLayer, open, setOpen, citiesCoordinates} = useContext(MapaContext)
     const [baseLayerEnable, setBaseLayerEnable] = useState(true);
     const [countryLayerEnable, setCountryLayerEnable] = useState(true);
-    const [fontSize, setFontSize] = useState(10)
+    const [fontSize, setFontSize] = useState(8)
     const [searchValue, setSearchValue] = useState('')
     const [subTitle, setSubTitle] = useState('');
     const [selectedOption, setSelectedOption] = useState('')
@@ -135,7 +135,7 @@ export default function Drawer({setSearchCityValue}){
     useEffect(()=>{
       setSelectedOption('');
       setSubTitle('');
-      setFontSize(10)
+      setFontSize(8)
       setBaseLayerEnable(true);
       setCountryLayerEnable(true);
     },[map])

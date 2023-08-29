@@ -17,7 +17,7 @@ export const MapaContext = createContext();
 
 export default function MapaProvider({url, children}){
     const {data, err, loading} = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`);
-    // const [selectedOption, setSelectedOption] = useState('')
+    const [error,setError] = useState(false);
     const [open, setOpen] = useState(false);
 
     const [citiesCoordinates, setCitiesCoordinates] = useState({});
@@ -49,75 +49,80 @@ export default function MapaProvider({url, children}){
     },[url])
 
 
+
     useEffect(()=>{
         if(!map) return
         if(!loading){
-
-            const baseLayer = new TileLayer({source: new OSM(), zIndex: 0});
-
-            const stateLayer = new vector({
-                source: new Vector({
-                    features: new GeoJSON().readFeatures(data),
-                }),
-                style: (feature,res)=>{
-                    return new Style({
-                        fill: new Stroke({
-                            color: feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)"
-                        }),
-                        stroke: new Stroke({
-                            color: "rgba(30,30,30)",
-                            width: 1,
-                        }),
-                        text: new Text({
-                            text: feature.getProperties().NM_MUN,
-                            scale: 1.0
-                        })
-                    })
-                },
-                zIndex: 3,
-                className: 'stateLayer',
-                // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
-            });
-
-            
-            const countryLayer = new vector({
+            try{
+                const baseLayer = new TileLayer({source: new OSM(), zIndex: 0});
+                const stateLayer = new vector({
                     source: new Vector({
-                        features: new GeoJSON().readFeatures(json),
+                        features: new GeoJSON().readFeatures(data),
                     }),
                     style: (feature,res)=>{
-                    return new Style({
-                        fill: new Stroke({
-                            color: "rgba(0,0,0,0)",
-                        }),
-                        stroke: new Stroke({
-                            color: "rgba(30,30,30)",
-                            width: 1,
-                        }),
-                    })
+                        return new Style({
+                            fill: new Stroke({
+                                color: feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)"
+                            }),
+                            stroke: new Stroke({
+                                color: "rgba(30,30,30)",
+                                width: 1,
+                            }),
+                            text: new Text({
+                                text: feature.getProperties().NM_MUN,
+                                scale: 1.0
+                            })
+                        })
                     },
-                    zIndex: 2
-            });
-            setBaseLayer(baseLayer);
-            setStateLayer(stateLayer);
-            setCountryLayer(countryLayer);
+                    zIndex: 3,
+                    className: 'stateLayer',
+                    // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
+                });
 
-            map.addLayer(baseLayer);
-            map.addLayer(countryLayer);
-            map.addLayer(stateLayer);
+                
+                const countryLayer = new vector({
+                        source: new Vector({
+                            features: new GeoJSON().readFeatures(json),
+                        }),
+                        style: (feature,res)=>{
+                        return new Style({
+                            fill: new Stroke({
+                                color: "rgba(0,0,0,0)",
+                            }),
+                            stroke: new Stroke({
+                                color: "rgba(30,30,30)",
+                                width: 1,
+                            }),
+                        })
+                        },
+                        zIndex: 2
+                });
+                setBaseLayer(baseLayer);
+                setStateLayer(stateLayer);
+                setCountryLayer(countryLayer);
 
-            const cities = data['features'].reduce((acc,city)=>{
-                const rawCityName = city.properties.NM_MUN.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
-                // console.log(rawCityName.normalize('NFD').replace(/[\u0300-\u036f]/g, ""));
-                if(!acc[rawCityName]){
-                    acc[rawCityName] = [];
-                }
-                acc[rawCityName].push(city.geometry.coordinates[0][0]);
-                return acc
-            }, {})
+                map.addLayer(baseLayer);
+                map.addLayer(countryLayer);
+                map.addLayer(stateLayer);
 
-            setCitiesCoordinates(cities);
-            
-            map.getView().setCenter(data.features[0].geometry.coordinates[0][0])
+                const cities = data['features'].reduce((acc,city)=>{
+                    const rawCityName = city.properties.NM_MUN.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
+                    // console.log(rawCityName.normalize('NFD').replace(/[\u0300-\u036f]/g, ""));
+                    if(!acc[rawCityName]){
+                        acc[rawCityName] = [];
+                    }
+                    acc[rawCityName].push(city.geometry.coordinates[0][0]);
+                    return acc
+                }, {})
+
+                setCitiesCoordinates(cities);
+                map.getView().setCenter(data.features[0].geometry.coordinates[0][0]);
+                setError(false);
+                
+            }catch(error){
+                setError(error);
+                // setMap(null)
+            }
             
         }
     },[data])
@@ -126,7 +131,7 @@ export default function MapaProvider({url, children}){
 
     
     return(
-        <MapaContext.Provider value={{map, err, loading, countryLayer, baseLayer, stateLayer,open, setOpen, citiesCoordinates}}>
+        <MapaContext.Provider value={{map, err, loading, countryLayer, baseLayer, stateLayer,open, setOpen, citiesCoordinates, error}}>
             {children}
         </MapaContext.Provider>
     )
