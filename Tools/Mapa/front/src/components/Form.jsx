@@ -1,10 +1,9 @@
-import React, { useEffect, useContext } from 'react';
-import { Input, Space, AutoComplete, message } from 'antd';
+import React, { useContext } from 'react';
+import { Input } from 'antd';
 import InputDate from '../components/InputDate';
 import dayjs from "dayjs";
 import { FormContext } from '../contexts/FormContext';
-const { Search } = Input;
-
+const {Search} = Input
 
 export default function Form({onSearch, isLoading}){
     const {register, handleSubmit, Controller, control} = useContext(FormContext);
@@ -40,8 +39,6 @@ export default function Form({onSearch, isLoading}){
             <h3 className="text-sm font-semibold">Representante</h3>
             <Controller
                 render={({field, fieldState})=>{
-                  // const { invalid, isTouched, isDirty, error } = fieldState;
-                  
                   return <Search disabled={isLoading} {...field} size="middle" required={true} placeholder='Código do representante' name='rc' onChange={(e)=>{field.onChange(e.target.value)}} onSearch={handleSubmit(onSearch)} maxLength={4} minLength={4} allowClear={false} className="w-[240px] outline-none max-md:w-[440px]"/>
                 }}
                 name="rc"
@@ -55,11 +52,3 @@ export default function Form({onSearch, isLoading}){
     )
 }
 
-
-// export function CustomSeacrh(placeholder){
-//     return(
-//         <>
-//             <Search size="middle" placeholder='312321312' value={3} maxLength={4} minLength={4} allowClear={false} className="w-[240px] outline-none max-md:w-[440px]"/>
-//         </>
-//     )
-// }

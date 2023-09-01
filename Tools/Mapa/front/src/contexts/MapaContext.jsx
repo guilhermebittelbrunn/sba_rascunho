@@ -1,39 +1,61 @@
 import {Map, View} from 'ol';
-import {MapboxVector, Vector as vector} from 'ol/layer'
+import {Vector as vector} from 'ol/layer'
 import {OSM, Vector} from 'ol/source';
 import {GeoJSON} from 'ol/format'
 import {Style,Stroke, Text, Fill} from 'ol/style'
-import {FullScreen, Zoom} from 'ol/control'
-import { get, useGeographic } from 'ol/proj';
 import TileLayer from 'ol/layer/Tile';
 import { createContext, useEffect, useState } from 'react';
 import useFetch from '../hooks/useFetch';
 import json from '../../geojson'
 
-// const fullscreen = new FullScreen({source: 'fullscreen', className:'btn_control'});
+
+function colorCategory(label, option){
+        if(!label[option]){
+            return 'rgba(221,221,223,0.7)'
+        }
+        const tailwindColors = {
+            0: 'rgba(221,221,223,0.8)',
+            1: 'rgb(240,253,244)',
+            2: 'rgb(187,247,208)',
+            3: 'rgb(74,222,128)',
+            4: 'rgb(22,163,74)',
+            5: 'rgb(22,101,52)',
+        }
+        let x;
+        switch (option){
+            case 'QUANTIDADE_VENDAS':
+                x = label[option] / 2
+                x = x > 5 ? 5 : x
+                x = x > 0 && x < 1 ? 1 : x
+                x = tailwindColors[Math.floor(x)]
+            case 'QUANTIDADE_CLIENTES_CIDADE':
+                x = label[option] / 1.5
+                x = x > 5 ? 5 : x
+                x = (x > 0 && x < 1) ? 1 : x
+                x = tailwindColors[Math.floor(x)]
+            case 'ULTIMA_VENDA':
+                return x
+        }
+        return x
+    } 
 
 
 export const MapaContext = createContext();
 
 export default function MapaProvider({url, children, setIsLoading}){
+
     const {data, err, loading} = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`);
     const [error,setError] = useState(false);
-    const [open, setOpen] = useState(false);
-
-    const [citiesCoordinates, setCitiesCoordinates] = useState({});
-  
-    
+    const [open, setOpen] = useState(false); 
     const [map, setMap] = useState(null)
     const [stateLayer, setStateLayer] = useState(null)
     const [countryLayer, setCountryLayer] = useState(null)
     const [baseLayer, setBaseLayer] = useState(null);
-
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
     useEffect(()=>{
         const view = new View({
                 extent: [-75, -35, -32, 6],
                 center: [-56, -14],
-                //  center: [-49.024331533, -27.256056628, -48.789077705, -26.998145418],
                 zoom: 6,
                 maxZoom: 12,
                 minZoom: 4
@@ -45,11 +67,7 @@ export default function MapaProvider({url, children, setIsLoading}){
             controls: []
         })
         setMap(mapObj);
-
-        // mapObj.addControl()
     },[url])
-
-
 
     useEffect(()=>{
         if(!map) return
@@ -62,7 +80,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                     }),
                     style: (feature,res)=>{
                         return new Style({
-                            fill: new Stroke({
+                            fill: new Fill({
                                 color: feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)"
                             }),
                             stroke: new Stroke({
@@ -106,17 +124,6 @@ export default function MapaProvider({url, children, setIsLoading}){
                 map.addLayer(countryLayer);
                 map.addLayer(stateLayer);
 
-                const cities = data['features'].reduce((acc,city)=>{
-                    const rawCityName = city.properties.NM_MUN.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
-                    // console.log(rawCityName.normalize('NFD').replace(/[\u0300-\u036f]/g, ""));
-                    if(!acc[rawCityName]){
-                        acc[rawCityName] = [];
-                    }
-                    acc[rawCityName].push(city.geometry.coordinates[0][0]);
-                    return acc
-                }, {})
-
-                setCitiesCoordinates(cities);
                 map.getView().setCenter(data.features[0].geometry.coordinates[0][0]);
                 setError(false);
             }catch(error){
@@ -135,7 +142,7 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     
     return(
-        <MapaContext.Provider value={{map, err, loading, countryLayer, baseLayer, stateLayer,open, setOpen, citiesCoordinates, error}}>
+        <MapaContext.Provider value={{map, err, loading, countryLayer, baseLayer, stateLayer,open, setOpen, error, colorCategory, isModalOpen,setIsModalOpen}}>
             {children}
         </MapaContext.Provider>
     )

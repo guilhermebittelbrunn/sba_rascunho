@@ -76,36 +76,6 @@ const optionsSubtitle = [
     }
 ]
 
-function colorCategory(label, option){
-        if(!label[option]){
-            return 'rgba(221,221,223,0.7)'
-        }
-        const tailwindColors = {
-            0: 'rgba(221,221,223,0.8)',
-            1: 'rgb(240,253,244)',
-            2: 'rgb(187,247,208)',
-            3: 'rgb(74,222,128)',
-            4: 'rgb(22,163,74)',
-            5: 'rgb(22,101,52)',
-        }
-        let x;
-        switch (option){
-            case 'QUANTIDADE_VENDAS':
-                x = label[option] / 2
-                x = x > 5 ? 5 : x
-                x = x > 0 && x < 1 ? 1 : x
-                x = tailwindColors[Math.floor(x)]
-            case 'QUANTIDADE_CLIENTES_CIDADE':
-                x = label[option] / 1.5
-                x = x > 5 ? 5 : x
-                x = (x > 0 && x < 1) ? 1 : x
-                x = tailwindColors[Math.floor(x)]
-            case 'ULTIMA_VENDA':
-                return x
-        }
-        // console.log(label[option])
-        return x
-    } 
 
  function subtitleCategory(label, option){
         let res;
@@ -120,43 +90,37 @@ function colorCategory(label, option){
                 res = label
         }
         return res
-    }
+}
 
-export default function Drawer({setSearchCityValue}){
+export default function Drawer(){
 
-    const {map, baseLayer, countryLayer, stateLayer, open, setOpen, citiesCoordinates} = useContext(MapaContext)
+    const {map, baseLayer, countryLayer, stateLayer, open, setOpen, colorCategory, setIsModalOpen} = useContext(MapaContext);
     const [baseLayerEnable, setBaseLayerEnable] = useState(true);
     const [countryLayerEnable, setCountryLayerEnable] = useState(true);
-    const [fontSize, setFontSize] = useState(8)
-    const [searchValue, setSearchValue] = useState('')
+    const [fontSize, setFontSize] = useState(9);
+    const [searchValue, setSearchValue] = useState('');
     const [subTitle, setSubTitle] = useState('');
-    const [selectedOption, setSelectedOption] = useState('')
+    const [selectedOption, setSelectedOption] = useState('');
 
     useEffect(()=>{
-      setSelectedOption('');
-      setSubTitle('');
-      setFontSize(8)
-      setBaseLayerEnable(true);
-      setCountryLayerEnable(true);
+        setSelectedOption('');
+        setSubTitle('');
+        setFontSize(9)
+        setBaseLayerEnable(true);
+        setCountryLayerEnable(true);
     },[map])
 
     useEffect(()=>{
         if(!map) return
-        baseLayer.setVisible(baseLayerEnable)
-    },[baseLayerEnable])
-
-
-    useEffect(()=>{
-        if(!map) return
-        countryLayer.setVisible(countryLayerEnable)
-    },[countryLayerEnable])
-
+        baseLayer.setVisible(baseLayerEnable);
+        countryLayer.setVisible(countryLayerEnable);
+    },[baseLayerEnable, countryLayerEnable])
 
     useEffect(()=>{
         if(!map)return
         stateLayer.getSource().getFeatures().forEach(feature=>{
           const newStyle = new Style({
-              fill: new Stroke({
+              fill: new Fill({
                   color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
               }),
               stroke: new Stroke({
@@ -167,7 +131,12 @@ export default function Drawer({setSearchCityValue}){
                   text: subTitle === '' ? feature.getProperties().NM_MUN : 
                   (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
                   feature.getProperties().NM_MUN),  
-                  scale: fontSize / 10
+                  scale: fontSize / 10,
+                  font: 'bold red serif',
+                  // backgroundFill: new Stroke({
+                  //   color: "rgba(255,255,255)",
+                  //   width: 1,
+                  // }),
               }),
           })  
           feature.setStyle(newStyle)
@@ -177,33 +146,20 @@ export default function Drawer({setSearchCityValue}){
 
     function handleSeach(value){
       const features = stateLayer.getSource().getFeatures();
-      const index = features.findIndex(f => f.values_.NM_MUN === value);
+      const index = features.findIndex(f => {
+        const f_name = f.values_['NM_MUN'].normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        return f_name === value.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
+      });
       const feature = features[index];
-      const zoomLevel = feature.values_.AREA_KM2 / 24
-      const position = feature.getGeometry().getExtent();
-      const oldStroke = feature.getStyle().getStroke();
-      console.log(feature.getGeometry())
-      console.log(feature);
-      feature.getStyle().setStroke(new Stroke({
-                  color: "rgb(222, 245, 16)",
-                  width: 4,
-              }),)
-      setTimeout(()=>{
-        feature.getStyle().setStroke(oldStroke);
-      },10000)
-      // console.log(feature.style_.fill_.color_ = 'rgb(222, 245, 16)');
-      // console.log(feature.style_.fill_.color_)
-      // console.log(feature.style_.stroke_.width = "1");
-      // console.log('s[0].getValues()', s[0].getValues_())
-      // const rawValue = value.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
-      // const index = citiesCoordinates[rawValue];
-      // if(!index) message.error('Cidade não encontrada na região do representante');
-      // else if(index){
-      //   // map.getView().setCenter(index[0])
-        flyTo(position, zoomLevel);
-      //   setOpen(false);
-      //   setSearchValue('');
-      // }
+
+      if(!feature) {
+        return message.error('Cidade não encontrada na região do representante');
+      }
+      // const oldStroke = feature.getStyle().getStroke();
+      feature.getStyle().setStroke(new Stroke({color: "rgb(222, 245, 16)",width: 4}));
+      flyTo(feature.getGeometry().getInteriorPoint().getCoordinates());
+      setOpen(false);
+      setTimeout(()=> setSearchValue(''),6000);
     }
 
     function flyTo(location, zoomLevel, done) {
@@ -234,12 +190,12 @@ export default function Drawer({setSearchCityValue}){
             duration: duration / 2,
           },
           {
-            zoom: zoom + 2,
+            zoom: zoom + .5,
             duration: duration / 2,
           },
           callback
         );
-  }
+    }
 
 
     return(
@@ -307,7 +263,7 @@ export default function Drawer({setSearchCityValue}){
 
                             </div>
                             <div id='bts' className='w-full flex flex-col gap-2'>
-                                <Button>Imprimir</Button>
+                                <Button onClick={()=>{setIsModalOpen(true)}}>Imprimir</Button>
                                 <Button>Relatório</Button>
                             </div>               
                           </div>
