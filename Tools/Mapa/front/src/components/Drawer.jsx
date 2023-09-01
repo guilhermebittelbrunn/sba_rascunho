@@ -172,19 +172,74 @@ export default function Drawer({setSearchCityValue}){
           })  
           feature.setStyle(newStyle)
         })
-    },[selectedOption, fontSize, subTitle])
+    },[selectedOption, fontSize, subTitle, searchValue])
 
 
     function handleSeach(value){
-      const rawValue = value.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
-      const index = citiesCoordinates[rawValue];
-      if(!index) message.error('Cidade não encontrada na região do representante');
-      else if(index){
-        map.getView().setCenter(index[0])
-        map.getView().setZoom(10)
-        setSearchValue('');
-      }
+      const features = stateLayer.getSource().getFeatures();
+      const index = features.findIndex(f => f.values_.NM_MUN === value);
+      const feature = features[index];
+      const zoomLevel = feature.values_.AREA_KM2 / 24
+      const position = feature.getGeometry().getExtent();
+      const oldStroke = feature.getStyle().getStroke();
+      console.log(feature.getGeometry())
+      console.log(feature);
+      feature.getStyle().setStroke(new Stroke({
+                  color: "rgb(222, 245, 16)",
+                  width: 4,
+              }),)
+      setTimeout(()=>{
+        feature.getStyle().setStroke(oldStroke);
+      },10000)
+      // console.log(feature.style_.fill_.color_ = 'rgb(222, 245, 16)');
+      // console.log(feature.style_.fill_.color_)
+      // console.log(feature.style_.stroke_.width = "1");
+      // console.log('s[0].getValues()', s[0].getValues_())
+      // const rawValue = value.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
+      // const index = citiesCoordinates[rawValue];
+      // if(!index) message.error('Cidade não encontrada na região do representante');
+      // else if(index){
+      //   // map.getView().setCenter(index[0])
+        flyTo(position, zoomLevel);
+      //   setOpen(false);
+      //   setSearchValue('');
+      // }
     }
+
+    function flyTo(location, zoomLevel, done) {
+        const duration = 2000;
+        const zoom =  map.getView().getZoom(10)
+        let parts = 2;
+        let called = false;
+        function callback(complete) {
+          --parts;
+          if (called) {
+            return;
+          }
+          if (parts === 0 || !complete) {
+            called = true;
+            // done(complete);
+          }
+        }
+        map.getView().animate(
+          {
+            center: location,
+            duration: duration,
+          },
+          callback
+        );
+        map.getView().animate(
+          {
+            zoom: zoom <= 6 ? zoom : zoom - 1,
+            duration: duration / 2,
+          },
+          {
+            zoom: zoom + 2,
+            duration: duration / 2,
+          },
+          callback
+        );
+  }
 
 
     return(

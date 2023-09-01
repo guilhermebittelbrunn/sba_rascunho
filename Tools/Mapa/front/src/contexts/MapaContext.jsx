@@ -15,7 +15,7 @@ import json from '../../geojson'
 
 export const MapaContext = createContext();
 
-export default function MapaProvider({url, children}){
+export default function MapaProvider({url, children, setIsLoading}){
     const {data, err, loading} = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`);
     const [error,setError] = useState(false);
     const [open, setOpen] = useState(false);
@@ -33,6 +33,7 @@ export default function MapaProvider({url, children}){
         const view = new View({
                 extent: [-75, -35, -32, 6],
                 center: [-56, -14],
+                //  center: [-49.024331533, -27.256056628, -48.789077705, -26.998145418],
                 zoom: 6,
                 maxZoom: 12,
                 minZoom: 4
@@ -118,7 +119,6 @@ export default function MapaProvider({url, children}){
                 setCitiesCoordinates(cities);
                 map.getView().setCenter(data.features[0].geometry.coordinates[0][0]);
                 setError(false);
-                
             }catch(error){
                 setError(error);
                 // setMap(null)
@@ -127,6 +127,10 @@ export default function MapaProvider({url, children}){
         }
     },[data])
 
+
+    useEffect(()=>{
+        setIsLoading(loading)
+    },[loading])
 
 
     

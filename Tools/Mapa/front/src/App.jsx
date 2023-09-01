@@ -51,7 +51,7 @@ export default function App() {
   const [viewSettingsValues, setViewSettingsValues] = useState({center: [-56,-14], zoom: 6, type: 'start'})
   const [options, setOptions] = useState([]);
   const [isFullScreen ,setIsFullscreen] = useState(false)
-  
+  const [isLoading, setIsLoading] = useState(false)
   
   const handleSearch = (value) => {
     setOptions(value ? searchResult(value) : []);
@@ -105,7 +105,6 @@ export default function App() {
 
   function handleContext(e){
         e.preventDefault();
-        console.log('21')
         setContextMenu((preventValue)=> {
             return {status: !preventValue.status, pageX: e.pageX, pageY: e.pageY}
         })
@@ -127,11 +126,11 @@ export default function App() {
   return(
     <div>
       <FormProvider>
-        <Form onSearch={onSearch}/>
+        <Form onSearch={onSearch} isLoading={isLoading}/>
       </FormProvider>
       {url && 
       <>
-        <MapaProvider url={url}>
+        <MapaProvider url={url} setIsLoading={setIsLoading}>
            <main id="main_content" className={`m-auto ${isFullScreen ? 'absolute top-0 p-0 left-0 w-screen h-screen' : 'p-4'}`} style={{width: '95%'}}> 
                   {/* <Map url={url} handleContext={handleContext} handleClick={handleClick} setGeometry={setGeometry} geometry={geometry} contextMenu={contextMenu} viewSettingsValues={viewSettingsValues} handleChangeCenterValue={handleChangeCenterValue}/> */}
                   

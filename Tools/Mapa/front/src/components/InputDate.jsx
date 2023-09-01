@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import moment from "moment";
 
 // eslint-disable-next-line react/prop-types
-export default function InputDate({initialDate, type, field}){
+export default function InputDate({initialDate, type, field, isLoading}){
     const dateFormat = 'DD/MM/YYYY';
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState(initialDate);
@@ -55,17 +55,16 @@ export default function InputDate({initialDate, type, field}){
             field.onChange(date)
         } 
         if(type !== 'start')field.onChange(date);
-        
     },[date])
 
 
     return(
-        <div className="flex gap-1">  
+        <div className={`flex gap-1 ${isLoading && 'cursor-not-allowed'}`}>  
 
-            <Input size="middle" defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } className="w-48 rounded-none max-md:w-[400px]" onChange={(e)=>{handleInputChange(e);}} value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } onKeyDown={pressKeyTonInput} onBlur={handleBlurInput}/>
+            <Input disabled={isLoading} dsize="middle" defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } className="w-48 rounded-none max-md:w-[400px]" onChange={(e)=>{handleInputChange(e);}} value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } onKeyDown={pressKeyTonInput} onBlur={handleBlurInput}/>
             <DatePicker
-            
-                open={open}
+                disabled={isLoading}
+                open={!isLoading && open}
                 style={{ visibility: "hidden", width: 0, marginRight: '-28px'}}
                 onOpenChange={(open) => {setOpen(open)}}
                 onChange={(v)=>{handleClickDataPicker(v)}}
@@ -74,7 +73,7 @@ export default function InputDate({initialDate, type, field}){
                 // defaultValue={initialDate}
             />
    
-            <button className='py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600' onClick={() =>{setOpen(!open)}}><CalendarOutlined/></button>
+            <button className={`py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600 ${isLoading && 'cursor-not-allowed'}`} onClick={() =>{!isLoading && setOpen(!open)}}><CalendarOutlined/></button>
         </div>
 
 

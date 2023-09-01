@@ -6,19 +6,19 @@ import { FormContext } from '../contexts/FormContext';
 const { Search } = Input;
 
 
-export default function Form({onSearch}){
+export default function Form({onSearch, isLoading}){
     const {register, handleSubmit, Controller, control} = useContext(FormContext);
     const currentDate = new Date();
     
 
     return(
-        <header>
-        <form className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
+        <header className={isLoading && 'opacity-60'}>
+        <form onSubmit={(e)=>{e.preventDefault()}} className="flex gap-4 justify-center items-center max-md:flex-col max-md:gap-1">
           <div className="flex flex-col"> 
             <h3 className="text-sm font-semibold">Data inicial</h3>
             <Controller
               render={({field})=>{
-                return <InputDate initialDate={dayjs(currentDate).add(-1, 'y')} type={"start"} field={field}/>
+                return <InputDate isLoading={isLoading} initialDate={dayjs(currentDate).add(-1, 'y')} type={"start"} field={field}/>
               }}
               name="dateStart"
               control={control}
@@ -29,7 +29,7 @@ export default function Form({onSearch}){
             <h3 className="text-sm font-semibold">Data final</h3>
             <Controller
               render={({field})=>{
-                return <InputDate initialDate={dayjs(currentDate)}  field={field}/>
+                return <InputDate isLoading={isLoading} initialDate={dayjs(currentDate)}  field={field}/>
               }}
               name='dateEnd'
               control={control}
@@ -42,7 +42,7 @@ export default function Form({onSearch}){
                 render={({field, fieldState})=>{
                   // const { invalid, isTouched, isDirty, error } = fieldState;
                   
-                  return <Search {...field} size="middle" required={true} placeholder='Código do representante' name='rc' onChange={(e)=>{field.onChange(e.target.value)}} onSearch={handleSubmit(onSearch)} maxLength={4} minLength={4} allowClear={false} className="w-[240px] outline-none max-md:w-[440px]"/>
+                  return <Search disabled={isLoading} {...field} size="middle" required={true} placeholder='Código do representante' name='rc' onChange={(e)=>{field.onChange(e.target.value)}} onSearch={handleSubmit(onSearch)} maxLength={4} minLength={4} allowClear={false} className="w-[240px] outline-none max-md:w-[440px]"/>
                 }}
                 name="rc"
                 control={control}
