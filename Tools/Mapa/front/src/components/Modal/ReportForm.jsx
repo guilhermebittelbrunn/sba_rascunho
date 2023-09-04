@@ -16,13 +16,13 @@ export default function ReportForm({ handleCancel }){
     
     const {handleSubmit, control} = useForm({defaultValues:{reportType: 'Detalhado'}});
 
-    const handleSendForm = (data) =>{
+    const sendForm = (data) =>{
         console.log(data)
     }
 
     return(
         <>
-            <form onSubmit={handleSubmit(handleSendForm)}>
+            <form onSubmit={handleSubmit(sendForm)}>
                 <h3 className='font-semibold mt-2'>Tipo</h3>
                 <Controller name='reportType' control={control} render={({field})=>{
                     return <RadioInput dataset={reportOptions} defaultValue={'Detalhado'} field={field} cardStyle={'hover:cursor-pointer w-32 h-16 mb-10 border-[1px] rounded-sm relative flex flex-col justify-center items-center'}  />
@@ -32,8 +32,6 @@ export default function ReportForm({ handleCancel }){
                     <Button htmlType='submit' className='bg-blue-500 text-white hover:bg-white hover:text-blue-500'>Exportar</Button>
                 </div>          
             </form>
-
-
         </>
     )
 }
