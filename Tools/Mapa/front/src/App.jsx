@@ -1,15 +1,15 @@
-import Map from "./components/Map"
+import Map from "./components/Map/Map"
 import React from 'react';
 import { message } from 'antd';
 import { useState } from "react";
 import { useGeographic } from 'ol/proj';
-import ContextMenu from "./components/ContextMenu";
+import ContextMenu from "./components/Map/ContextMenu";
 import dayjs from "dayjs";
 import Drawer from "./components/Drawer";
 import MapaProvider from "./contexts/MapaContext";
 import FormProvider from "./contexts/FormContext";
-import Form from "./components/Form";
-import Modal from "./components/Modal";
+import Form from "./components/Form/Form";
+import Modal from "./components/Modal/Modal";
 
 export default function App() {
 

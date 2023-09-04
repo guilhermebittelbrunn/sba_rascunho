@@ -51,7 +51,8 @@ export default function MapaProvider({url, children, setIsLoading}){
     const [stateLayer, setStateLayer] = useState(null)
     const [countryLayer, setCountryLayer] = useState(null)
     const [baseLayer, setBaseLayer] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState({status: false, type: ''});
+
     useEffect(()=>{
         const view = new View({
                 extent: [-75, -35, -32, 6],

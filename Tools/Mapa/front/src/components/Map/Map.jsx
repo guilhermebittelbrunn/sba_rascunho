@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef, useContext } from 'react';
+import { Spin } from 'antd';
 import {Style,Stroke, Text, Fill} from 'ol/style'
 import { useGeographic } from 'ol/proj';
-import { Spin } from 'antd';
 import {SettingOutlined,SelectOutlined, FullscreenExitOutlined,FullscreenOutlined} from '@ant-design/icons';
 import Select from 'ol/interaction/Select.js';
 import {pointerMove} from 'ol/events/condition.js';
-import { MapaContext } from '../contexts/MapaContext';
+import { MapaContext } from '../../contexts/MapaContext';
 import ErrorModal from './ErrorModal';
 
 

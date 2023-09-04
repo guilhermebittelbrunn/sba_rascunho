@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import { Input } from 'antd';
-import InputDate from '../components/InputDate';
 import dayjs from "dayjs";
-import { FormContext } from '../contexts/FormContext';
+import InputDate from './InputDate';
+import { FormContext } from '../../contexts/FormContext';
+
 const {Search} = Input
 
 export default function Form({onSearch, isLoading}){

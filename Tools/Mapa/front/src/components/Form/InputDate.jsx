@@ -1,8 +1,9 @@
-import { Input, DatePicker, message, Checkbox } from "antd";
-import { CalendarOutlined } from '@ant-design/icons'
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import moment from "moment";
+import { Input, DatePicker, message, Checkbox } from "antd";
+import { CalendarOutlined } from '@ant-design/icons'
+
 
 // eslint-disable-next-line react/prop-types
 export default function InputDate({initialDate, type, field, isLoading}){

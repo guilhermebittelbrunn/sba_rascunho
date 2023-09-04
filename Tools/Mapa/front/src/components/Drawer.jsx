@@ -97,7 +97,7 @@ export default function Drawer(){
     const {map, baseLayer, countryLayer, stateLayer, open, setOpen, colorCategory, setIsModalOpen} = useContext(MapaContext);
     const [baseLayerEnable, setBaseLayerEnable] = useState(true);
     const [countryLayerEnable, setCountryLayerEnable] = useState(true);
-    const [fontSize, setFontSize] = useState(9);
+    const [fontSize, setFontSize] = useState(10);
     const [searchValue, setSearchValue] = useState('');
     const [subTitle, setSubTitle] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
@@ -105,7 +105,7 @@ export default function Drawer(){
     useEffect(()=>{
         setSelectedOption('');
         setSubTitle('');
-        setFontSize(9)
+        setFontSize(10)
         setBaseLayerEnable(true);
         setCountryLayerEnable(true);
     },[map])
@@ -263,8 +263,8 @@ export default function Drawer(){
 
                             </div>
                             <div id='bts' className='w-full flex flex-col gap-2'>
-                                <Button onClick={()=>{setIsModalOpen(true)}}>Imprimir</Button>
-                                <Button>Relatório</Button>
+                                <Button onClick={()=>{setIsModalOpen({status:true, type:'export'})}}>Imprimir</Button>
+                                <Button onClick={()=>{setIsModalOpen({status:true, type:'report'})}}>Relatório</Button>
                             </div>               
                           </div>
             </DrawerAntd>   
