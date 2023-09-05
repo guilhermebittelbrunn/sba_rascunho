@@ -265,8 +265,8 @@ export default function Drawer(){
 
                             </div>
                             <div id='bts' className='w-full flex flex-col gap-2'>
-                                <Button onClick={()=>{setIsModalOpen({status:true, type:'export'})}}>Imprimir</Button>
-                                <Button onClick={()=>{setIsModalOpen({status:true, type:'report'})}}>Relatório</Button>
+                                <Button onClick={()=>{setIsModalOpen({status:true, type:'export'})}}>Imprimir Mapa</Button>
+                                <Button onClick={()=>{setIsModalOpen({status:true, type:'report'})}}>Exportar Relatório</Button>
                             </div>               
                           </div>
             </DrawerAntd>   

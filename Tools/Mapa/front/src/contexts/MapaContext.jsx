@@ -147,7 +147,7 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     
     return(
-        <MapaContext.Provider value={{map, err, loading, countryLayer, baseLayer, stateLayer,open, setOpen, error, colorCategory, isModalOpen,setIsModalOpen, rc: url.rc}}>
+        <MapaContext.Provider value={{map, err, loading, countryLayer, baseLayer, stateLayer,open, setOpen, error, colorCategory, isModalOpen,setIsModalOpen, rc: url.rc,  url}}>
             {children}
         </MapaContext.Provider>
     )
