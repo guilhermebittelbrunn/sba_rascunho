@@ -131,8 +131,10 @@ export default function Drawer(){
                   text: subTitle === '' ? feature.getProperties().NM_MUN : 
                   (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
                   feature.getProperties().NM_MUN),  
-                  scale: fontSize / 10,
-                  font: 'bold red serif',
+                  font: `bold ${fontSize}px ${"Segoe UI"}`,
+                  fill: new Fill({
+                        color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+                  }),
                   // backgroundFill: new Stroke({
                   //   color: "rgba(255,255,255)",
                   //   width: 1,
