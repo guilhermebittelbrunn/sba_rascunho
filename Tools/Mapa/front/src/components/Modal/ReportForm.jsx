@@ -2,7 +2,7 @@ import RadioInput from './RadioInput';
 import { useContext, useState } from 'react';
 import { MapaContext } from '../../contexts/MapaContext';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, Spin } from 'antd';
+import { Button, Spin, message } from 'antd';
 import axios from 'axios';
 import {jsPDF} from 'jspdf'
 
@@ -23,21 +23,28 @@ export default function ReportForm({ handleCancel }){
     const sendForm = async (fv) =>{
 
         setIsLoading(true);
-        const res = await axios.get(`http://localhost:3535/api/report/${fv.reportType}/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`, {responseType: 'arraybuffer'});
-        console.log(`http://localhost:3535/api/report/${fv.reportType}/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`)
-        // console.log(1)
-        
-        console.log(res)
+        try{
+            const res = await axios.get(`http://localhost:3535/api/report/${fv.reportType}/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`, {responseType: 'arraybuffer'});
+            console.log(`http://localhost:3535/api/report/${fv.reportType}/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`)
+            // console.log(1)
+            
+            console.log(res)
 
 
-        const blob = new Blob([res.data], { type: 'application/pdf' });
+            const blob = new Blob([res.data], { type: 'application/pdf' });
 
-        // Crie uma URL temporária para o blob
-        const url2 = window.URL.createObjectURL(blob);
+            // Crie uma URL temporária para o blob
+            const url2 = window.URL.createObjectURL(blob);
 
-        // Abra o PDF em uma nova aba
-        window.open(url2);
-        setIsLoading(false)
+            // Abra o PDF em uma nova aba
+            window.open(url2);
+            setIsLoading(false)
+        }catch(err){
+            console.log(err);
+            message.error('Um erro ocorreu durante a geração do relatório');
+        }finally{
+            setIsLoading(false);
+        }
     }
 
     return(

@@ -25,6 +25,24 @@ let report = {
     dataset: [{ ok: true }],
 };
 
+const jasper2 = require('node-jasper')({
+    path: '../../reports', //Report path
+    reports: {
+        report_detalhado: {
+            jasper: '../../reports/report_detalhado.jasper', //Doc.jasper path
+            conn: 'in_memory_json',
+        },
+    },
+});
+
+let report2 = {
+    report: 'report_detalhado', //File
+    data: {
+        teste: '{ok:true}',
+    },
+    dataset: [{ ok: true }],
+};
+
 optionsFB.host = 'excia-server'; //'firebird';
 optionsFB.port = 3050;
 // optionsFB.database = 'sba'; //'C:\\EXCIA\\SBA.fdb'; // 'sba'; //'/var/lib/firebird/2.5/data/sba.fdb';
@@ -146,7 +164,6 @@ const controller = {
             // const vencimento_end = moment().format('yyyy-DD-MM');
             const cod_rep = req.params.id;
             const { dateStart, dateEnd } = req.query;
-            console.log({ dateStart, dateEnd });
             const db = await attachFB(optionsFB);
             const rows = await db.queryFB(
                 `
@@ -355,7 +372,6 @@ const controller = {
             // const vencimento_end = moment().format('yyyy-DD-MM');
             const cod_rep = req.params.id;
             const { dateStart, dateEnd } = req.query;
-            console.log({ dateStart, dateEnd });
             const db = await attachFB(optionsFB);
             const rows = await db.queryFB(
                 `
@@ -446,6 +462,171 @@ const controller = {
                 res.send(Buffer.from(pdf));
             }, 1000);
         })();
+    },
+    getDetailReport: async (req, res) => {
+        const attachFB = (opt) =>
+            new Promise((resolve, reject) => {
+                Firebird.attach(opt, (err, db) => {
+                    if (err) throw err;
+
+                    db.fixStrings = (obj) => {
+                        for (const prop in obj) {
+                            if (Buffer.isBuffer(obj[prop])) {
+                                obj[prop] = obj[prop].toString('latin1');
+                            }
+                        }
+                    };
+
+                    db.on('commit', function () {
+                        console.log('commit!');
+                    });
+
+                    db.queryFB = (
+                        query,
+                        params,
+                        options = {
+                            detachOnFinish: false,
+                            //t: null,
+                        }
+                    ) =>
+                        new Promise((resolve, reject) => {
+                            //if (options.t === null) {
+                            console.log(query);
+                            db.query(query, params, (err, res) => {
+                                //console.log(err);
+                                options.detachOnFinish && db.detach();
+                                if (err) return reject(err); //throw err;
+                                resolve(res);
+                            });
+                            // } else {
+                            //     options.t.query(query, params, (err, res) => {
+                            //         //options.detachOnFinish && db.detach();
+                            //         if (err) throw err;
+                            //         resolve(res);
+                            //     });
+                            // }
+                        });
+
+                    db.transactionFB = () => {
+                        return new Promise((resolve, reject) => {
+                            db.transaction(Firebird.ISOLATION_READ_COMMITED, (err, transaction) => {
+                                if (err) throw err;
+                                transaction.queryFB = (query, params, options = {}) => {
+                                    return new Promise((resolve, reject) => {
+                                        //if (options.t === null) {
+                                        console.log(query);
+                                        transaction.query(query, params, (err, res) => {
+                                            if (err) {
+                                                transaction.rollback();
+                                                reject(err);
+                                            }
+                                            resolve(res);
+                                        });
+                                        // } else {
+                                        //     options.t.query(query, params, (err, res) => {
+                                        //         //options.detachOnFinish && db.detach();
+                                        //         if (err) throw err;
+                                        //         resolve(res);
+                                        //     });
+                                        // }
+                                    });
+                                };
+                                transaction.commitFB = () => {
+                                    return new Promise((resolve, reject) => {
+                                        //if (options.t === null) {
+                                        transaction.commit((err) => {
+                                            if (err) {
+                                                transaction.rollback();
+                                                reject(err);
+                                            }
+                                            resolve(true);
+                                        });
+                                    });
+                                };
+                                resolve(transaction);
+                            });
+                        });
+                    };
+
+                    // db.transaction(Firebird.ISOLATION_READ_COMMITED, function(err, transaction) {
+                    //     transaction.query('INSERT INTO users VALUE(?,?)', [1, 'Janko'], function(err, result) {
+
+                    //         if (err) {
+                    //             transaction.rollback();
+                    //             return;
+                    //         }
+
+                    //         transaction.commit(function(err) {
+                    //             if (err)
+                    //                 transaction.rollback();
+                    //             else
+                    //                 db.detach();
+                    //         });
+                    //     });
+                    // });
+
+                    resolve(db);
+                });
+            });
+        const cod_rep = req.params.id;
+        const { dateStart, dateEnd } = req.query;
+        console.log({ dateStart, dateEnd });
+        const db = await attachFB(optionsFB);
+        const rows = await db.queryFB(
+            `
+               SELECT r.nome AS NOME_REPRESENTANTE,c2.COD_CID, c2.COD_EST, c2.NOME_CID, p.DT_EMISSAO, p.NUMERO, p.CODCLI, e.NOME, (
+                    SELECT SUM ((pi2.QTDE + pi2.QTDE_F) * pi2.PRECO) FROM PEDIDO_001 p3
+                    LEFT JOIN PED_ITEN_001 pi2 ON pi2.NUMERO = p3.NUMERO 
+                    WHERE p3.NUMERO = p.NUMERO 
+                    GROUP BY p3.NUMERO 
+                ) AS valor 
+                FROM CIDADE_001 c2
+                LEFT JOIN (
+                    SELECT c3.COD_CID, MAX(p2.DT_EMISSAO) AS Max_DT_EMISSAO
+                    FROM PEDIDO_001 p2
+                    LEFT JOIN ENTIDADE_001 e2 ON e2.CODCLI = p2.CODCLI
+                    LEFT JOIN CADCEP_001 c3 ON c3.CEP = e2.CEP 
+                    WHERE p2.CODREP = ${cod_rep} 
+                    AND p2.DT_EMISSAO >= '2022-08-01'
+                    AND p2.DT_EMISSAO <= '2023-08-01'
+                    GROUP BY c3.COD_CID
+                ) AS Subquery
+                ON c2.COD_CID = Subquery.COD_CID
+                LEFT JOIN PEDIDO_001 p ON c2.COD_CID = Subquery.COD_CID AND p.DT_EMISSAO = Subquery.Max_DT_EMISSAO
+                LEFT JOIN ENTIDADE_001 e ON e.CODCLI = p.CODCLI
+                LEFT JOIN REPRESEN_001 r ON r.CODREP = p.CODREP 
+                WHERE p.CODREP = ${cod_rep} 
+                AND p.DT_EMISSAO >= '2022-08-01'
+                AND p.DT_EMISSAO <= '2023-08-01'
+                ORDER BY c2.COD_CID, p.DT_EMISSAO desc;
+                `,
+            [dateStart, dateEnd, dateStart, dateEnd]
+        );
+        db.detach();
+
+        let dataset = rows.map((row) => {
+            return { ...row, DT_EMISSAO: moment(row.DT_EMISSAO).format('DD/MM/YYYY') };
+        });
+
+        report2 = {
+            ...report2,
+            data: {
+                dt_start: moment(dateStart).format('DD/MM/YYYY'),
+                dt_end: moment(dateEnd).format('DD/MM/YYYY'),
+                rc_codigo: cod_rep,
+                rc_nome: rows[0].NOME_REPRESENTANTE,
+            },
+            dataset,
+        };
+
+        setTimeout(() => {
+            console.log(rows);
+            const pdf = jasper2.pdf(report2);
+            console.log(`Pdf gerado, tamanho: ${Math.ceil(pdf.length / 1000)} KB's`);
+            fs.writeFileSync('./' + `relatorio_detalhadoS.pdf`, Buffer.from(pdf));
+            res.contentType('application/pdf');
+            res.send(Buffer.from(pdf));
+        }, 1000);
     },
 };
 
