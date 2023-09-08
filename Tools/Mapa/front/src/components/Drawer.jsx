@@ -131,8 +131,10 @@ export default function Drawer(){
                   text: subTitle === '' ? feature.getProperties().NM_MUN : 
                   (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
                   feature.getProperties().NM_MUN),  
-                  scale: fontSize / 10,
-                  font: 'bold red serif',
+                  font: `bold ${fontSize}px ${"Segoe UI"}`,
+                  fill: new Fill({
+                        color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+                  }),
                   // backgroundFill: new Stroke({
                   //   color: "rgba(255,255,255)",
                   //   width: 1,
@@ -263,8 +265,8 @@ export default function Drawer(){
 
                             </div>
                             <div id='bts' className='w-full flex flex-col gap-2'>
-                                <Button onClick={()=>{setIsModalOpen({status:true, type:'export'})}}>Imprimir</Button>
-                                <Button onClick={()=>{setIsModalOpen({status:true, type:'report'})}}>Relatório</Button>
+                                <Button onClick={()=>{setIsModalOpen({status:true, type:'export'})}}>Imprimir Mapa</Button>
+                                <Button onClick={()=>{setIsModalOpen({status:true, type:'report'})}}>Exportar Relatório</Button>
                             </div>               
                           </div>
             </DrawerAntd>   

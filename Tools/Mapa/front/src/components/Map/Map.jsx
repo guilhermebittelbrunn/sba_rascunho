@@ -21,8 +21,13 @@ const select = new Select({
                 width: 3,
             }),
             text: new Text({
-                text: feature.getProperties().NM_MUN
-            })
+                                fill: new Fill({
+                                    color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 30, 30)' : 'rgb(0,0,0)'
+                                }),
+                                font: 'bold 10px "Segoe UI"',
+                                text: feature.getProperties().NM_MUN,
+                                scale: 1.0
+                            })
         })      
     }    
 });

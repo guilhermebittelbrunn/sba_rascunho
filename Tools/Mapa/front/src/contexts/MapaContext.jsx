@@ -19,7 +19,7 @@ function colorCategory(label, option){
             2: 'rgb(187,247,208)',
             3: 'rgb(74,222,128)',
             4: 'rgb(22,163,74)',
-            5: 'rgb(22,101,52)',
+            5: 'rgb(28, 122, 64)',
         }
         let x;
         switch (option){
@@ -89,6 +89,10 @@ export default function MapaProvider({url, children, setIsLoading}){
                                 width: 1,
                             }),
                             text: new Text({
+                                fill: new Fill({
+                                    color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 30, 30)' : 'rgb(0,0,0)'
+                                }),
+                                font: 'bold 10px "Segoe UI"',
                                 text: feature.getProperties().NM_MUN,
                                 scale: 1.0
                             })
@@ -143,7 +147,7 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     
     return(
-        <MapaContext.Provider value={{map, err, loading, countryLayer, baseLayer, stateLayer,open, setOpen, error, colorCategory, isModalOpen,setIsModalOpen}}>
+        <MapaContext.Provider value={{map, err, loading, countryLayer, baseLayer, stateLayer,open, setOpen, error, colorCategory, isModalOpen,setIsModalOpen, rc: url.rc,  url}}>
             {children}
         </MapaContext.Provider>
     )
