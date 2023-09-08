@@ -1,5 +1,7 @@
 const { DataTypes, db } = require("../sequelize");
 const Genre = require("./Genre");
+const Streaming = require("./Streaming");
+
 const Movie = db.define("movie", {
     id: {
         type: DataTypes.INTEGER,
@@ -12,7 +14,7 @@ const Movie = db.define("movie", {
     },
     sinopse: {
         type: DataTypes.TEXT,
-        defaultValue: "Sem sinopse",
+        defaultValue: null,
     },
     duration: {
         type: DataTypes.INTEGER,
@@ -47,6 +49,10 @@ const Movie = db.define("movie", {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
     },
+    idAPI: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     json: {
         type: DataTypes.JSON,
     },
@@ -57,9 +63,22 @@ Movie.belongsToMany(Genre, {
     foreignKey: "idMovie",
     constraints: true,
 });
+
+Movie.belongsToMany(Streaming, {
+    through: "streamingMovie",
+    foreignKey: "idMovie",
+    constraints: true,
+});
+
 Genre.belongsToMany(Movie, {
     through: "movieGenre",
     foreignKey: "idGenre",
+    constraints: true,
+});
+
+Streaming.belongsToMany(Movie, {
+    through: "streamingMovie",
+    foreignKey: "idStreaming",
     constraints: true,
 });
 
