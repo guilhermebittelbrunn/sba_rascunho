@@ -1,7 +1,9 @@
 const { db } = require("../sequelize");
 const Movie = require("./Movie");
 const Genre = require("./Genre");
-const Streaming = require("./Streaming")(async () => {
+const Streaming = require("./Streaming");
+
+(async () => {
     try {
         await db.sync();
         console.log("database connection successfuly");
