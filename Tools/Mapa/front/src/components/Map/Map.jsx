@@ -3,42 +3,18 @@ import { Spin } from 'antd';
 import {Style,Stroke, Text, Fill} from 'ol/style'
 import { useGeographic } from 'ol/proj';
 import {SettingOutlined,SelectOutlined, FullscreenExitOutlined,FullscreenOutlined} from '@ant-design/icons';
-import Select from 'ol/interaction/Select.js';
-import {pointerMove} from 'ol/events/condition.js';
+
 import { MapaContext } from '../../contexts/MapaContext';
 import ErrorModal from './ErrorModal';
 
 
-const select = new Select({
-    condition: pointerMove,
-    style: (feature)=>{ 
-        return new Style({
-            fill: new Fill({
-                color: feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)"
-            }),
-            stroke: new Stroke({
-                color: 'rgb(30, 30, 30)',
-                width: 3,
-            }),
-            text: new Text({
-                                fill: new Fill({
-                                    color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 30, 30)' : 'rgb(0,0,0)'
-                                }),
-                                font: 'bold 10px "Segoe UI"',
-                                text: feature.getProperties().NM_MUN,
-                                scale: 1.0
-                            })
-        })      
-    }    
-});
-   
 
 export default function MapPage({handleClick, handleFullScreenAction, handleContext, setGeometry, isFullScreen}){
 
     useGeographic();
     
-    const { map, loading, setOpen, error} = useContext(MapaContext)
-    const [interaction, setInteraction] = useState(false);
+    const { map, loading, setOpen, error, setFeaturesSelected, setInteraction} = useContext(MapaContext)
+   
     const map1 = useRef(null);
 
     useEffect(()=>{
@@ -53,20 +29,39 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
     useEffect(()=>{
         if(!map)return
         map.addEventListener('contextmenu', (e)=>{
-                handleContext(e.originalEvent)
-                const pixels = e.pixel
+                handleContext(e.originalEvent);
+                const pixels = e.pixel;
                 map.forEachFeatureAtPixel(pixels, (feature, layer)=>{
                     const properties = feature.getProperties();
-                    const layerName = layer.getClassName()
-                    layerName === 'stateLayer' && setGeometry(properties)
+                    const layerName = layer.getClassName();
+                    layerName === 'stateLayer' && setGeometry(properties);
                 })
-        })
+        });
+
+        map.addEventListener('click', (e)=>{
+            if(e.originalEvent.ctrlKey){
+                map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
+                    // console.log(feature.getProperties());
+                    if(feature.getProperties().CD_MUN){
+                        const style = new Style({
+                            fill: new Fill({
+                                color: "rgb(255, 238, 0)"
+                            }),
+                            stroke: new Stroke({
+                                color: "rgba(30,30,30)",
+                                width: 1,
+                            })
+                        })
+                        feature.setStyle(style)
+                    }
+                    
+          
+                })
+            }
+        });
     },[map])
 
-    useEffect(()=>{
-        if(!map) return
-        interaction? map.addInteraction(select) : console.log(map.removeInteraction(select));
-    },[interaction])
+    
 
   return (
    

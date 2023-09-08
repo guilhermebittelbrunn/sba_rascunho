@@ -7,6 +7,8 @@ import TileLayer from 'ol/layer/Tile';
 import { createContext, useEffect, useState } from 'react';
 import useFetch from '../hooks/useFetch';
 import json from '../../geojson'
+import Select from 'ol/interaction/Select.js';
+import {pointerMove} from 'ol/events/condition.js';
 
 
 function colorCategory(label, option){
@@ -40,6 +42,79 @@ function colorCategory(label, option){
     } 
 
 
+ function subtitleCategory(label, option){
+        let res;
+        switch(option){
+            case 'ULTIMA_VENDA':
+                res = moment(label).format('DD/MM/YYYY');
+                break
+            case 'AREA_KM2':
+                res = label + " km²";
+                break
+            default: 
+                res = label
+        }
+        return res
+}
+
+
+
+function setStyle(feature, selectedOption, fontSize, subTitle){
+    const newStyle = new Style({
+              fill: new Fill({
+                  color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
+              }),
+              stroke: new Stroke({
+                  color: "rgba(30,30,30)",
+                  width: 1,
+              }),
+              text: new Text({
+                  text: subTitle === '' ? feature.getProperties().NM_MUN : 
+                  (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
+                  feature.getProperties().NM_MUN),  
+                  font: `bold ${fontSize}px ${"Segoe UI"}`,
+                  fill: new Fill({
+                        color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+                  }),
+                  // backgroundFill: new Stroke({
+                  //   color: "rgba(255,255,255)",
+                  //   width: 1,
+                  // }),
+              }),
+    })  
+    return newStyle
+}
+
+
+function handleSelectInteration(selectedOption, fontSize, subTitle, colorCategory){
+
+    const select = new Select({
+        condition: pointerMove,
+        style: (feature)=>{ 
+            return new Style({
+                fill: new Fill({
+                  color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
+                }),
+                stroke: new Stroke({
+                    color: 'rgb(30, 30, 30)',
+                    width: 3,
+                }),
+                text: new Text({
+                  text: subTitle === '' ? feature.getProperties().NM_MUN : 
+                  (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
+                  feature.getProperties().NM_MUN),  
+                  font: `bold ${fontSize + .5}px ${"Segoe UI"}`,
+                  fill: new Fill({
+                        color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+                  }),
+              }),
+            })      
+        }    
+    });
+    return select
+}
+   
+
 export const MapaContext = createContext();
 
 export default function MapaProvider({url, children, setIsLoading}){
@@ -47,11 +122,17 @@ export default function MapaProvider({url, children, setIsLoading}){
     const {data, err, loading} = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`);
     const [error,setError] = useState(false);
     const [open, setOpen] = useState(false); 
-    const [map, setMap] = useState(null)
-    const [stateLayer, setStateLayer] = useState(null)
-    const [countryLayer, setCountryLayer] = useState(null)
+    const [map, setMap] = useState(null);
+    const [stateLayer, setStateLayer] = useState(null);
+    const [countryLayer, setCountryLayer] = useState(null);
     const [baseLayer, setBaseLayer] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState({status: false, type: ''});
+    const [featuresSelected, setFeaturesSelected] = useState([]);
+    const [fontSize, setFontSize] = useState(10);
+    const [subTitle, setSubTitle] = useState('');
+    const [selectedOption, setSelectedOption] = useState('');
+    const [interaction, setInteraction] = useState(false);
+    
 
     useEffect(()=>{
         const view = new View({
@@ -70,6 +151,20 @@ export default function MapaProvider({url, children, setIsLoading}){
         setMap(mapObj);
     },[url])
 
+
+    useEffect(()=>{
+        if(!map)return
+        stateLayer.getSource().getFeatures().forEach(feature=>{
+          const newStyle = setStyle(feature, selectedOption, fontSize, subTitle);
+          feature.setStyle(newStyle);
+        });
+        map.getInteractions().remove(map.getInteractions().item(9));
+        const select = handleSelectInteration(selectedOption, fontSize, subTitle, colorCategory);
+        interaction && map.addInteraction(select)
+    },[selectedOption, fontSize, subTitle, interaction])
+
+
+
     useEffect(()=>{
         if(!map) return
         if(!loading){
@@ -80,23 +175,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                         features: new GeoJSON().readFeatures(data),
                     }),
                     style: (feature,res)=>{
-                        return new Style({
-                            fill: new Fill({
-                                color: feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)"
-                            }),
-                            stroke: new Stroke({
-                                color: "rgba(30,30,30)",
-                                width: 1,
-                            }),
-                            text: new Text({
-                                fill: new Fill({
-                                    color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 30, 30)' : 'rgb(0,0,0)'
-                                }),
-                                font: 'bold 10px "Segoe UI"',
-                                text: feature.getProperties().NM_MUN,
-                                scale: 1.0
-                            })
-                        })
+                        return setStyle(feature, selectedOption, fontSize, subTitle);
                     },
                     zIndex: 3,
                     className: 'stateLayer',
@@ -147,7 +226,10 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     
     return(
-        <MapaContext.Provider value={{map, err, loading, countryLayer, baseLayer, stateLayer,open, setOpen, error, colorCategory, isModalOpen,setIsModalOpen, rc: url.rc,  url}}>
+        <MapaContext.Provider value={{map, err, loading, setFeaturesSelected, countryLayer, baseLayer, stateLayer,open, setOpen, error, 
+            colorCategory, isModalOpen,setIsModalOpen, rc: url.rc,  url, fontSize, setFontSize, subTitle, setSubTitle, selectedOption, setSelectedOption,
+            setInteraction,
+        }}>
             {children}
         </MapaContext.Provider>
     )

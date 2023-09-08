@@ -11,8 +11,7 @@ export default function ContextMenu({geometry, contextMenu}){
             ...geometry,
             // pageX: contextMenu.pageX > 980 ? contextMenu.pageX - 80 : contextMenu.pageX,
             // pageY: contextMenu.pageY > 790 ? contextMenu.pageY - 120 : contextMenu.pageY,
-        })
-        console.log(properties)
+        });
     }, [contextMenu])
   
     return(

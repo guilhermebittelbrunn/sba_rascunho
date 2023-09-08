@@ -24,7 +24,6 @@ export default function App() {
 
     function onSearch(value){
         const {dateStart, dateEnd, rc} = value
-        console.log({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc});
         setUrl({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc});
     }
 

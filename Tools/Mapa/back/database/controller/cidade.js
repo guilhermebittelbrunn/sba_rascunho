@@ -5,20 +5,20 @@ const Firebird = require('node-firebird');
 const moment = require('moment');
 const fs = require('fs');
 const optionsFB = {};
-const shapefile = require('shapefile');
-const pathshp = path.join(__dirname, '../../assets/Brasil/BR_Municipios_2022.shp');
+// const shapefile = require('shapefile');
+// const pathshp = path.join(__dirname, '../../assets/Brasil/BR_Municipios_2022.shp');
 const jasper = require('node-jasper')({
     path: '../../reports', //Report path
     reports: {
-        relatorio_pgmt: {
-            jasper: '../../reports/relatorio_pgmt.jasper', //Doc.jasper path
+        report_simples: {
+            jasper: '../../reports/report_simples.jasper', //Doc.jasper path
             conn: 'in_memory_json',
         },
     },
 });
 
 let report = {
-    report: 'relatorio_pgmt', //File
+    report: 'report_simples', //File
     data: {
         teste: '{ok:true}',
     },
@@ -89,13 +89,6 @@ const controller = {
                                 if (err) return reject(err); //throw err;
                                 resolve(res);
                             });
-                            // } else {
-                            //     options.t.query(query, params, (err, res) => {
-                            //         //options.detachOnFinish && db.detach();
-                            //         if (err) throw err;
-                            //         resolve(res);
-                            //     });
-                            // }
                         });
 
                     db.transactionFB = () => {
@@ -113,13 +106,6 @@ const controller = {
                                             }
                                             resolve(res);
                                         });
-                                        // } else {
-                                        //     options.t.query(query, params, (err, res) => {
-                                        //         //options.detachOnFinish && db.detach();
-                                        //         if (err) throw err;
-                                        //         resolve(res);
-                                        //     });
-                                        // }
                                     });
                                 };
                                 transaction.commitFB = () => {
@@ -139,29 +125,10 @@ const controller = {
                         });
                     };
 
-                    // db.transaction(Firebird.ISOLATION_READ_COMMITED, function(err, transaction) {
-                    //     transaction.query('INSERT INTO users VALUE(?,?)', [1, 'Janko'], function(err, result) {
-
-                    //         if (err) {
-                    //             transaction.rollback();
-                    //             return;
-                    //         }
-
-                    //         transaction.commit(function(err) {
-                    //             if (err)
-                    //                 transaction.rollback();
-                    //             else
-                    //                 db.detach();
-                    //         });
-                    //     });
-                    // });
-
                     resolve(db);
                 });
             });
         (async () => {
-            // const vencimento_init = '2023-05-10';
-            // const vencimento_end = moment().format('yyyy-DD-MM');
             const cod_rep = req.params.id;
             const { dateStart, dateEnd } = req.query;
             const db = await attachFB(optionsFB);
@@ -297,13 +264,6 @@ const controller = {
                                 if (err) return reject(err); //throw err;
                                 resolve(res);
                             });
-                            // } else {
-                            //     options.t.query(query, params, (err, res) => {
-                            //         //options.detachOnFinish && db.detach();
-                            //         if (err) throw err;
-                            //         resolve(res);
-                            //     });
-                            // }
                         });
 
                     db.transactionFB = () => {
@@ -321,13 +281,6 @@ const controller = {
                                             }
                                             resolve(res);
                                         });
-                                        // } else {
-                                        //     options.t.query(query, params, (err, res) => {
-                                        //         //options.detachOnFinish && db.detach();
-                                        //         if (err) throw err;
-                                        //         resolve(res);
-                                        //     });
-                                        // }
                                     });
                                 };
                                 transaction.commitFB = () => {
@@ -347,29 +300,10 @@ const controller = {
                         });
                     };
 
-                    // db.transaction(Firebird.ISOLATION_READ_COMMITED, function(err, transaction) {
-                    //     transaction.query('INSERT INTO users VALUE(?,?)', [1, 'Janko'], function(err, result) {
-
-                    //         if (err) {
-                    //             transaction.rollback();
-                    //             return;
-                    //         }
-
-                    //         transaction.commit(function(err) {
-                    //             if (err)
-                    //                 transaction.rollback();
-                    //             else
-                    //                 db.detach();
-                    //         });
-                    //     });
-                    // });
-
                     resolve(db);
                 });
             });
         (async () => {
-            // const vencimento_init = '2023-05-10';
-            // const vencimento_end = moment().format('yyyy-DD-MM');
             const cod_rep = req.params.id;
             const { dateStart, dateEnd } = req.query;
             const db = await attachFB(optionsFB);
@@ -498,13 +432,6 @@ const controller = {
                                 if (err) return reject(err); //throw err;
                                 resolve(res);
                             });
-                            // } else {
-                            //     options.t.query(query, params, (err, res) => {
-                            //         //options.detachOnFinish && db.detach();
-                            //         if (err) throw err;
-                            //         resolve(res);
-                            //     });
-                            // }
                         });
 
                     db.transactionFB = () => {
@@ -513,7 +440,6 @@ const controller = {
                                 if (err) throw err;
                                 transaction.queryFB = (query, params, options = {}) => {
                                     return new Promise((resolve, reject) => {
-                                        //if (options.t === null) {
                                         console.log(query);
                                         transaction.query(query, params, (err, res) => {
                                             if (err) {
@@ -522,18 +448,10 @@ const controller = {
                                             }
                                             resolve(res);
                                         });
-                                        // } else {
-                                        //     options.t.query(query, params, (err, res) => {
-                                        //         //options.detachOnFinish && db.detach();
-                                        //         if (err) throw err;
-                                        //         resolve(res);
-                                        //     });
-                                        // }
                                     });
                                 };
                                 transaction.commitFB = () => {
                                     return new Promise((resolve, reject) => {
-                                        //if (options.t === null) {
                                         transaction.commit((err) => {
                                             if (err) {
                                                 transaction.rollback();
@@ -547,23 +465,6 @@ const controller = {
                             });
                         });
                     };
-
-                    // db.transaction(Firebird.ISOLATION_READ_COMMITED, function(err, transaction) {
-                    //     transaction.query('INSERT INTO users VALUE(?,?)', [1, 'Janko'], function(err, result) {
-
-                    //         if (err) {
-                    //             transaction.rollback();
-                    //             return;
-                    //         }
-
-                    //         transaction.commit(function(err) {
-                    //             if (err)
-                    //                 transaction.rollback();
-                    //             else
-                    //                 db.detach();
-                    //         });
-                    //     });
-                    // });
 
                     resolve(db);
                 });

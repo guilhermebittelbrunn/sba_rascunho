@@ -77,30 +77,16 @@ const optionsSubtitle = [
 ]
 
 
- function subtitleCategory(label, option){
-        let res;
-        switch(option){
-            case 'ULTIMA_VENDA':
-                res = moment(label).format('DD/MM/YYYY');
-                break
-            case 'AREA_KM2':
-                res = label + " km²";
-                break
-            default: 
-                res = label
-        }
-        return res
-}
 
 export default function Drawer(){
 
-    const {map, baseLayer, countryLayer, stateLayer, open, setOpen, colorCategory, setIsModalOpen} = useContext(MapaContext);
+    const {map, baseLayer, countryLayer, stateLayer, open, setOpen, colorCategory, setIsModalOpen,
+       fontSize, setFontSize, subTitle, setSubTitle, selectedOption, setSelectedOption,} = useContext(MapaContext);
     const [baseLayerEnable, setBaseLayerEnable] = useState(true);
     const [countryLayerEnable, setCountryLayerEnable] = useState(true);
-    const [fontSize, setFontSize] = useState(10);
+    
     const [searchValue, setSearchValue] = useState('');
-    const [subTitle, setSubTitle] = useState('');
-    const [selectedOption, setSelectedOption] = useState('');
+    
 
     useEffect(()=>{
         setSelectedOption('');
@@ -116,34 +102,34 @@ export default function Drawer(){
         countryLayer.setVisible(countryLayerEnable);
     },[baseLayerEnable, countryLayerEnable])
 
-    useEffect(()=>{
-        if(!map)return
-        stateLayer.getSource().getFeatures().forEach(feature=>{
-          const newStyle = new Style({
-              fill: new Fill({
-                  color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
-              }),
-              stroke: new Stroke({
-                  color: "rgba(30,30,30)",
-                  width: 1,
-              }),
-              text: new Text({
-                  text: subTitle === '' ? feature.getProperties().NM_MUN : 
-                  (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
-                  feature.getProperties().NM_MUN),  
-                  font: `bold ${fontSize}px ${"Segoe UI"}`,
-                  fill: new Fill({
-                        color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
-                  }),
-                  // backgroundFill: new Stroke({
-                  //   color: "rgba(255,255,255)",
-                  //   width: 1,
-                  // }),
-              }),
-          })  
-          feature.setStyle(newStyle)
-        })
-    },[selectedOption, fontSize, subTitle, searchValue])
+    // useEffect(()=>{
+    //     if(!map)return
+    //     stateLayer.getSource().getFeatures().forEach(feature=>{
+    //       const newStyle = new Style({
+    //           fill: new Fill({
+    //               color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
+    //           }),
+    //           stroke: new Stroke({
+    //               color: "rgba(30,30,30)",
+    //               width: 1,
+    //           }),
+    //           text: new Text({
+    //               text: subTitle === '' ? feature.getProperties().NM_MUN : 
+    //               (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
+    //               feature.getProperties().NM_MUN),  
+    //               font: `bold ${fontSize}px ${"Segoe UI"}`,
+    //               fill: new Fill({
+    //                     color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+    //               }),
+    //               // backgroundFill: new Stroke({
+    //               //   color: "rgba(255,255,255)",
+    //               //   width: 1,
+    //               // }),
+    //           }),
+    //       })  
+    //       feature.setStyle(newStyle)
+    //     })
+    // },[selectedOption, fontSize, subTitle, searchValue])
 
 
     function handleSeach(value){
