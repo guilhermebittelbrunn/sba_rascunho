@@ -1,7 +1,6 @@
 import Map from "./components/Map/Map"
-import React from 'react';
+import React, { useState }  from 'react';
 import { message } from 'antd';
-import { useState } from "react";
 import { useGeographic } from 'ol/proj';
 import ContextMenu from "./components/Map/ContextMenu";
 import dayjs from "dayjs";
@@ -16,8 +15,7 @@ export default function App() {
     useGeographic();
 
     const [url, setUrl] = useState('');
-    const [contextMenu, setContextMenu] = useState({status: false, layerX: 0, layerY: 0})
-    const [geometry, setGeometry] = useState({});  
+    const [contextMenu, setContextMenu] = useState({status: false, layerX: 0, layerY: 0, geometry: undefined}) 
     const [isFullScreen ,setIsFullscreen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -32,7 +30,6 @@ export default function App() {
         setIsFullscreen(pv=>!pv);
         if(!isFullScreen){
           try{
-            // main.requestFullscreen().then(res=>{console.log(res, 'teste')})
             await main.requestFullscreen();
           }catch(err){
             message.error('navegador incompatível com essa função');
@@ -42,24 +39,13 @@ export default function App() {
           }
         }
         document.exitFullscreen();
-      
-      // fullscreenEnabled() && main.exitFullscreen();
-              // console.log(mapDiv)
-              // map.addEventListener('click', async()=>{
-              //     try{
-              //         const res = await mapDiv.requestFullscreen();
-              //         console.log(res);
-              //     }catch(err){
-              //         console.log('err fullscreen', err);
-              //     }
-              // })
     }
 
     function handleContext(e){
         e.preventDefault();
         setContextMenu((preventValue)=> {
             return {status: !preventValue.status, pageX: e.pageX, pageY: e.pageY}
-        })
+        });
     }
 
     function handleClick(e){
@@ -78,18 +64,16 @@ export default function App() {
         <>
           <MapaProvider url={url} setIsLoading={setIsLoading}>
             <main id="main_content" className={`m-auto ${isFullScreen ? 'absolute top-0 p-0 left-0 w-screen h-screen' : 'p-4'}`} style={{width: '95%'}}> 
-                    {/* <Map url={url} handleContext={handleContext} handleClick={handleClick} setGeometry={setGeometry} geometry={geometry} contextMenu={contextMenu} viewSettingsValues={viewSettingsValues} handleChangeCenterValue={handleChangeCenterValue}/> */}
                     
                     <div className={`w-full relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
-                    {/* <div className={`w-screen h-screen absolute left-0 top-0 z-50`}> */}
-                      <Map handleFullScreenAction={handleFullScreenAction} isFullScreen={isFullScreen} setGeometry={setGeometry} handleContext={handleContext} handleClick={handleClick}/>
+                      <Map handleFullScreenAction={handleFullScreenAction} setContextMenu={setContextMenu} isFullScreen={isFullScreen} handleContext={handleContext} handleClick={handleClick}/>
                       <Drawer/>
                     </div>
             
-                    <ContextMenu geometry={geometry} contextMenu={contextMenu}/>        
+                    <ContextMenu contextMenu={contextMenu}/>        
                 
-              </main>
-              <Modal/>
+            </main>
+            <Modal/>
           </MapaProvider>
         </> 
         }

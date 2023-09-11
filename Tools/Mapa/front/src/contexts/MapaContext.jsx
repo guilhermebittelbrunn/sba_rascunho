@@ -1,10 +1,10 @@
+import { createContext, useEffect, useState } from 'react';
 import {Map, View} from 'ol';
 import {Vector as vector} from 'ol/layer'
 import {OSM, Vector} from 'ol/source';
 import {GeoJSON} from 'ol/format'
 import {Style,Stroke, Text, Fill} from 'ol/style'
 import TileLayer from 'ol/layer/Tile';
-import { createContext, useEffect, useState } from 'react';
 import useFetch from '../hooks/useFetch';
 import json from '../../geojson'
 import Select from 'ol/interaction/Select.js';
@@ -17,11 +17,11 @@ function colorCategory(label, option){
         }
         const tailwindColors = {
             0: 'rgba(221,221,223,0.8)',
-            1: 'rgb(240,253,244)',
-            2: 'rgb(187,247,208)',
-            3: 'rgb(74,222,128)',
-            4: 'rgb(22,163,74)',
-            5: 'rgb(28, 122, 64)',
+            1: 'rgba(240,253,244, 0.8)',
+            2: 'rgba(187,247,208, 0.8)',
+            3: 'rgba(74,222,128, 0.8)',
+            4: 'rgba(22,163,74, 0.8)',
+            5: 'rgba(28, 122, 64, 0.8)',
         }
         let x;
         switch (option){
@@ -39,10 +39,9 @@ function colorCategory(label, option){
                 return x
         }
         return x
-    } 
+} 
 
-
- function subtitleCategory(label, option){
+function subtitleCategory(label, option){
         let res;
         switch(option){
             case 'ULTIMA_VENDA':
@@ -59,7 +58,10 @@ function colorCategory(label, option){
 
 
 
-function setStyle(feature, selectedOption, fontSize, subTitle){
+function setStyle(feature, settings){
+    // const {strokeColor, textColor, fillColor} = style
+    const {selectedOption, fontSize, subTitle} = settings 
+
     const newStyle = new Style({
               fill: new Fill({
                   color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
@@ -85,8 +87,8 @@ function setStyle(feature, selectedOption, fontSize, subTitle){
     return newStyle
 }
 
-
-function handleSelectInteration(selectedOption, fontSize, subTitle, colorCategory){
+function handleSelectInteration(settings){
+    const {selectedOption, fontSize, subTitle} = settings
 
     const select = new Select({
         condition: pointerMove,
@@ -120,19 +122,25 @@ export const MapaContext = createContext();
 export default function MapaProvider({url, children, setIsLoading}){
 
     const {data, err, loading} = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`);
+    const [settings, setSettings] = useState({fontSize: 10, subTitle: '', selectedOption: '', interaction: false});
+    // const [layers, setLayers] = useState({stateLayer, countryLayer, baseLayer})
     const [error,setError] = useState(false);
     const [open, setOpen] = useState(false); 
     const [map, setMap] = useState(null);
+
     const [stateLayer, setStateLayer] = useState(null);
     const [countryLayer, setCountryLayer] = useState(null);
     const [baseLayer, setBaseLayer] = useState(null);
+
     const [isModalOpen, setIsModalOpen] = useState({status: false, type: ''});
     const [featuresSelected, setFeaturesSelected] = useState([]);
-    const [fontSize, setFontSize] = useState(10);
-    const [subTitle, setSubTitle] = useState('');
-    const [selectedOption, setSelectedOption] = useState('');
-    const [interaction, setInteraction] = useState(false);
-    
+
+    // const [fontSize, setFontSize] = useState(10);
+    // const [subTitle, setSubTitle] = useState('');
+    // const [selectedOption, setSelectedOption] = useState('');
+    // const [interaction, setInteraction] = useState(false);
+
+    const [searchValue, setSearchValue] = useState('');
 
     useEffect(()=>{
         const view = new View({
@@ -141,29 +149,35 @@ export default function MapaProvider({url, children, setIsLoading}){
                 zoom: 6,
                 maxZoom: 12,
                 minZoom: 4
-            });
+        });
 
         const mapObj = new Map({
             view: view,
             layers: [],
             controls: []
-        })
+        });
+
         setMap(mapObj);
     },[url])
 
 
     useEffect(()=>{
-        if(!map)return
+        if(!map || !stateLayer)return
+
         stateLayer.getSource().getFeatures().forEach(feature=>{
-          const newStyle = setStyle(feature, selectedOption, fontSize, subTitle);
+          const newStyle = setStyle(feature, settings);
           feature.setStyle(newStyle);
         });
+
         map.getInteractions().remove(map.getInteractions().item(9));
-        const select = handleSelectInteration(selectedOption, fontSize, subTitle, colorCategory);
-        interaction && map.addInteraction(select)
-    },[selectedOption, fontSize, subTitle, interaction])
+        const select = handleSelectInteration(settings);
+        settings.interaction && map.addInteraction(select)
 
+    },[settings, searchValue])
 
+    useEffect(()=>{
+        console.log(featuresSelected);
+    }, [featuresSelected])
 
     useEffect(()=>{
         if(!map) return
@@ -175,13 +189,14 @@ export default function MapaProvider({url, children, setIsLoading}){
                         features: new GeoJSON().readFeatures(data),
                     }),
                     style: (feature,res)=>{
-                        return setStyle(feature, selectedOption, fontSize, subTitle);
+                        return setStyle(feature, settings);
                     },
                     zIndex: 3,
                     className: 'stateLayer',
                     // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
                 });
 
+                console.log(stateLayer);
                 
                 const countryLayer = new vector({
                         source: new Vector({
@@ -227,8 +242,9 @@ export default function MapaProvider({url, children, setIsLoading}){
     
     return(
         <MapaContext.Provider value={{map, err, loading, setFeaturesSelected, countryLayer, baseLayer, stateLayer,open, setOpen, error, 
-            colorCategory, isModalOpen,setIsModalOpen, rc: url.rc,  url, fontSize, setFontSize, subTitle, setSubTitle, selectedOption, setSelectedOption,
-            setInteraction,
+            isModalOpen,setIsModalOpen, rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings
+  
+            // setInteraction,colorCategory, fontSize, setFontSize, subTitle, setSubTitle, selectedOption, setSelectedOption,
         }}>
             {children}
         </MapaContext.Provider>

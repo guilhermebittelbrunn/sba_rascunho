@@ -1,20 +1,21 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useEffect, useRef, useContext } from 'react';
 import { Spin } from 'antd';
 import {Style,Stroke, Text, Fill} from 'ol/style'
 import { useGeographic } from 'ol/proj';
 import {SettingOutlined,SelectOutlined, FullscreenExitOutlined,FullscreenOutlined} from '@ant-design/icons';
-
 import { MapaContext } from '../../contexts/MapaContext';
 import ErrorModal from './ErrorModal';
 
-
-
-export default function MapPage({handleClick, handleFullScreenAction, handleContext, setGeometry, isFullScreen}){
+export default function MapPage({handleClick, handleFullScreenAction, handleContext, isFullScreen, setContextMenu}){
 
     useGeographic();
     
-    const { map, loading, setOpen, error, setFeaturesSelected, setInteraction} = useContext(MapaContext)
-   
+    const { map, loading, setOpen, error, setFeaturesSelected, settings, setSettings
+        // setInteraction, fontSize, subTitle
+    } = useContext(MapaContext)
+    const {interaction, fontSize, subTitle} = settings
+
+
     const map1 = useRef(null);
 
     useEffect(()=>{
@@ -28,13 +29,14 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
     useEffect(()=>{
         if(!map)return
+
         map.addEventListener('contextmenu', (e)=>{
                 handleContext(e.originalEvent);
                 const pixels = e.pixel;
                 map.forEachFeatureAtPixel(pixels, (feature, layer)=>{
                     const properties = feature.getProperties();
                     const layerName = layer.getClassName();
-                    layerName === 'stateLayer' && setGeometry(properties);
+                    layerName === 'stateLayer' && setContextMenu((pv)=>{return {...pv, properties}});
                 })
         });
 
@@ -50,12 +52,22 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                             stroke: new Stroke({
                                 color: "rgba(30,30,30)",
                                 width: 1,
-                            })
+                            }),
+                            text: new Text({
+                                text: subTitle === '' ? feature.getProperties().NM_MUN : 
+                                (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
+                                feature.getProperties().NM_MUN),  
+                                font: `bold ${fontSize + .5}px ${"Segoe UI"}`,
+                                fill: new Fill({
+                                    color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+                                }),
+                            }),
                         })
-                        feature.setStyle(style)
+                        feature.setStyle(style);
+                        setFeaturesSelected(pv=>{
+                            return [...pv, feature.getProperties()];
+                        })
                     }
-                    
-          
                 })
             }
         });
@@ -81,7 +93,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                             {isFullScreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
                         </button>
                         
-                        <button onClick={()=>setInteraction(pv=>!pv)} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base'style={{transform: 'translate(20%, 150%)', transition: 'all .4s'}}>
+                        <button onClick={()=>setSettings(pv=>{return {...pv, interaction: !interaction}})} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base'style={{transform: 'translate(20%, 150%)', transition: 'all .4s'}}>
                             <SelectOutlined />
                         </button>
                                               

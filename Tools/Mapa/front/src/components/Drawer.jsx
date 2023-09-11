@@ -80,18 +80,18 @@ const optionsSubtitle = [
 
 export default function Drawer(){
 
-    const {map, baseLayer, countryLayer, stateLayer, open, setOpen, colorCategory, setIsModalOpen,
-       fontSize, setFontSize, subTitle, setSubTitle, selectedOption, setSelectedOption,} = useContext(MapaContext);
+    const {map, baseLayer, countryLayer, stateLayer, open, setOpen, setIsModalOpen, settings, setSettings, searchValue, setSearchValue} = useContext(MapaContext);
     const [baseLayerEnable, setBaseLayerEnable] = useState(true);
     const [countryLayerEnable, setCountryLayerEnable] = useState(true);
+    const {fontSize, subTitle, selectedOption} = settings
     
-    const [searchValue, setSearchValue] = useState('');
+
     
 
     useEffect(()=>{
-        setSelectedOption('');
-        setSubTitle('');
-        setFontSize(10)
+        setSettings((pv)=>{
+          return {...pv, fontSize: 10, subTitle: '', selectedOption: ''};
+        })
         setBaseLayerEnable(true);
         setCountryLayerEnable(true);
     },[map])
@@ -144,6 +144,7 @@ export default function Drawer(){
         return message.error('Cidade não encontrada na região do representante');
       }
       // const oldStroke = feature.getStyle().getStroke();
+      console.log(feature)
       feature.getStyle().setStroke(new Stroke({color: "rgb(222, 245, 16)",width: 4}));
       flyTo(feature.getGeometry().getInteriorPoint().getCoordinates());
       setOpen(false);
@@ -215,12 +216,12 @@ export default function Drawer(){
                                     <div className='flex flex-col'>
                                         <label className='font-bold text-sm' htmlFor='category'>Category layer</label>
 
-                                        <Select dropdownStyle={{ zIndex: 2000 }} value={selectedOption} name='category' options={optionsSelect} defaultValue="Sem categoria" className='w-[250px]' onChange={(value)=>{setSelectedOption(value)}}/>
+                                        <Select dropdownStyle={{ zIndex: 2000 }} value={selectedOption} name='category' options={optionsSelect} defaultValue="Sem categoria" className='w-[250px]' onChange={(value)=>{setSettings(pv=>{return {...pv, selectedOption: value}})}}/>
                                     </div>
 
                                     <div className='flex flex-col'>
                                         <label className='font-bold text-sm' htmlFor='category'>Category subtitle</label>
-                                        <Select dropdownStyle={{ zIndex: 2000 }} value={subTitle} name='category' options={optionsSubtitle} defaultValue="Sem subtítulo" className='w-[250px]' onChange={(value)=>{setSubTitle(value)}}/>
+                                        <Select dropdownStyle={{ zIndex: 2000 }} value={subTitle} name='category' options={optionsSubtitle} defaultValue="Sem subtítulo" className='w-[250px]' onChange={(value)=>{setSettings(pv=>{return {...pv, subTitle: value}})}}/>
                                     </div>
 
                                     <div className='flex flex-col'>
@@ -235,10 +236,10 @@ export default function Drawer(){
                                             }}
                                             bordered={false}
                                             value={fontSize}
-                                            onChange={(v)=>{setFontSize(v)}}
+                                            onChange={(value)=>{setSettings(pv=>{return {...pv, fontSize: value}})}}
                                             />
                                         </div>
-                                        <Slider min={4} max={36} defaultValue={fontSize} value={fontSize} onChange={(value)=>{setFontSize(value)}}/>
+                                        <Slider min={4} max={36} defaultValue={fontSize} value={fontSize} onChange={(value)=>{setSettings(pv=>{return{...pv, fontSize: value}})}}/>
                                     </div>
 
                                     
