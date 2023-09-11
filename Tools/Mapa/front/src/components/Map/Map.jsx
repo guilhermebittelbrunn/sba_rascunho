@@ -10,7 +10,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
     useGeographic();
     
-    const { map, loading, setOpen, error, setFeaturesSelected, settings, setSettings
+    const { map, loading, setOpen, error, setFeaturesSelected, featuresSelected,settings, setSettings, subtitleCategory, setStyle
         // setInteraction, fontSize, subTitle
     } = useContext(MapaContext)
     const {interaction, fontSize, subTitle} = settings
@@ -22,10 +22,109 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         if(!map) return
         map.setTarget('map');
         map1.current = map;
+
+
         return () => {  
                 map1.current.setTarget(null);
         };
     })
+
+    useEffect(()=>{
+        if(!map) return
+        // map.addEventListener('click', (e)=>{
+        //     if(e.originalEvent.ctrlKey){
+        //         map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
+        //             // console.log(feature.getProperties());
+        //             // console.log(featuresSelected);
+        //             if(feature.getProperties().CD_MUN){
+                     
+                        
+        //                 const index = featuresSelected.indexOf(fs=>{
+                        
+        //                     return fs.getProperties().CD_MUN === feature.getProperties().CD_MUN
+        //                 })
+        //                 console.log(index);
+        //                 if(index === -1){
+        //                     const style = setStyle(feature, {...settings, fillColor: 'rgb(255, 238, 0)'});
+        //                     feature.setStyle(style);
+        //                     setFeaturesSelected(pv=>{
+        //                         return [...pv, feature.getProperties()];
+        //                     })
+        //                 }
+        //                 // const style = new Style({
+        //                 //     fill: new Fill({
+        //                 //         color: "rgb(255, 238, 0)"
+        //                 //     }),
+        //                 //     stroke: new Stroke({
+        //                 //         color: "rgba(30,30,30)",
+        //                 //         width: 1,
+        //                 //     }),
+        //                 //     text: new Text({
+        //                 //         text: subTitle === '' ? feature.getProperties().NM_MUN : 
+        //                 //         (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
+        //                 //         feature.getProperties().NM_MUN),  
+        //                 //         font: `bold ${fontSize + .5}px ${"Segoe UI"}`,
+        //                 //         fill: new Fill({
+        //                 //             color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+        //                 //         }),
+        //                 //     }),
+        //                 // })
+                    
+                        
+        //             }
+        //         })
+        //     }
+        // });
+
+        map.on('click', (e)=>{
+            if(e.originalEvent.ctrlKey){
+                map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
+                    // console.log(feature.getProperties());
+                    // console.log(featuresSelected);
+                    if(feature.getProperties().CD_MUN){
+                     
+                        
+                        const index = featuresSelected.indexOf(fs=>{
+                           
+                            return fs.getProperties().CD_MUN === feature.getProperties().CD_MUN
+                        })
+
+                        // console.log(featuresSelected);
+                        console.log(index);
+
+
+                        if(index === -1){
+                            const style = setStyle(feature, {...settings, fillColor: 'rgb(255, 238, 0)'});
+                            feature.setStyle(style);
+                            setFeaturesSelected(pv=>{
+                                return [...pv, feature.getProperties()];
+                            })
+                        }
+                        // const style = new Style({
+                        //     fill: new Fill({
+                        //         color: "rgb(255, 238, 0)"
+                        //     }),
+                        //     stroke: new Stroke({
+                        //         color: "rgba(30,30,30)",
+                        //         width: 1,
+                        //     }),
+                        //     text: new Text({
+                        //         text: subTitle === '' ? feature.getProperties().NM_MUN : 
+                        //         (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
+                        //         feature.getProperties().NM_MUN),  
+                        //         font: `bold ${fontSize + .5}px ${"Segoe UI"}`,
+                        //         fill: new Fill({
+                        //             color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+                        //         }),
+                        //     }),
+                        // })
+                    
+                        
+                    }
+                })
+            }
+        });
+    },[settings, featuresSelected])
 
     useEffect(()=>{
         if(!map)return
@@ -40,37 +139,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                 })
         });
 
-        map.addEventListener('click', (e)=>{
-            if(e.originalEvent.ctrlKey){
-                map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
-                    // console.log(feature.getProperties());
-                    if(feature.getProperties().CD_MUN){
-                        const style = new Style({
-                            fill: new Fill({
-                                color: "rgb(255, 238, 0)"
-                            }),
-                            stroke: new Stroke({
-                                color: "rgba(30,30,30)",
-                                width: 1,
-                            }),
-                            text: new Text({
-                                text: subTitle === '' ? feature.getProperties().NM_MUN : 
-                                (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
-                                feature.getProperties().NM_MUN),  
-                                font: `bold ${fontSize + .5}px ${"Segoe UI"}`,
-                                fill: new Fill({
-                                    color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
-                                }),
-                            }),
-                        })
-                        feature.setStyle(style);
-                        setFeaturesSelected(pv=>{
-                            return [...pv, feature.getProperties()];
-                        })
-                    }
-                })
-            }
-        });
+        
     },[map])
 
     

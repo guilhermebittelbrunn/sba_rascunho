@@ -59,16 +59,15 @@ function subtitleCategory(label, option){
 
 
 function setStyle(feature, settings){
-    // const {strokeColor, textColor, fillColor} = style
-    const {selectedOption, fontSize, subTitle} = settings 
+    const {selectedOption, fontSize, subTitle, fillColor, strokeColor, strokeWidth} = settings;
 
     const newStyle = new Style({
               fill: new Fill({
-                  color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
+                  color: fillColor || (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
               }),
               stroke: new Stroke({
-                  color: "rgba(30,30,30)",
-                  width: 1,
+                  color: strokeColor || "rgba(0,0,0, 1)",
+                  width: strokeWidth || 1,
               }),
               text: new Text({
                   text: subTitle === '' ? feature.getProperties().NM_MUN : 
@@ -88,30 +87,13 @@ function setStyle(feature, settings){
 }
 
 function handleSelectInteration(settings){
-    const {selectedOption, fontSize, subTitle} = settings
 
     const select = new Select({
         condition: pointerMove,
-        style: (feature)=>{ 
-            return new Style({
-                fill: new Fill({
-                  color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
-                }),
-                stroke: new Stroke({
-                    color: 'rgb(30, 30, 30)',
-                    width: 3,
-                }),
-                text: new Text({
-                  text: subTitle === '' ? feature.getProperties().NM_MUN : 
-                  (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
-                  feature.getProperties().NM_MUN),  
-                  font: `bold ${fontSize + .5}px ${"Segoe UI"}`,
-                  fill: new Fill({
-                        color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
-                  }),
-              }),
-            })      
-        }    
+        style: (feature)=> {    
+            const newStyle = feature.getProperties().CD_MUN ? setStyle(feature, {...settings, strokeWidth: 3, fontSize: settings.fontSize + 0.5}) : setStyle(feature, {...settings, fillColor: ''});
+            return newStyle
+        },
     });
     return select
 }
@@ -123,32 +105,23 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     const {data, err, loading} = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`);
     const [settings, setSettings] = useState({fontSize: 10, subTitle: '', selectedOption: '', interaction: false});
-    // const [layers, setLayers] = useState({stateLayer, countryLayer, baseLayer})
-    const [error,setError] = useState(false);
+    const [layers, setLayers] = useState([]);
+    const [error,setError] = useState(err);
     const [open, setOpen] = useState(false); 
     const [map, setMap] = useState(null);
-
-    const [stateLayer, setStateLayer] = useState(null);
-    const [countryLayer, setCountryLayer] = useState(null);
-    const [baseLayer, setBaseLayer] = useState(null);
-
     const [isModalOpen, setIsModalOpen] = useState({status: false, type: ''});
     const [featuresSelected, setFeaturesSelected] = useState([]);
-
-    // const [fontSize, setFontSize] = useState(10);
-    // const [subTitle, setSubTitle] = useState('');
-    // const [selectedOption, setSelectedOption] = useState('');
-    // const [interaction, setInteraction] = useState(false);
 
     const [searchValue, setSearchValue] = useState('');
 
     useEffect(()=>{
+
         const view = new View({
-                extent: [-75, -35, -32, 6],
-                center: [-56, -14],
-                zoom: 6,
-                maxZoom: 12,
-                minZoom: 4
+            extent: [-75, -35, -32, 6],
+            center: [-56, -14],
+            zoom: 6,
+            maxZoom: 12,
+            minZoom: 4
         });
 
         const mapObj = new Map({
@@ -156,15 +129,16 @@ export default function MapaProvider({url, children, setIsLoading}){
             layers: [],
             controls: []
         });
-
+        setLayers([]);
         setMap(mapObj);
+
     },[url])
 
-
     useEffect(()=>{
-        if(!map || !stateLayer)return
 
-        stateLayer.getSource().getFeatures().forEach(feature=>{
+        const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
+        if(!map || stateLayer === -1)return
+        layers[stateLayer].properties.getSource().getFeatures().forEach(feature=>{
           const newStyle = setStyle(feature, settings);
           feature.setStyle(newStyle);
         });
@@ -177,7 +151,8 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     useEffect(()=>{
         console.log(featuresSelected);
-    }, [featuresSelected])
+    }, [featuresSelected]);
+
 
     useEffect(()=>{
         if(!map) return
@@ -196,8 +171,6 @@ export default function MapaProvider({url, children, setIsLoading}){
                     // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
                 });
 
-                console.log(stateLayer);
-                
                 const countryLayer = new vector({
                         source: new Vector({
                             features: new GeoJSON().readFeatures(json),
@@ -215,13 +188,32 @@ export default function MapaProvider({url, children, setIsLoading}){
                         },
                         zIndex: 2
                 });
-                setBaseLayer(baseLayer);
-                setStateLayer(stateLayer);
-                setCountryLayer(countryLayer);
 
-                map.addLayer(baseLayer);
-                map.addLayer(countryLayer);
-                map.addLayer(stateLayer);
+
+                const newLayers = [
+                    {
+                        name: 'Camada Estado',
+                        value: 'stateLayer',
+                        properties: stateLayer
+                    },
+                    {
+                        name: 'Camada País',
+                        value: 'countryLayer',
+                        properties: countryLayer
+                    },
+                    {
+                        name: 'Camada base',
+                        value: 'baseLayer',
+                        properties: baseLayer
+                    },
+                ]
+
+                setLayers(newLayers)
+
+                newLayers.forEach(layer=>{
+                    map.addLayer(layer.properties);
+                })
+
 
                 map.getView().setCenter(data.features[0].geometry.coordinates[0][0]);
                 setError(false);
@@ -235,16 +227,14 @@ export default function MapaProvider({url, children, setIsLoading}){
 
 
     useEffect(()=>{
-        setIsLoading(loading)
+        setIsLoading(loading);
     },[loading])
 
 
     
     return(
-        <MapaContext.Provider value={{map, err, loading, setFeaturesSelected, countryLayer, baseLayer, stateLayer,open, setOpen, error, 
-            isModalOpen,setIsModalOpen, rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings
-  
-            // setInteraction,colorCategory, fontSize, setFontSize, subTitle, setSubTitle, selectedOption, setSelectedOption,
+        <MapaContext.Provider value={{map, error, loading,featuresSelected, setFeaturesSelected, open, setOpen, error, layers, subtitleCategory,
+            isModalOpen,setIsModalOpen, rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings, setStyle
         }}>
             {children}
         </MapaContext.Provider>

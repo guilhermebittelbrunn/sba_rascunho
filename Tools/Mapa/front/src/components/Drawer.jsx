@@ -80,27 +80,40 @@ const optionsSubtitle = [
 
 export default function Drawer(){
 
-    const {map, baseLayer, countryLayer, stateLayer, open, setOpen, setIsModalOpen, settings, setSettings, searchValue, setSearchValue} = useContext(MapaContext);
-    const [baseLayerEnable, setBaseLayerEnable] = useState(true);
-    const [countryLayerEnable, setCountryLayerEnable] = useState(true);
-    const {fontSize, subTitle, selectedOption} = settings
-    
-
+    const {map, layers, open, setOpen, setIsModalOpen, settings, setSettings, searchValue, setSearchValue,} = useContext(MapaContext);
+    const [layerEnable, setLayerEnable] = useState([]);
+    const {fontSize, subTitle, selectedOption} = settings;
     
 
     useEffect(()=>{
+
+      if(!layers.length > 0)return
+      setLayerEnable(layers.map((layer,key)=>{
+        return {...layer, key,status: true}
+      }));
+ 
+  
+    },[layers])    
+
+    useEffect(()=>{
+      
         setSettings((pv)=>{
           return {...pv, fontSize: 10, subTitle: '', selectedOption: ''};
-        })
-        setBaseLayerEnable(true);
-        setCountryLayerEnable(true);
+        });
+        
     },[map])
 
     useEffect(()=>{
+
         if(!map) return
-        baseLayer.setVisible(baseLayerEnable);
-        countryLayer.setVisible(countryLayerEnable);
-    },[baseLayerEnable, countryLayerEnable])
+  
+        layers.forEach(layer=>{
+          const index = layerEnable.findIndex(lyr => lyr.value === layer.value);
+          const status = layerEnable[index].status;
+          layer.properties.setVisible(status);
+        })
+        
+    },[layerEnable])
 
     // useEffect(()=>{
     //     if(!map)return
@@ -133,7 +146,7 @@ export default function Drawer(){
 
 
     function handleSeach(value){
-      const features = stateLayer.getSource().getFeatures();
+      const features = layers.stateLayer.getSource().getFeatures();
       const index = features.findIndex(f => {
         const f_name = f.values_['NM_MUN'].normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
         return f_name === value.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
@@ -149,6 +162,17 @@ export default function Drawer(){
       flyTo(feature.getGeometry().getInteriorPoint().getCoordinates());
       setOpen(false);
       setTimeout(()=> setSearchValue(''),6000);
+    }
+
+    function handleCheck(e){
+      setLayerEnable(layerEnable.map(layer=>{        
+        if(layer.value === e.target.value){
+          return {...layer, status: !layer.status}
+        }
+        return {...layer}
+  
+      }));
+
     }
 
     function flyTo(location, zoomLevel, done) {
@@ -242,13 +266,19 @@ export default function Drawer(){
                                         <Slider min={4} max={36} defaultValue={fontSize} value={fontSize} onChange={(value)=>{setSettings(pv=>{return{...pv, fontSize: value}})}}/>
                                     </div>
 
-                                    
-                                    <div>
-                                      <Checkbox  onClick={(e)=>{setBaseLayerEnable(e.target.checked)}} checked={baseLayerEnable}>Enable base layer</Checkbox>
-                                    </div>
-                                    <div>
-                                      <Checkbox  onClick={(e)=>{setCountryLayerEnable(e.target.checked)}} checked={countryLayerEnable}>Enable country layer</Checkbox>
-                                    </div>
+                                    {layerEnable.map(layer=>{
+                                     
+                                    return(
+                                          <div key={layer.key}>
+                                            <Checkbox  
+                                              value={layer.value}
+                                              onClick={(e)=>handleCheck(e)}
+                                              checked={layer.status}>
+                                              {layer.name}
+                                            </Checkbox>
+                                          </div>
+                                      )
+                                    })}
 
                             </div>
                             <div id='bts' className='w-full flex flex-col gap-2'>

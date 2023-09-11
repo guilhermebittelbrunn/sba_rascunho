@@ -23,6 +23,6 @@ export default function useFetch(url){
     
   }, [url])
 
-    return {loading, error, data}
+    return {loading, err:error, data}
 
 }
