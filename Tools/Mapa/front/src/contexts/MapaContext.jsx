@@ -150,7 +150,21 @@ export default function MapaProvider({url, children, setIsLoading}){
     },[settings, searchValue])
 
     useEffect(()=>{
-        console.log(featuresSelected);
+    //    const newlist = featuresSelected.reduce((acc,fs)=>{
+    //         const index = acc.findIndex(element=> element.CD_MUN === fs.CD_MUN);
+    //         index === -1 && acc.push(fs);
+    //         return acc
+    //    },[]);
+    //    setFeaturesSelected(newlist);
+    //    featuresSelected.forEach(fs=>{
+    //         console.log(fs)
+    //    })
+        featuresSelected.forEach(fs=>{
+            const isSeleted = fs.getProperties().SELECTED;
+    
+            const style = isSeleted ? setStyle(fs, {...settings, fillColor: 'rgb(255,238,0)'}) : setStyle(fs, settings);
+             fs.setStyle(style);
+        })
     }, [featuresSelected]);
 
 
@@ -230,11 +244,57 @@ export default function MapaProvider({url, children, setIsLoading}){
         setIsLoading(loading);
     },[loading])
 
+    // function addFeatureSelected(feature){
+    //     console.log(feature);
+    //     console.log('featuresSelected', featuresSelected);
+    //     const index = featuresSelected.findIndex(fs=>fs.CD_MUN === feature.getProperties().CD_MUN);
+    //     if(index === -1){
+    //         setFeaturesSelected(pv=>[...pv, feature]);
+    //     }                
+            
+    // }
+
+    function addLayer(){
+        const newlist = featuresSelected.reduce((acc,fs)=>{
+            const index = acc.findIndex(element=> element.getProperties().CD_MUN === fs.getProperties().CD_MUN);
+            index === -1 && acc.push(fs);
+            return acc
+        },[]);
+        // setFeaturesSelected(newlist);
+        // console.log(newlist);
+        const Features = {
+            features: newlist.map(f=>f.getProperties().geometry.getCoordinates()),
+            type: "FeatureCollection"
+        }
+        // console.log(data);
+        // // console.log(newlist[0].getProperties().geometry.getCoordinates());
+        // console.log(Features)
+        // // getCoordinates
+        const newLayer = {
+            name: 'Layer Nova',
+            value: 'newLayer',
+            properties: new vector({
+                source: new Vector({
+                    features: new GeoJSON().readFeatures(Features),
+                }),
+                style: (feature,res)=>{
+                    return setStyle(feature, {...settings, fillColor: 'rgb(0,0,200)'});
+                },
+                zIndex: 4,
+                className: 'newLayer',
+                // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
+            })
+        }
+        setLayers(pv=>[...pv, newLayer]);
+        map.addLayer(newLayer.properties);
+
+    }
+
 
     
     return(
         <MapaContext.Provider value={{map, error, loading,featuresSelected, setFeaturesSelected, open, setOpen, error, layers, subtitleCategory,
-            isModalOpen,setIsModalOpen, rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings, setStyle
+            isModalOpen,setIsModalOpen, rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings, setStyle, addLayer
         }}>
             {children}
         </MapaContext.Provider>
