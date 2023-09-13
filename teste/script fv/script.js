@@ -151,7 +151,7 @@ let countPlat = 0;
         let list = [];
         for (let element of dataset) {
             list.push(`https://api.themoviedb.org/3/movie/${element}?language=pt-BR`);
-            if (list.length === 60) {
+            if (list.length === 100) {
                 //métodos
                 const allResponse = await axios.all(
                     list.map(async (endpoint) => {
@@ -188,33 +188,36 @@ let countPlat = 0;
                                 json: objt,
                             });
 
-                            const res = await axios.get(
-                                `https://api.themoviedb.org/3/movie/${objt.id}/watch/providers`,
-                                options
-                            );
-                            if (res.data.results.BR) {
-                                if (res.data.results.BR.flatrate) {
-                                    const listProviders = res.data.results.BR.flatrate.map((provider) => {
-                                        return provider.provider_id;
-                                    });
-
-                                    const listStreamings = await Streaming.findAll({
-                                        // raw: true,
-                                        where: {
-                                            id: {
-                                                [Op.in]: listProviders,
-                                            },
-                                        },
-                                    });
-
-                                    if (listStreamings.length > 0) {
-                                        countPlat++;
-                                        listStreamings.forEach(async (item) => {
-                                            await newMovie.setStreamings([item]);
+                            if (objt.overview) {
+                                const res = await axios.get(
+                                    `https://api.themoviedb.org/3/movie/${objt.id}/watch/providers`,
+                                    options
+                                );
+                                if (res.data.results.BR) {
+                                    if (res.data.results.BR.flatrate) {
+                                        const listProviders = res.data.results.BR.flatrate.map((provider) => {
+                                            return provider.provider_id;
                                         });
+
+                                        const listStreamings = await Streaming.findAll({
+                                            // raw: true,
+                                            where: {
+                                                id: {
+                                                    [Op.in]: listProviders,
+                                                },
+                                            },
+                                        });
+
+                                        if (listStreamings.length > 0) {
+                                            countPlat++;
+                                            listStreamings.forEach(async (item) => {
+                                                await newMovie.setStreamings([item]);
+                                            });
+                                        }
                                     }
                                 }
                             }
+
                             objt['genres'].forEach(async (genre) => {
                                 const newGenre = await Genre.findByPk(genre.id);
                                 await newMovie.setGenres([newGenre]);
@@ -231,7 +234,7 @@ let countPlat = 0;
                         dataset.length
                     } total, ${countPlat} possuem plataforma`
                 );
-                await sleep(13000);
+                await sleep(7000);
             }
         }
     });
