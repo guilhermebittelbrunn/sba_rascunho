@@ -1,10 +1,11 @@
-import { useEffect, useRef, useContext } from 'react';
-import { Spin } from 'antd';
+import { useEffect, useRef, useContext, useState } from 'react';
+import { Spin,Button, Modal } from 'antd';
 import {Style,Stroke, Text, Fill} from 'ol/style'
 import { useGeographic } from 'ol/proj';
 import {SettingOutlined,SelectOutlined, FullscreenExitOutlined,PlusOutlined,FullscreenOutlined} from '@ant-design/icons';
 import { MapaContext } from '../../contexts/MapaContext';
 import ErrorModal from './ErrorModal';
+import NewLayerModal from './NewLayerModal';
 
 export default function MapPage({handleClick, handleFullScreenAction, handleContext, isFullScreen, setContextMenu}){
 
@@ -14,10 +15,14 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         // setInteraction, fontSize, subTitle
     } = useContext(MapaContext)
     const {interaction, fontSize, subTitle} = settings
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const map1 = useRef(null);
 
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+   
     useEffect(()=>{
         if(!map) return
         map.setTarget('map');
@@ -145,7 +150,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         map.on('click', (e)=>{
              if(e.originalEvent.ctrlKey){
                 map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
-  
+
                     if(layer.className_ === "stateLayer"){
                         feature.setProperties({SELECTED: !feature.getProperties().SELECTED})
                         // console.log(feature.setProperties({SELECTED: true}));
@@ -204,6 +209,22 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
     //     })
     // }, [settings]);
 
+    function countSelectedLayers(){
+        const newlist = featuresSelected.reduce((acc,fs)=>{
+            const index = acc.findIndex(element=> element.getProperties().CD_MUN === fs.getProperties().CD_MUN);
+            index === -1 && acc.push(fs);
+            return acc
+       },[]);
+       const seleteds = newlist.map(fs=>fs.getProperties().SELECTED);
+       console.log('fs', featuresSelected.length);
+       console.log('newlist', newlist)
+    //    console.log('newlist', newlist);
+    //    console.log('seleteds', seleteds)
+       console.log('length', seleteds.length);
+       return seleteds.length
+
+    }
+
 
   return (
    
@@ -227,10 +248,17 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                             <SelectOutlined />
                         </button>
 
-                        <button onClick={addLayer} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base'style={{transform: 'translate(20%, 275%)', transition: 'all .4s'}}>
-                            <PlusOutlined />
+                        <button onClick={()=>{showModal()}} id='btn_interaction' className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base ${(featuresSelected.map(fs=>fs.getProperties().SELECTED)).length > 0} && 'opacity-60 cursor-not-allowed'}`} style={{transform: 'translate(20%, 275%)', transition: 'all .4s'}}>
+                            {/* <PlusOutlined />
+                             */}
+                             {countSelectedLayers()}
                         </button>
-                                              
+
+                        {/* <newLayerModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                        
+                        */}
+
+                        <NewLayerModal addLayer={addLayer} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
                         <div id='map'  onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/> 
                     </>
                     }

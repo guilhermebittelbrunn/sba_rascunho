@@ -146,7 +146,8 @@ export default function Drawer(){
 
 
     function handleSeach(value){
-      const features = layers.stateLayer.getSource().getFeatures();
+      const stateLayer = layers[layers.findIndex(layer=>layer.value === 'stateLayer')].properties;
+      const features = stateLayer.getSource().getFeatures();
       const index = features.findIndex(f => {
         const f_name = f.values_['NM_MUN'].normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
         return f_name === value.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();

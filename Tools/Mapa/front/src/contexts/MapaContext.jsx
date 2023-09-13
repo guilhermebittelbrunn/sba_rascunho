@@ -159,6 +159,8 @@ export default function MapaProvider({url, children, setIsLoading}){
     //    featuresSelected.forEach(fs=>{
     //         console.log(fs)
     //    })
+
+        console.log(featuresSelected)
         featuresSelected.forEach(fs=>{
             const isSeleted = fs.getProperties().SELECTED;
     
@@ -227,8 +229,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                 newLayers.forEach(layer=>{
                     map.addLayer(layer.properties);
                 })
-
-
+    
                 map.getView().setCenter(data.features[0].geometry.coordinates[0][0]);
                 setError(false);
             }catch(error){
@@ -254,16 +255,23 @@ export default function MapaProvider({url, children, setIsLoading}){
             
     // }
 
-    function addLayer(){
+    function addLayer(data){
+        let {layerName, fontColor, fillColor} = data
+        console.log(fontColor)
+        fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor
+        fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor
+        console.log(layerName, fontColor, fillColor)
         const newlist = featuresSelected.reduce((acc,fs)=>{
             const index = acc.findIndex(element=> element.getProperties().CD_MUN === fs.getProperties().CD_MUN);
-            index === -1 && acc.push(fs);
+            if(index === -1){
+                fs.getProperties().SELECTED && acc.push(fs);
+            }
             return acc
         },[]);
         // setFeaturesSelected(newlist);
         // console.log(newlist);
         const Features = {
-            features: newlist.map(f=>f.getProperties().geometry.getCoordinates()),
+            features: newlist.map(f=>{return {type: 'Feature',properties:f.getProperties() ,geometry: {type: 'Polygon',coordinates: f.getProperties().geometry.getCoordinates()}}}),
             type: "FeatureCollection"
         }
         // console.log(data);
@@ -271,23 +279,25 @@ export default function MapaProvider({url, children, setIsLoading}){
         // console.log(Features)
         // // getCoordinates
         const newLayer = {
-            name: 'Layer Nova',
-            value: 'newLayer',
+            name: layerName || `Camada ${layers.length + 1}`,
+            value: `layer${layers.length + 1}`,
             properties: new vector({
                 source: new Vector({
                     features: new GeoJSON().readFeatures(Features),
                 }),
                 style: (feature,res)=>{
-                    return setStyle(feature, {...settings, fillColor: 'rgb(0,0,200)'});
+                    return setStyle(feature, {...settings, fillColor, fontColor});
                 },
                 zIndex: 4,
                 className: 'newLayer',
                 // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
             })
         }
-        setLayers(pv=>[...pv, newLayer]);
-        map.addLayer(newLayer.properties);
 
+        setLayers(pv=>[...pv, newLayer]);
+        featuresSelected.forEach(fs=>{fs.setStyle(setStyle(fs, settings))});
+        setFeaturesSelected([]);
+        map.addLayer(newLayer.properties);
     }
 
 
