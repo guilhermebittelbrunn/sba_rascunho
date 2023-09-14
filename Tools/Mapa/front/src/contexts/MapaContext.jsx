@@ -59,11 +59,11 @@ function subtitleCategory(label, option){
 
 
 function setStyle(feature, settings){
-    const {selectedOption, fontSize, subTitle, fillColor, strokeColor, strokeWidth} = settings;
+    const {selectedOption, fontSize, subTitle, fillColor, strokeColor, strokeWidth, fontColor} = settings;
 
     const newStyle = new Style({
               fill: new Fill({
-                  color: fillColor || (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
+                  color: feature.getProperties().SELECTED ? 'rgb(255,238,0)' :  ((feature.getProperties().fillColor || fillColor) || (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))),
               }),
               stroke: new Stroke({
                   color: strokeColor || "rgba(0,0,0, 1)",
@@ -75,7 +75,7 @@ function setStyle(feature, settings){
                   feature.getProperties().NM_MUN),  
                   font: `bold ${fontSize}px ${"Segoe UI"}`,
                   fill: new Fill({
-                        color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+                        color: (feature.getProperties().fontColor || fontColor) || (feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)')
                   }),
                   // backgroundFill: new Stroke({
                   //   color: "rgba(255,255,255)",
@@ -110,7 +110,6 @@ export default function MapaProvider({url, children, setIsLoading}){
     const [open, setOpen] = useState(false); 
     const [map, setMap] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState({status: false, type: ''});
-    const [featuresSelected, setFeaturesSelected] = useState([]);
 
     const [searchValue, setSearchValue] = useState('');
 
@@ -135,46 +134,11 @@ export default function MapaProvider({url, children, setIsLoading}){
     },[url])
 
     useEffect(()=>{
-
-        const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
-        if(!map || stateLayer === -1)return
-        layers[stateLayer].properties.getSource().getFeatures().forEach(feature=>{
-          const newStyle = setStyle(feature, settings);
-          feature.setStyle(newStyle);
-        });
-
-        map.getInteractions().remove(map.getInteractions().item(9));
-        const select = handleSelectInteration(settings);
-        settings.interaction && map.addInteraction(select)
-
-    },[settings, searchValue])
-
-    useEffect(()=>{
-    //    const newlist = featuresSelected.reduce((acc,fs)=>{
-    //         const index = acc.findIndex(element=> element.CD_MUN === fs.CD_MUN);
-    //         index === -1 && acc.push(fs);
-    //         return acc
-    //    },[]);
-    //    setFeaturesSelected(newlist);
-    //    featuresSelected.forEach(fs=>{
-    //         console.log(fs)
-    //    })
-
-        console.log(featuresSelected)
-        featuresSelected.forEach(fs=>{
-            const isSeleted = fs.getProperties().SELECTED;
-    
-            const style = isSeleted ? setStyle(fs, {...settings, fillColor: 'rgb(255,238,0)'}) : setStyle(fs, settings);
-             fs.setStyle(style);
-        })
-    }, [featuresSelected]);
-
-
-    useEffect(()=>{
         if(!map) return
         if(!loading){
             try{
-                const baseLayer = new TileLayer({source: new OSM(), zIndex: 0});
+                const baseLayer = new TileLayer({source: new OSM(), zIndex: 0, className: 'baseLayer'});
+
                 const stateLayer = new vector({
                     source: new Vector({
                         features: new GeoJSON().readFeatures(data),
@@ -184,7 +148,6 @@ export default function MapaProvider({url, children, setIsLoading}){
                     },
                     zIndex: 3,
                     className: 'stateLayer',
-                    // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
                 });
 
                 const countryLayer = new vector({
@@ -192,54 +155,100 @@ export default function MapaProvider({url, children, setIsLoading}){
                             features: new GeoJSON().readFeatures(json),
                         }),
                         style: (feature,res)=>{
-                        return new Style({
-                            fill: new Stroke({
-                                color: "rgba(0,0,0,0)",
-                            }),
-                            stroke: new Stroke({
-                                color: "rgba(30,30,30)",
-                                width: 1,
-                            }),
-                        })
+                            return setStyle(feature, {...settings, fillColor: 'rgba(0,0,0,0)', strokeColor: 'rgba(30,30,30)'})
                         },
                         zIndex: 2
                 });
-
 
                 const newLayers = [
                     {
                         name: 'Camada Estado',
                         value: 'stateLayer',
-                        properties: stateLayer
+                        properties: stateLayer,
+                        status: true,
+                        key: 1,
                     },
                     {
                         name: 'Camada País',
                         value: 'countryLayer',
-                        properties: countryLayer
+                        properties: countryLayer,
+                        status: true,
+                        key: 2,
                     },
                     {
                         name: 'Camada base',
                         value: 'baseLayer',
-                        properties: baseLayer
+                        properties: baseLayer,
+                        status: true,
+                        key: 3,
                     },
                 ]
 
-                setLayers(newLayers)
+                setLayers(newLayers);
 
                 newLayers.forEach(layer=>{
                     map.addLayer(layer.properties);
-                })
-    
+                });
                 map.getView().setCenter(data.features[0].geometry.coordinates[0][0]);
                 setError(false);
             }catch(error){
                 setError(error);
                 // setMap(null)
             }
-            
         }
     },[data])
 
+    useEffect(()=>{
+
+        const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
+        if(!map || stateLayer === -1)return
+        // layers[stateLayer].properties.getSource().getFeatures().forEach(feature=>{
+        //   const newStyle = setStyle(feature, settings);
+        //   feature.setStyle(newStyle);
+        // });
+
+        layers.forEach(layer=>{
+            if(layer.properties.className_ !== 'baseLayer'){
+                layer.properties.getSource().getFeatures().forEach(feature=>{
+                    const newStyle = setStyle(feature, settings);
+                    feature.setStyle(newStyle);
+                    feature.setProperties({stylesConfig: settings})
+                });
+            }
+        })
+
+        map.getInteractions().remove(map.getInteractions().item(9));
+        settings.interaction && map.addInteraction(handleSelectInteration(settings))
+
+    },[settings, searchValue])
+
+    // useEffect(()=>{
+    // //    const newlist = featuresSelected.reduce((acc,fs)=>{
+    // //         const index = acc.findIndex(element=> element.CD_MUN === fs.CD_MUN);
+    // //         index === -1 && acc.push(fs);
+    // //         return acc
+    // //    },[]);
+    // //    setFeaturesSelected(newlist);
+    // //    featuresSelected.forEach(fs=>{
+    // //         console.log(fs)
+    // //    })
+    //     const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
+    //     if(!map || stateLayer === -1)return
+    //     const features = layers[stateLayer].properties.getSource().getFeatures();
+    //     const selecteds = features.reduce((acc, element)=>{
+    //         const index = acc.findIndex(f=> element.CD_MUN === f.CD_MUN);
+    //         index === -1 && acc.push(fs);
+    //         return acc
+    //     }, [])
+
+
+    //     featuresSelected.forEach(fs=>{
+    //         const isSeleted = fs.getProperties().SELECTED;
+    
+    //         const style = isSeleted ? setStyle(fs, {...settings, fillColor: 'rgb(255,238,0)'}) : setStyle(fs, settings);
+    //          fs.setStyle(style);
+    //     })
+    // }, [featuresSelected]);
 
     useEffect(()=>{
         setIsLoading(loading);
@@ -256,22 +265,25 @@ export default function MapaProvider({url, children, setIsLoading}){
     // }
 
     function addLayer(data){
+        const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
         let {layerName, fontColor, fillColor} = data
-        console.log(fontColor)
         fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor
         fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor
-        console.log(layerName, fontColor, fillColor)
-        const newlist = featuresSelected.reduce((acc,fs)=>{
-            const index = acc.findIndex(element=> element.getProperties().CD_MUN === fs.getProperties().CD_MUN);
-            if(index === -1){
-                fs.getProperties().SELECTED && acc.push(fs);
-            }
-            return acc
-        },[]);
+
+        if(stateLayer === -1)return
+        const features = layers[stateLayer].properties.getSource().getFeatures();
+        const featuresSelecteds =  features.filter(fs=> fs.getProperties().SELECTED === true);
+        // const newlist = featuresSelected.reduce((acc,fs)=>{
+        //     const index = acc.findIndex(element=> element.getProperties().CD_MUN === fs.getProperties().CD_MUN);
+        //     if(index === -1){
+        //         fs.getProperties().SELECTED && acc.push(fs);
+        //     }
+        //     return acc
+        // },[]);
         // setFeaturesSelected(newlist);
         // console.log(newlist);
-        const Features = {
-            features: newlist.map(f=>{return {type: 'Feature',properties:f.getProperties() ,geometry: {type: 'Polygon',coordinates: f.getProperties().geometry.getCoordinates()}}}),
+        const geoJSON = {
+            features: featuresSelecteds.map(f=>{return {type: 'Feature',properties:{...f.getProperties(), fontColor, fillColor} ,geometry: {type: 'Polygon',coordinates: f.getProperties().geometry.getCoordinates()}}}),
             type: "FeatureCollection"
         }
         // console.log(data);
@@ -281,12 +293,14 @@ export default function MapaProvider({url, children, setIsLoading}){
         const newLayer = {
             name: layerName || `Camada ${layers.length + 1}`,
             value: `layer${layers.length + 1}`,
+            status: true,
+            key: layers.length + 1,
             properties: new vector({
                 source: new Vector({
-                    features: new GeoJSON().readFeatures(Features),
+                    features: new GeoJSON().readFeatures(geoJSON),
                 }),
                 style: (feature,res)=>{
-                    return setStyle(feature, {...settings, fillColor, fontColor});
+                    return setStyle(feature, {...settings});
                 },
                 zIndex: 4,
                 className: 'newLayer',
@@ -295,16 +309,25 @@ export default function MapaProvider({url, children, setIsLoading}){
         }
 
         setLayers(pv=>[...pv, newLayer]);
-        featuresSelected.forEach(fs=>{fs.setStyle(setStyle(fs, settings))});
-        setFeaturesSelected([]);
+        // featuresSelected.forEach(fs=>{fs.setStyle(setStyle(fs, settings))});
+        // setFeaturesSelected([]);
+
+        featuresSelecteds.forEach(fs=>{
+            fs.setProperties({SELECTED: false});
+            fs.setStyle(setStyle(fs, {...settings, fillColor, fontColor}));
+        });
+        setSettings((pv)=>pv);
         map.addLayer(newLayer.properties);
     }
 
 
+    function testeS(f){
+        console.log(f, settings)
+    }
     
     return(
-        <MapaContext.Provider value={{map, error, loading,featuresSelected, setFeaturesSelected, open, setOpen, error, layers, subtitleCategory,
-            isModalOpen,setIsModalOpen, rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings, setStyle, addLayer
+        <MapaContext.Provider value={{map, error, loading, open, setOpen, error, layers, setLayers,subtitleCategory,
+            isModalOpen,setIsModalOpen, testeS,rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings, setStyle, addLayer
         }}>
             {children}
         </MapaContext.Provider>

@@ -170,25 +170,25 @@ let countPlat = 0;
 
                 for (let objt of allResponse) {
                     if (typeof objt === 'object') {
-                        if (objt['genres'].length > 0) {
-                            // console.log(objt.title);
-                            const newMovie = await Movie.create({
-                                title: objt.title,
-                                sinopse: objt.overview,
-                                duration: objt.runtime,
-                                original_title: objt.original_title,
-                                vote: objt.vote_average,
-                                count_votes: objt.vote_count,
-                                release: objt.release_date,
-                                score_popularity: objt.popularity,
-                                porter_path: objt.poster_path,
-                                backdrop_path: objt.backdrop_path,
-                                adult: objt.adult,
-                                idAPI: objt.id,
-                                json: objt,
-                            });
+                        if (objt.overview) {
+                            if (objt['genres'].length > 0) {
+                                // console.log(objt.title);
+                                const newMovie = await Movie.create({
+                                    title: objt.title,
+                                    sinopse: objt.overview,
+                                    duration: objt.runtime,
+                                    original_title: objt.original_title,
+                                    vote: objt.vote_average,
+                                    count_votes: objt.vote_count,
+                                    release: objt.release_date,
+                                    score_popularity: objt.popularity,
+                                    porter_path: objt.poster_path,
+                                    backdrop_path: objt.backdrop_path,
+                                    adult: objt.adult,
+                                    idAPI: objt.id,
+                                    json: objt,
+                                });
 
-                            if (objt.overview) {
                                 const res = await axios.get(
                                     `https://api.themoviedb.org/3/movie/${objt.id}/watch/providers`,
                                     options
@@ -216,14 +216,14 @@ let countPlat = 0;
                                         }
                                     }
                                 }
-                            }
 
-                            objt['genres'].forEach(async (genre) => {
-                                const newGenre = await Genre.findByPk(genre.id);
-                                await newMovie.setGenres([newGenre]);
-                                // console.log(`${objt.title} - ${newGenre.dataValues.id} - ${genre.id}`);
-                            });
-                            count++;
+                                objt['genres'].forEach(async (genre) => {
+                                    const newGenre = await Genre.findByPk(genre.id);
+                                    await newMovie.setGenres([newGenre]);
+                                    // console.log(`${objt.title} - ${newGenre.dataValues.id} - ${genre.id}`);
+                                });
+                                count++;
+                            }
                         }
                     }
                 }
@@ -234,7 +234,7 @@ let countPlat = 0;
                         dataset.length
                     } total, ${countPlat} possuem plataforma`
                 );
-                await sleep(7000);
+                await sleep(6000);
             }
         }
     });

@@ -11,7 +11,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
     useGeographic();
     
-    const { map, loading, setOpen, error, setFeaturesSelected, addLayer,featuresSelected,settings, setSettings, subtitleCategory, setStyle
+    const { map, loading, setOpen,error, setFeaturesSelected, testeS ,layers,addLayer,featuresSelected,settings, setSettings, subtitleCategory, setStyle
         // setInteraction, fontSize, subTitle
     } = useContext(MapaContext)
     const {interaction, fontSize, subTitle} = settings
@@ -28,9 +28,8 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         map.setTarget('map');
         map1.current = map;
 
-
         return () => {  
-                map1.current.setTarget(null);
+            map1.current.setTarget(null);
         };
     })
 
@@ -152,11 +151,22 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                 map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
 
                     if(layer.className_ === "stateLayer"){
-                        feature.setProperties({SELECTED: !feature.getProperties().SELECTED})
+                        feature.setProperties({SELECTED: !feature.getProperties().SELECTED});
+                        feature.getProperties().SELECTED;
                         // console.log(feature.setProperties({SELECTED: true}));
                         // addFeatureSelected(feature.getProperties());
-                        console.log(feature.getProperties());
-                        setFeaturesSelected(pv=>[...pv, feature]);
+                        const styleConfig = feature.getProperties().stylesConfig || settings
+                        const newStyle = feature.getProperties().SELECTED ? setStyle(feature, {...styleConfig, fillColor: 'rgb(255,238,0)'}) : setStyle(feature, {...settings});
+                        feature.setStyle(newStyle);
+                        // const btn = document.getElementById('btn_add_layer');
+                  
+                        // setFeaturesSelected(pv=>{
+                        //     const featuresWithSelectedStatus = pv.filter(f=>f.getProperties().SELECTED === true);
+                        //     const newFeatureSelected = feature.getProperties().SELECTED === true
+                        //     if(newFeatureSelected) return [...featuresWithSelectedStatus, feature]
+                        //     return [...featuresWithSelectedStatus]
+                        // });
+
                         // const index = featuresSelected.findIndex(fs=>{
                         //     return fs.CD_MUN === feature.getProperties().CD_MUN;
                         
@@ -202,28 +212,24 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         
     },[map])
 
-    // useEffect(()=>{
-    //     if(!map)return
-    //     map.on('click', ()=>{
-    //         console.log('click event', settings.fontSize);
-    //     })
-    // }, [settings]);
 
-    function countSelectedLayers(){
-        const newlist = featuresSelected.reduce((acc,fs)=>{
-            const index = acc.findIndex(element=> element.getProperties().CD_MUN === fs.getProperties().CD_MUN);
-            index === -1 && acc.push(fs);
-            return acc
-       },[]);
-       const seleteds = newlist.map(fs=>fs.getProperties().SELECTED);
-       console.log('fs', featuresSelected.length);
-       console.log('newlist', newlist)
-    //    console.log('newlist', newlist);
-    //    console.log('seleteds', seleteds)
-       console.log('length', seleteds.length);
-       return seleteds.length
+    // function countSelectedLayers(){
+    // //     const newlist = featuresSelected.reduce((acc,fs)=>{
+    // //         const index = acc.findIndex(element=> element.getProperties().CD_MUN === fs.getProperties().CD_MUN);
+    // //         index === -1 && acc.push(fs);
+    // //         return acc
+    // //    },[]);
+    // //     const seleteds = newlist.map(fs=>fs.getProperties().SELECTED);
+    //     const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
+    //     if(stateLayer === -1)return
+    //     const features = layers[stateLayer].properties.getSource().getFeatures();
+    //     const featuresSelecteds =  features.filter(fs=> fs.getProperties().SELECTED === true);
+    // //    console.log('newlist', newlist);
+    // //    console.log('seleteds', seleteds)
+    
+    //    return featuresSelecteds.length
 
-    }
+    // }
 
 
   return (
@@ -248,10 +254,10 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                             <SelectOutlined />
                         </button>
 
-                        <button onClick={()=>{showModal()}} id='btn_interaction' className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base ${(featuresSelected.map(fs=>fs.getProperties().SELECTED)).length > 0} && 'opacity-60 cursor-not-allowed'}`} style={{transform: 'translate(20%, 275%)', transition: 'all .4s'}}>
-                            {/* <PlusOutlined />
-                             */}
-                             {countSelectedLayers()}
+                        <button onClick={()=>{showModal()}} id='btn_add_layer' className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base`} style={{transform: 'translate(20%, 275%)', transition: 'all .4s'}}>
+                            <PlusOutlined />
+                            
+                             {/* {countSelectedLayers()} */}
                         </button>
 
                         {/* <newLayerModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>

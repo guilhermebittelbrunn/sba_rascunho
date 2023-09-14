@@ -80,20 +80,9 @@ const optionsSubtitle = [
 
 export default function Drawer(){
 
-    const {map, layers, open, setOpen, setIsModalOpen, settings, setSettings, searchValue, setSearchValue,} = useContext(MapaContext);
-    const [layerEnable, setLayerEnable] = useState([]);
+    const {map, layers, open, setOpen, setIsModalOpen, setLayers,settings, setSettings, searchValue, setSearchValue,} = useContext(MapaContext);
     const {fontSize, subTitle, selectedOption} = settings;
     
-
-    useEffect(()=>{
-
-      if(!layers.length > 0)return
-      setLayerEnable(layers.map((layer,key)=>{
-        return {...layer, key,status: true}
-      }));
- 
-  
-    },[layers])    
 
     useEffect(()=>{
       
@@ -108,41 +97,12 @@ export default function Drawer(){
         if(!map) return
   
         layers.forEach(layer=>{
-          const index = layerEnable.findIndex(lyr => lyr.value === layer.value);
-          const status = layerEnable[index].status;
+          const index = layers.findIndex(lyr => lyr.value === layer.value);
+          const status = layers[index].status;
           layer.properties.setVisible(status);
-        })
+        });
         
-    },[layerEnable])
-
-    // useEffect(()=>{
-    //     if(!map)return
-    //     stateLayer.getSource().getFeatures().forEach(feature=>{
-    //       const newStyle = new Style({
-    //           fill: new Fill({
-    //               color: (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption)),
-    //           }),
-    //           stroke: new Stroke({
-    //               color: "rgba(30,30,30)",
-    //               width: 1,
-    //           }),
-    //           text: new Text({
-    //               text: subTitle === '' ? feature.getProperties().NM_MUN : 
-    //               (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
-    //               feature.getProperties().NM_MUN),  
-    //               font: `bold ${fontSize}px ${"Segoe UI"}`,
-    //               fill: new Fill({
-    //                     color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
-    //               }),
-    //               // backgroundFill: new Stroke({
-    //               //   color: "rgba(255,255,255)",
-    //               //   width: 1,
-    //               // }),
-    //           }),
-    //       })  
-    //       feature.setStyle(newStyle)
-    //     })
-    // },[selectedOption, fontSize, subTitle, searchValue])
+    },[layers])
 
 
     function handleSeach(value){
@@ -158,7 +118,7 @@ export default function Drawer(){
         return message.error('Cidade não encontrada na região do representante');
       }
       // const oldStroke = feature.getStyle().getStroke();
-      console.log(feature)
+      console.log(feature);
       feature.getStyle().setStroke(new Stroke({color: "rgb(222, 245, 16)",width: 4}));
       flyTo(feature.getGeometry().getInteriorPoint().getCoordinates());
       setOpen(false);
@@ -166,12 +126,11 @@ export default function Drawer(){
     }
 
     function handleCheck(e){
-      setLayerEnable(layerEnable.map(layer=>{        
+      setLayers(pv => pv.map(layer=>{        
         if(layer.value === e.target.value){
           return {...layer, status: !layer.status}
         }
         return {...layer}
-  
       }));
 
     }
@@ -267,7 +226,7 @@ export default function Drawer(){
                                         <Slider min={4} max={36} defaultValue={fontSize} value={fontSize} onChange={(value)=>{setSettings(pv=>{return{...pv, fontSize: value}})}}/>
                                     </div>
 
-                                    {layerEnable.map(layer=>{
+                                    {layers.map(layer=>{
                                      
                                     return(
                                           <div key={layer.key}>

@@ -29,8 +29,8 @@ const options = {
     //     idAPI: data.id,
     //     json: data,
     // };
-
+    const x = await Streaming.findByPk(119);
+    x.icon_path = 'Amazon_Prime_Video';
+    x.save();
     // console.log(newMovie);
-
-    // await Movie.destroy({ where: { idAPI: 9612 } });
 })();
