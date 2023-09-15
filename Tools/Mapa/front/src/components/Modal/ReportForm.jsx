@@ -52,7 +52,7 @@ export default function ReportForm({ handleCancel }){
             <form onSubmit={handleSubmit(sendForm)}>
                 <h3 className='font-semibold mt-2'>Tipo</h3>
                 <Controller name='reportType' control={control} render={({field})=>{
-                    return <RadioInput dataset={reportOptions} defaultValue={'Detalhado'} field={field} cardStyle={'hover:cursor-pointer w-32 h-16 mb-10 border-[1px] rounded-sm relative flex flex-col justify-center items-center'}  />
+                    return <RadioInput dataset={reportOptions} defaultValue={'Simples'} field={field} cardStyle={'hover:cursor-pointer w-32 h-16 mb-10 border-[1px] rounded-sm relative flex flex-col justify-center items-center'}  />
                 }}/>
                 <div className='absolute right-4 bottom-4 flex gap-2'>
                     {isLoading ? <Spin/> : 

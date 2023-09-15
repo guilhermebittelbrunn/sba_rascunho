@@ -21,6 +21,10 @@ const sizeDataSet = [
         type: 'pdf',
         name: 'A4'
     },
+    {
+        type: 'pdf',
+        name: 'A5'
+    },
 ];
 const dpiValueSet = [
     {
@@ -35,6 +39,10 @@ const dpiValueSet = [
         type: 'dpi',
         name: 450
     },
+    {
+        type: 'dpi',
+        name: 600
+    },
 ];
 
 const sizeDefaultValue = 'A3'
@@ -44,6 +52,7 @@ const dims = {
     A2: [594,420],
     A3: [420,297],
     A4: [297,210],
+    A5: [210, 148],
 }
 
 

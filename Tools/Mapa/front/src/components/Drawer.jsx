@@ -1,7 +1,90 @@
-import { Button, Select, theme, Slider, Switch, InputNumber, Checkbox, Drawer as DrawerAntd, Input, message } from 'antd';
-import { useState, useEffect, useContext } from 'react';
+import { Button, Select, Table ,theme,Slider, Switch, InputNumber, Checkbox, Drawer as DrawerAntd, Input, message } from 'antd';
+import React, { useState, useEffect, useContext } from 'react';
+import { MenuOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons';
+import { DndContext } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { MapaContext } from '../contexts/MapaContext';
 import { Stroke, Style, Text, Fill } from 'ol/style';
+import { CSS } from '@dnd-kit/utilities';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+
+const columns = [
+  {
+    key: 'sort',
+    width: 30
+  },
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    width: 300
+  },
+  { 
+    render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500'/>}
+  },
+  { 
+    render: (text, record)=>{return <DeleteOutlined className='hover:text-red-400'/>}
+  },
+  { 
+    render: (text, record)=>{return <Checkbox defaultChecked={true} onClick={()=>{console.log(text); text.status = !text.status; text.properties.setVisible(text.status)}}/>}
+  },
+];
+
+const Row = ({ children, ...props }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: props['data-row-key'],
+  });
+  const style = {
+    ...props.style,
+    transform: CSS.Transform.toString(
+      transform && {
+        ...transform,
+        scaleY: 1,
+      },
+    ),
+    transition,
+    ...(isDragging
+      ? {
+          position: 'relative',
+          zIndex: 9999,
+        }
+      : {}),
+  };
+  return (
+    <tr {...props} ref={setNodeRef} style={style} {...attributes}>
+      {React.Children.map(children, (child) => {
+        if (child.key === 'sort') {
+          return React.cloneElement(child, {
+            children: (
+              <MenuOutlined
+                ref={setActivatorNodeRef}
+                style={{
+                  touchAction: 'none',
+                  cursor: 'move',
+                }}
+                {...listeners}
+              />
+            ),
+          });
+        }
+        return child;
+      })}
+    </tr>
+  );
+};
+
 const {Search} = Input
 
 const optionsSelect = [
@@ -80,16 +163,37 @@ const optionsSubtitle = [
 
 export default function Drawer(){
 
+    const defaultLayersLength = 3
     const {map, layers, open, setOpen, setIsModalOpen, setLayers,settings, setSettings, searchValue, setSearchValue,} = useContext(MapaContext);
     const {fontSize, subTitle, selectedOption} = settings;
-    
+    // const [dataSource, setDataSource] = useState([]);
+
+
+    const onDragEnd = ({ active, over }) => {
+      if (active.id !== over?.id) {
+        setLayers((previous) => {
+          const activeIndex = previous.findIndex((i) => i.key === active.id);
+          const overIndex = previous.findIndex((i) => i.key === over?.id);
+          return arrayMove(previous, activeIndex, overIndex);
+        });
+      }
+      // const list = [];
+
+      // console.log(layers.slice(3));
+
+      // const orderData = dataSource.sort((a,b)=> b - a)
+      // dataSource.map((ds,key)=>{
+      //   const stateLayerIndexValue = 3
+      //   ds.properties.setZIndex(key + stateLayerIndexValue);
+      // })
+    };
 
     useEffect(()=>{
       
         setSettings((pv)=>{
           return {...pv, fontSize: 10, subTitle: '', selectedOption: ''};
         });
-        
+
     },[map])
 
     useEffect(()=>{
@@ -101,6 +205,9 @@ export default function Drawer(){
           const status = layers[index].status;
           layer.properties.setVisible(status);
         });
+        // setDataSource(pv=>{
+        //   return [...pv, layers.slice(defaultLayersLength)]
+        // });
         
     },[layers])
 
@@ -177,7 +284,7 @@ export default function Drawer(){
               title="Opções"
               placement="left"
               closable={true}
-              width={300}
+              width={325}
               onClose={()=>{setOpen(false);}}
               open={open}
               getContainer={false}
@@ -192,20 +299,19 @@ export default function Drawer(){
                                         onChange={(e)=>{setSearchValue(e.target.value)}}
                                         onSearch={(value)=>{handleSeach(value);}}
                                         style={{
-                                          width: 250,
+                                          width: 275,
                                         }}
                                       />
                                     </div>
 
                                     <div className='flex flex-col'>
                                         <label className='font-bold text-sm' htmlFor='category'>Category layer</label>
-
-                                        <Select dropdownStyle={{ zIndex: 2000 }} value={selectedOption} name='category' options={optionsSelect} defaultValue="Sem categoria" className='w-[250px]' onChange={(value)=>{setSettings(pv=>{return {...pv, selectedOption: value}})}}/>
+                                        <Select dropdownStyle={{ zIndex: 2000 }} value={selectedOption} name='category' options={optionsSelect} defaultValue="Sem categoria" className='w-[275px]' onChange={(value)=>{setSettings(pv=>{return {...pv, selectedOption: value}})}}/>
                                     </div>
 
                                     <div className='flex flex-col'>
                                         <label className='font-bold text-sm' htmlFor='category'>Category subtitle</label>
-                                        <Select dropdownStyle={{ zIndex: 2000 }} value={subTitle} name='category' options={optionsSubtitle} defaultValue="Sem subtítulo" className='w-[250px]' onChange={(value)=>{setSettings(pv=>{return {...pv, subTitle: value}})}}/>
+                                        <Select dropdownStyle={{ zIndex: 2000 }} value={subTitle} name='category' options={optionsSubtitle} defaultValue="Sem subtítulo" className='w-[275px]' onChange={(value)=>{setSettings(pv=>{return {...pv, subTitle: value}})}}/>
                                     </div>
 
                                     <div className='flex flex-col'>
@@ -215,9 +321,7 @@ export default function Drawer(){
                                             min={6}
                                             max={36}
                                             maxLength={2}
-                                            style={{
-                                                marginLeft: '0px',padding: '0'
-                                            }}
+                                            style={{marginLeft: '0px',padding: '0'}}
                                             bordered={false}
                                             value={fontSize}
                                             onChange={(value)=>{setSettings(pv=>{return {...pv, fontSize: value}})}}
@@ -226,21 +330,57 @@ export default function Drawer(){
                                         <Slider min={4} max={36} defaultValue={fontSize} value={fontSize} onChange={(value)=>{setSettings(pv=>{return{...pv, fontSize: value}})}}/>
                                     </div>
 
-                                    {layers.map(layer=>{
-                                     
-                                    return(
-                                          <div key={layer.key}>
-                                            <Checkbox  
-                                              value={layer.value}
-                                              onClick={(e)=>handleCheck(e)}
-                                              checked={layer.status}>
-                                              {layer.name}
-                                            </Checkbox>
-                                          </div>
-                                      )
-                                    })}
+                                    <div>
+                                      <h3 className='text-sm font-bold mb-1'>Default Layers</h3>
+                                      <div className='flex flex-col gap-1'>
+                                        {layers.map(layer=>{
+                                        if(layer.value.slice(0,6) === 'custom')return
+                                        return(
+                                              <div key={layer.key} className='flex w-full justify-between'>
+                                                <span className='text-base'>{layer.name}</span>
+                                                <Checkbox  
+                                                  value={layer.value}
+                                                  onClick={(e)=>handleCheck(e)}
+                                                  checked={layer.status}
+                                                />
+                                              </div>
+                                          )
+                                      })}
+                                      </div>
+                                    </div>
 
+                                    <div className='mt-2'>
+                                      <h3 className={`font-bold text-sm mb-1 ${layers.length <= 3 && 'hidden'}`}>Custom Layers</h3>
+                                        <div className='overflow-auto h-[270px] w-[285px]'>
+                                          {layers.length > 3 && 
+                                              <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+                                                  <SortableContext
+                                                    // rowKey array
+                                                    items={layers.map((i) => i.key)}
+                                                    strategy={verticalListSortingStrategy}
+                                                  >
+                                                    <Table
+                                                      components={{
+                                                        body: {
+                                                          row: Row,
+                                                        },
+                                                      }}
+                                                      size='small'
+                                                      rowKey="key"
+                                                      columns={columns}
+                                                      dataSource={layers.slice(3)}
+                                                      pagination={false}
+                                                      showHeader={false}           
+                                                              
+                                                    />
+                                                  </SortableContext>
+                                              </DndContext>        
+                                          }
+                                        </div>
+                                    </div>
+                                      
                             </div>
+                           
                             <div id='bts' className='w-full flex flex-col gap-2'>
                                 <Button onClick={()=>{setIsModalOpen({status:true, type:'export'})}}>Imprimir Mapa</Button>
                                 <Button onClick={()=>{setIsModalOpen({status:true, type:'report'})}}>Exportar Relatório</Button>

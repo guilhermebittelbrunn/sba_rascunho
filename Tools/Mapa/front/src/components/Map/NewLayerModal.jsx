@@ -4,11 +4,11 @@ import { useForm, Controller } from 'react-hook-form';
 
 
 export default function NewLayerModal({isModalOpen, setIsModalOpen, addLayer}){
-    const {register, control, handleSubmit, reset} = useForm({defaultValues: {layerName: '', fontColor: 'rgba(0,0,0,1)', fillColor: 'rgba(22, 119, 255,0.8)'}});
+    const {control, handleSubmit, reset} = useForm({defaultValues: {layerName: '', fontColor: '#000000', fillColor: '#0084ff'}});
 
     const handleOk = (data) => {
         addLayer(data);
-        reset({layerName: '', fontColor: 'rgba(0,0,0,1)', fillColor: 'rgba(22, 119, 255,0.8)'});
+        reset();
         setIsModalOpen(false);
     };  
     const handleCancel = () => {
@@ -24,7 +24,7 @@ export default function NewLayerModal({isModalOpen, setIsModalOpen, addLayer}){
                         <div>
                             <h3 className='font-bold'>Nome</h3>
                             <Controller name='layerName' control={control} render={({field})=>{
-                                return <Input defaultValue='' field={field} onChange={(value)=>field.onChange(value)} placeholder="Título da camada" size='small' className='w-[200px]'/>
+                                return <Input defaultValue='' field={field} value={field.value} onChange={(value)=>field.onChange(value)} placeholder="Título da camada" size='small' className='w-[200px]'/>
                             }}/>          
                         </div>
 
@@ -37,6 +37,8 @@ export default function NewLayerModal({isModalOpen, setIsModalOpen, addLayer}){
                                     return (
                                         <>
                                             <ColorPicker
+                                                value={field?.value?.metaColor?.originalInput || '#000000'}
+                                                onChange={(v)=>{field.onChange(v);}}
                                                 defaultValue='#000000'
                                                 onChange={(v)=>{field.onChange(v)}}
                                                 showText={()=>{return <><span>Fonte</span></>}}
@@ -121,8 +123,9 @@ export default function NewLayerModal({isModalOpen, setIsModalOpen, addLayer}){
                                     return (
                                         <>
                                             <ColorPicker
-                                                defaultValue='#1677FF'
-                                                onChange={(v)=>{field.onChange(v)}}
+                                                defaultValue='#rgba(255, 0, )'
+                                                value={field?.value?.metaColor?.originalInput || '#0084ff'}
+                                                onChange={(v)=>{field.onChange(v);}}
                                                 showText={()=>{return <><span>Fundo</span></>}}
                                                 styles={{
                                                     popupOverlayInner: {

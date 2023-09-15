@@ -23,6 +23,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         setIsModalOpen(true);
     };
    
+
     useEffect(()=>{
         if(!map) return
         map.setTarget('map');
@@ -33,104 +34,6 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         };
     })
 
-    // useEffect(()=>{
-    //     if(!map) return
-    //     // map.addEventListener('click', (e)=>{
-    //     //     if(e.originalEvent.ctrlKey){
-    //     //         map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
-    //     //             // console.log(feature.getProperties());
-    //     //             // console.log(featuresSelected);
-    //     //             if(feature.getProperties().CD_MUN){
-                     
-                        
-    //     //                 const index = featuresSelected.indexOf(fs=>{
-                        
-    //     //                     return fs.getProperties().CD_MUN === feature.getProperties().CD_MUN
-    //     //                 })
-    //     //                 console.log(index);
-    //     //                 if(index === -1){
-    //     //                     const style = setStyle(feature, {...settings, fillColor: 'rgb(255, 238, 0)'});
-    //     //                     feature.setStyle(style);
-    //     //                     setFeaturesSelected(pv=>{
-    //     //                         return [...pv, feature.getProperties()];
-    //     //                     })
-    //     //                 }
-    //     //                 // const style = new Style({
-    //     //                 //     fill: new Fill({
-    //     //                 //         color: "rgb(255, 238, 0)"
-    //     //                 //     }),
-    //     //                 //     stroke: new Stroke({
-    //     //                 //         color: "rgba(30,30,30)",
-    //     //                 //         width: 1,
-    //     //                 //     }),
-    //     //                 //     text: new Text({
-    //     //                 //         text: subTitle === '' ? feature.getProperties().NM_MUN : 
-    //     //                 //         (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
-    //     //                 //         feature.getProperties().NM_MUN),  
-    //     //                 //         font: `bold ${fontSize + .5}px ${"Segoe UI"}`,
-    //     //                 //         fill: new Fill({
-    //     //                 //             color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
-    //     //                 //         }),
-    //     //                 //     }),
-    //     //                 // })
-                    
-                        
-    //     //             }
-    //     //         })
-    //     //     }
-    //     // });
-    //     map.on('click', (e)=>{
-    //         if(e.originalEvent.ctrlKey){
-    //             map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
-    //                 // console.log(feature.getProperties());
-    //                 // console.log(featuresSelected);
-    //                 if(feature.getProperties().CD_MUN){
-                     
-    //                     console.log(',',featuresSelected)
-    //                     const index = featuresSelected.findIndex(fs=>{
-    //                         return fs.CD_MUN === feature.getProperties().CD_MUN;
-                        
-    //                         // console.log({ok:true});
-    //                         // return fs.getProperties().CD_MUN === feature.getProperties().CD_MUN
-    //                     })
-
-    //                     // console.log(featuresSelected);
-    //                     console.log(index);
-
-
-    //                     if(index === -1){
-    //                         const style = setStyle(feature, {...settings, fillColor: 'rgb(255, 238, 0)'});
-    //                         feature.setStyle(style);
-    //                         setFeaturesSelected(pv=>{
-    //                             return [...pv, feature.getProperties()];
-    //                         })
-    //                     }
-    //                     // const style = new Style({
-    //                     //     fill: new Fill({
-    //                     //         color: "rgb(255, 238, 0)"
-    //                     //     }),
-    //                     //     stroke: new Stroke({
-    //                     //         color: "rgba(30,30,30)",
-    //                     //         width: 1,
-    //                     //     }),
-    //                     //     text: new Text({
-    //                     //         text: subTitle === '' ? feature.getProperties().NM_MUN : 
-    //                     //         (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
-    //                     //         feature.getProperties().NM_MUN),  
-    //                     //         font: `bold ${fontSize + .5}px ${"Segoe UI"}`,
-    //                     //         fill: new Fill({
-    //                     //             color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
-    //                     //         }),
-    //                     //     }),
-    //                     // })
-                    
-                        
-    //                 }
-    //             })
-    //         }
-    //     });
-        
-    // },[map, featuresSelected])
 
     useEffect(()=>{
         if(!map)return
@@ -153,57 +56,11 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                     if(layer.className_ === "stateLayer"){
                         feature.setProperties({SELECTED: !feature.getProperties().SELECTED});
                         feature.getProperties().SELECTED;
-                        // console.log(feature.setProperties({SELECTED: true}));
-                        // addFeatureSelected(feature.getProperties());
+                   
                         const styleConfig = feature.getProperties().stylesConfig || settings
                         const newStyle = feature.getProperties().SELECTED ? setStyle(feature, {...styleConfig, fillColor: 'rgb(255,238,0)'}) : setStyle(feature, {...settings});
                         feature.setStyle(newStyle);
-                        // const btn = document.getElementById('btn_add_layer');
-                  
-                        // setFeaturesSelected(pv=>{
-                        //     const featuresWithSelectedStatus = pv.filter(f=>f.getProperties().SELECTED === true);
-                        //     const newFeatureSelected = feature.getProperties().SELECTED === true
-                        //     if(newFeatureSelected) return [...featuresWithSelectedStatus, feature]
-                        //     return [...featuresWithSelectedStatus]
-                        // });
-
-                        // const index = featuresSelected.findIndex(fs=>{
-                        //     return fs.CD_MUN === feature.getProperties().CD_MUN;
-                        
-                        //     // console.log({ok:true});
-                        //     // return fs.getProperties().CD_MUN === feature.getProperties().CD_MUN
-                        // })
- 
-                        // console.log(featuresSelected);
-            
-
-                        // if(index === -1){
-                        //     const style = setStyle(feature, {...settings, fillColor: 'rgb(255, 238, 0)'});
-                        //     feature.setStyle(style);
-                        //     setFeaturesSelected(pv=>{
-                        //         return [...pv, feature.getProperties()];
-                        //     });
-                        // }
-                        // const style = new Style({
-                        //     fill: new Fill({
-                        //         color: "rgb(255, 238, 0)"
-                        //     }),
-                        //     stroke: new Stroke({
-                        //         color: "rgba(30,30,30)",
-                        //         width: 1,
-                        //     }),
-                        //     text: new Text({
-                        //         text: subTitle === '' ? feature.getProperties().NM_MUN : 
-                        //         (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
-                        //         feature.getProperties().NM_MUN),  
-                        //         font: `bold ${fontSize + .5}px ${"Segoe UI"}`,
-                        //         fill: new Fill({
-                        //             color: feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
-                        //         }),
-                        //     }),
-                        // })
                     
-                        
                     }
                 })
             }
@@ -211,26 +68,6 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
      
         
     },[map])
-
-
-    // function countSelectedLayers(){
-    // //     const newlist = featuresSelected.reduce((acc,fs)=>{
-    // //         const index = acc.findIndex(element=> element.getProperties().CD_MUN === fs.getProperties().CD_MUN);
-    // //         index === -1 && acc.push(fs);
-    // //         return acc
-    // //    },[]);
-    // //     const seleteds = newlist.map(fs=>fs.getProperties().SELECTED);
-    //     const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
-    //     if(stateLayer === -1)return
-    //     const features = layers[stateLayer].properties.getSource().getFeatures();
-    //     const featuresSelecteds =  features.filter(fs=> fs.getProperties().SELECTED === true);
-    // //    console.log('newlist', newlist);
-    // //    console.log('seleteds', seleteds)
-    
-    //    return featuresSelecteds.length
-
-    // }
-
 
   return (
    
