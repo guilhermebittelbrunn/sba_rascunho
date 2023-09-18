@@ -2,8 +2,9 @@ import { Button, Select, Table ,theme,Slider, Switch, InputNumber, Checkbox, Dra
 import React, { useState, useEffect, useContext } from 'react';
 import { MenuOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons';
 import { DndContext } from '@dnd-kit/core';
+import DragTable from './DragTable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { MapaContext } from '../contexts/MapaContext';
+import { MapaContext } from '../../contexts/MapaContext';
 import { Stroke, Style, Text, Fill } from 'ol/style';
 import { CSS } from '@dnd-kit/utilities';
 import {
@@ -13,77 +14,9 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-const columns = [
-  {
-    key: 'sort',
-    width: 30
-  },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    width: 300
-  },
-  { 
-    render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500'/>}
-  },
-  { 
-    render: (text, record)=>{return <DeleteOutlined className='hover:text-red-400'/>}
-  },
-  { 
-    render: (text, record)=>{return <Checkbox defaultChecked={true} onClick={()=>{console.log(text); text.status = !text.status; text.properties.setVisible(text.status)}}/>}
-  },
-];
 
-const Row = ({ children, ...props }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: props['data-row-key'],
-  });
-  const style = {
-    ...props.style,
-    transform: CSS.Transform.toString(
-      transform && {
-        ...transform,
-        scaleY: 1,
-      },
-    ),
-    transition,
-    ...(isDragging
-      ? {
-          position: 'relative',
-          zIndex: 9999,
-        }
-      : {}),
-  };
-  return (
-    <tr {...props} ref={setNodeRef} style={style} {...attributes}>
-      {React.Children.map(children, (child) => {
-        if (child.key === 'sort') {
-          return React.cloneElement(child, {
-            children: (
-              <MenuOutlined
-                ref={setActivatorNodeRef}
-                style={{
-                  touchAction: 'none',
-                  cursor: 'move',
-                }}
-                {...listeners}
-              />
-            ),
-          });
-        }
-        return child;
-      })}
-    </tr>
-  );
-};
+
+
 
 const {Search} = Input
 
@@ -163,30 +96,9 @@ const optionsSubtitle = [
 
 export default function Drawer(){
 
-    const defaultLayersLength = 3
     const {map, layers, open, setOpen, setIsModalOpen, setLayers,settings, setSettings, searchValue, setSearchValue,} = useContext(MapaContext);
     const {fontSize, subTitle, selectedOption} = settings;
-    // const [dataSource, setDataSource] = useState([]);
-
-
-    const onDragEnd = ({ active, over }) => {
-      if (active.id !== over?.id) {
-        setLayers((previous) => {
-          const activeIndex = previous.findIndex((i) => i.key === active.id);
-          const overIndex = previous.findIndex((i) => i.key === over?.id);
-          return arrayMove(previous, activeIndex, overIndex);
-        });
-      }
-      // const list = [];
-
-      // console.log(layers.slice(3));
-
-      // const orderData = dataSource.sort((a,b)=> b - a)
-      // dataSource.map((ds,key)=>{
-      //   const stateLayerIndexValue = 3
-      //   ds.properties.setZIndex(key + stateLayerIndexValue);
-      // })
-    };
+    const defaultLayersLength = 3
 
     useEffect(()=>{
       
@@ -208,8 +120,25 @@ export default function Drawer(){
         // setDataSource(pv=>{
         //   return [...pv, layers.slice(defaultLayersLength)]
         // });
-        
+
+        layers.slice(defaultLayersLength).forEach((layer, k)=>{
+          const index = layers.findIndex(l => l.name === layer.name);
+          // layer.key = index + 3
+          layer.properties.setZIndex(index);
+        })
+
     },[layers])
+
+
+    function handleDelete(layer){
+        map.getLayers().getArray().forEach(l=>{
+          // l.getProperties().value === layer.value && map.removeLayer(l);
+          console.log(l);
+        })
+        setLayers(pv=>{
+            return pv.filter(l=>l.value !== layer.value)
+        })
+    }
 
 
     function handleSeach(value){
@@ -337,7 +266,7 @@ export default function Drawer(){
                                         if(layer.value.slice(0,6) === 'custom')return
                                         return(
                                               <div key={layer.key} className='flex w-full justify-between'>
-                                                <span className='text-base'>{layer.name}</span>
+                                                <span className='text-sm'>{layer.name}</span>
                                                 <Checkbox  
                                                   value={layer.value}
                                                   onClick={(e)=>handleCheck(e)}
@@ -350,31 +279,10 @@ export default function Drawer(){
                                     </div>
 
                                     <div className='mt-2'>
-                                      <h3 className={`font-bold text-sm mb-1 ${layers.length <= 3 && 'hidden'}`}>Custom Layers</h3>
+                                      <h3 className={`font-bold text-sm mb-1 ${layers.length <= defaultLayersLength && 'hidden'}`}>Custom Layers</h3>
                                         <div className='overflow-auto h-[270px] w-[285px]'>
-                                          {layers.length > 3 && 
-                                              <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
-                                                  <SortableContext
-                                                    // rowKey array
-                                                    items={layers.map((i) => i.key)}
-                                                    strategy={verticalListSortingStrategy}
-                                                  >
-                                                    <Table
-                                                      components={{
-                                                        body: {
-                                                          row: Row,
-                                                        },
-                                                      }}
-                                                      size='small'
-                                                      rowKey="key"
-                                                      columns={columns}
-                                                      dataSource={layers.slice(3)}
-                                                      pagination={false}
-                                                      showHeader={false}           
-                                                              
-                                                    />
-                                                  </SortableContext>
-                                              </DndContext>        
+                                          {layers.length > defaultLayersLength && 
+                                            <DragTable layers={layers} setLayers={setLayers} handleDelete={handleDelete}/>
                                           }
                                         </div>
                                     </div>

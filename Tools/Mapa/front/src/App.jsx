@@ -4,7 +4,7 @@ import { message } from 'antd';
 import { useGeographic } from 'ol/proj';
 import ContextMenu from "./components/Map/ContextMenu";
 import dayjs from "dayjs";
-import Drawer from "./components/Drawer";
+import Drawer from "./components/Drawer/Drawer";
 import MapaProvider from "./contexts/MapaContext";
 import FormProvider from "./contexts/FormContext";
 import Form from "./components/Form/Form";
