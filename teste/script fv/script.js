@@ -145,7 +145,7 @@ let count = 0;
 let countPlat = 0;
 (async () => {
     // await Movie.drop();
-    fs.readFile('./ids/main.txt', 'utf-8', async (err, info) => {
+    fs.readFile('./ids/429.txt', 'utf-8', async (err, info) => {
         if (err) throw err;
         const dataset = JSON.parse(info);
         let list = [];
