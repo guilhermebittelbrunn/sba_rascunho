@@ -55,9 +55,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
                     if(layer.className_ === "stateLayer"){
                         feature.setProperties({SELECTED: !feature.getProperties().SELECTED});
-                        feature.getProperties().SELECTED;
-                   
-                        const styleConfig = feature.getProperties().stylesConfig || settings
+                        const styleConfig = feature.getProperties().stylesConfig || settings;
                         const newStyle = feature.getProperties().SELECTED ? setStyle(feature, {...styleConfig, fillColor: 'rgb(255,238,0)'}) : setStyle(feature, {...settings});
                         feature.setStyle(newStyle);
                     

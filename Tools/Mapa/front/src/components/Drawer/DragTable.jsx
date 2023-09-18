@@ -12,7 +12,7 @@ import {
 } from '@dnd-kit/sortable';
 
 
-export default function DragTable({layers, setLayers, handleDelete}){
+export default function DragTable({layers, setLayers, handleDelete, handleEditLayer, handleChangeVisibleLayer, setIsModalOpen}){
     const columns = [
         {
             key: 'sort',
@@ -24,13 +24,13 @@ export default function DragTable({layers, setLayers, handleDelete}){
             width: 300
         },
         { 
-            render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500'/>}
+            render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500' onClick={()=>{handleEditLayer(text); setIsModalOpen({status:true, layer:text})}}/>}
         },
         { 
             render: (text, record)=>{return <DeleteOutlined className='hover:text-red-400' onClick={()=>{handleDelete(text)}}/>}
         },
         { 
-            render: (text, record)=>{return <Checkbox defaultChecked={true} onClick={()=>{console.log(text); text.status = !text.status; text.properties.setVisible(text.status)}}/>}
+            render: (text, record)=>{return <Checkbox defaultChecked={true} onClick={()=>{handleChangeVisibleLayer(text)}}/>}
         },
     ];
 

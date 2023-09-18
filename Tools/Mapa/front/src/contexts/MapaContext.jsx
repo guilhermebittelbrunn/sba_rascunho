@@ -90,7 +90,8 @@ function handleSelectInteration(settings){
 
     const select = new Select({
         condition: pointerMove,
-        style: (feature)=> {    
+        style: (feature, l)=> {
+            // console.log('s',feature)    
             const newStyle = feature.getProperties().CD_MUN ? setStyle(feature, {...settings, strokeWidth: 3, fontSize: settings.fontSize + 0.5}) : setStyle(feature, {...settings, fillColor: ''});
             return newStyle
         },
@@ -226,13 +227,14 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     function addLayer(data){
         const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
-        let {layerName, fontColor, fillColor} = data
-        fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor
-        fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor
+        let {layerName, fontColor, fillColor} = data;
+        fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
+        fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor;
+        layerName = layerName ||  `Camada ${layers.length + 1}`;
 
         if(stateLayer === -1)return
         const features = layers[stateLayer].properties.getSource().getFeatures();
-        const featuresSelecteds =  features.filter(fs=> fs.getProperties().SELECTED === true);
+        const featuresSelecteds =  features.filter(fs=> fs.getProperties().SELECTED);
 
         const geoJSON = {
             features: featuresSelecteds.map(f=>{return {type: 'Feature',properties:{...f.getProperties(), fontColor, fillColor} ,geometry: {type: 'Polygon',coordinates: f.getProperties().geometry.getCoordinates()}}}),
@@ -248,6 +250,7 @@ export default function MapaProvider({url, children, setIsLoading}){
             name: layerName || `Camada ${layers.length + 1}`,
             value: `custom_layer${layers.length + 1}`,
             status: true,
+            data: {...data},
             key: layers.length + 1,
             properties: new vector({
                 source: new Vector({
@@ -258,7 +261,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                     return setStyle(feature, {...feature.getProperties().stylesConfig});
                 },
                 zIndex: 4,
-                className: 'newLayer',
+                className: `custom_layer${layers.length + 1}`,
                 // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
             })
         }
@@ -269,14 +272,24 @@ export default function MapaProvider({url, children, setIsLoading}){
         map.addLayer(newLayer.properties);
     }
 
+    function changeLayer(data, layer){
 
-    function testeS(f){
-        console.log(f, settings)
+        let {fontColor, fillColor} = data
+        const features = layer.properties.getSource().getFeatures();
+
+        fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
+        fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor;
+
+        features.map(feature=>{
+            feature.setProperties({fontColor, fillColor, SELECTED:false, stylesConfig: {...settings, fillColor, fontColor}});
+            feature.setStyle(setStyle(feature, {...feature.getProperties().stylesConfig}));
+        });
     }
+
     
     return(
         <MapaContext.Provider value={{map, error, loading, open, setOpen, error, layers, setLayers,subtitleCategory,
-            isModalOpen,setIsModalOpen, testeS,rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings, setStyle, addLayer
+            isModalOpen, changeLayer, setIsModalOpen,rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings, setStyle, addLayer
         }}>
             {children}
         </MapaContext.Provider>

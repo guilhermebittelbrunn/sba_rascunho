@@ -7,6 +7,7 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { MapaContext } from '../../contexts/MapaContext';
 import { Stroke, Style, Text, Fill } from 'ol/style';
 import { CSS } from '@dnd-kit/utilities';
+import NewLayerModal from '../Map/newLayerModal';
 import {
   arrayMove,
   SortableContext,
@@ -96,8 +97,9 @@ const optionsSubtitle = [
 
 export default function Drawer(){
 
-    const {map, layers, open, setOpen, setIsModalOpen, setLayers,settings, setSettings, searchValue, setSearchValue,} = useContext(MapaContext);
+    const {map, layers, open, setOpen, setIsModalOpen, changeLayer,addLayer, setLayers, settings, setSettings, searchValue, setSearchValue,} = useContext(MapaContext);
     const {fontSize, subTitle, selectedOption} = settings;
+    const [isEditModal, setEditModal] = useState({status: false, layer: null});
     const defaultLayersLength = 3
 
     useEffect(()=>{
@@ -130,14 +132,22 @@ export default function Drawer(){
     },[layers])
 
 
-    function handleDelete(layer){
+    function handleDeleteLayer(layer){
         map.getLayers().getArray().forEach(l=>{
-          // l.getProperties().value === layer.value && map.removeLayer(l);
-          console.log(l);
+          l.getClassName() === layer.value && map.removeLayer(l);
         })
         setLayers(pv=>{
             return pv.filter(l=>l.value !== layer.value)
         })
+    }
+
+    function handleEditLayer(layer){
+      console.log('edit layer',layer);
+    }
+
+    function handleChangeVisibleLayer(layer){
+      layer.status = !layer.status; 
+      layer.properties.setVisible(layer.status);
     }
 
 
@@ -282,7 +292,7 @@ export default function Drawer(){
                                       <h3 className={`font-bold text-sm mb-1 ${layers.length <= defaultLayersLength && 'hidden'}`}>Custom Layers</h3>
                                         <div className='overflow-auto h-[270px] w-[285px]'>
                                           {layers.length > defaultLayersLength && 
-                                            <DragTable layers={layers} setLayers={setLayers} handleDelete={handleDelete}/>
+                                            <DragTable setIsModalOpen ={setEditModal} layers={layers} setLayers={setLayers} handleDelete={handleDeleteLayer} handleEditLayer={handleEditLayer} handleChangeVisibleLayer={handleChangeVisibleLayer}/>
                                           }
                                         </div>
                                     </div>
@@ -292,7 +302,10 @@ export default function Drawer(){
                             <div id='bts' className='w-full flex flex-col gap-2'>
                                 <Button onClick={()=>{setIsModalOpen({status:true, type:'export'})}}>Imprimir Mapa</Button>
                                 <Button onClick={()=>{setIsModalOpen({status:true, type:'report'})}}>Exportar Relatório</Button>
-                            </div>               
+                            </div>   
+
+
+                            <NewLayerModal changeLayer={changeLayer} layer={isEditModal.layer} addLayer={addLayer} isModalOpen={isEditModal.status} setIsModalOpen={setEditModal}/>            
                           </div>
             </DrawerAntd>   
     )    

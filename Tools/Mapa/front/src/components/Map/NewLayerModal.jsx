@@ -3,17 +3,25 @@ import { Spin,Button, Modal,Input, ColorPicker,  Divider} from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 
 
-export default function NewLayerModal({isModalOpen, setIsModalOpen, addLayer}){
-    const {control, handleSubmit, reset} = useForm({defaultValues: {layerName: '', fontColor: '#000000', fillColor: '#0084ff'}});
+export default function NewLayerModal({layer, isModalOpen, setIsModalOpen, addLayer, changeLayer}){
+    const {control, handleSubmit, reset, setValue} = useForm({defaultValues: {layerName: layer?.data.layerName || '', fontColor: '#000000', fillColor: '#0084ff'}});
 
     const handleOk = (data) => {
-        addLayer(data);
+        layer ? changeLayer(data, layer) : addLayer(data);
         reset();
         setIsModalOpen(false);
     };  
     const handleCancel = () => {
         setIsModalOpen(false);
     };
+
+    useEffect(()=>{
+        if(layer){
+            // setValue([{layerName: '123'}, {fontColor: '#111111'}, {fillColor: '#777777'}]);
+            const {fontColor, fillColor} = layer?.data;
+            reset({layerName: layer.name, fontColor, fillColor});
+        }
+    }, [layer])
 
 
     return (
@@ -24,7 +32,7 @@ export default function NewLayerModal({isModalOpen, setIsModalOpen, addLayer}){
                         <div>
                             <h3 className='font-bold'>Nome</h3>
                             <Controller name='layerName' control={control} render={({field})=>{
-                                return <Input defaultValue='' field={field} value={field.value} onChange={(value)=>field.onChange(value)} placeholder="Título da camada" size='small' className='w-[200px]'/>
+                                return <Input field={field} value={field.value} onChange={(value)=>field.onChange(value)} placeholder="Título da camada" size='small' className='w-[200px]'/>
                             }}/>          
                         </div>
 
@@ -37,9 +45,9 @@ export default function NewLayerModal({isModalOpen, setIsModalOpen, addLayer}){
                                     return (
                                         <>
                                             <ColorPicker
-                                                value={field?.value?.metaColor?.originalInput || '#000000'}
+                                                value={(field?.value?.metaColor?.originalInput || layer?.data.fontColor) || '#000000'}
                                                 onChange={(v)=>{field.onChange(v);}}
-                                                defaultValue='#000000'
+                                      
                                                 onChange={(v)=>{field.onChange(v)}}
                                                 showText={()=>{return <><span>Fonte</span></>}}
                                                 styles={{
@@ -123,8 +131,8 @@ export default function NewLayerModal({isModalOpen, setIsModalOpen, addLayer}){
                                     return (
                                         <>
                                             <ColorPicker
-                                                defaultValue='#rgba(255, 0, )'
-                                                value={field?.value?.metaColor?.originalInput || '#0084ff'}
+                                            
+                                                value={(field?.value?.metaColor?.originalInput ||  layer?.data.fillColor) ||'#0084ff'}
                                                 onChange={(v)=>{field.onChange(v);}}
                                                 showText={()=>{return <><span>Fundo</span></>}}
                                                 styles={{
@@ -220,7 +228,7 @@ export default function NewLayerModal({isModalOpen, setIsModalOpen, addLayer}){
                         </div>
 
                         <div className='absolute right-4 bottom-2 flex gap-2'>
-                                <Button htmlType='submit' className='bg-blue-500 text-white hover:bg-white hover:text-blue-500'>Confirmar</Button>
+                                <Button htmlType='submit' className='bg-blue-500 text-white hover:bg-white hover:text-blue-500'>{layer ? 'Salvar' : 'Confirmar'}</Button>
                         </div> 
                       
                     </form>
