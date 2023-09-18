@@ -1,21 +1,21 @@
 // //2018-02-06
 
-require('dotenv').config();
-const axios = require('axios');
-const fs = require('fs');
-const moment = require('moment');
+require("dotenv").config();
+const axios = require("axios");
+const fs = require("fs");
+const moment = require("moment");
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
-const { Movie, Genre, Streaming } = require('./database/modules/index');
-const { Op } = require('sequelize');
-const sequelize = require('sequelize');
+const { Movie, Genre, Streaming } = require("./database/modules/index");
+const { Op } = require("sequelize");
+const sequelize = require("sequelize");
 const options = {
-    method: 'GET',
+    method: "GET",
     headers: {
-        accept: 'application/json',
+        accept: "application/json",
         Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmI0OWNmMzQzYzU2MmRmYmM4YjczMTlmMmZmMmI3NyIsInN1YiI6IjY0Yzk4MWE5MDAxYmJkMDEyNmE3MjAxOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ZqK6DNET911i81ING_Q6emqC5yGF_TYDy_4Uc1YDGnY',
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmI0OWNmMzQzYzU2MmRmYmM4YjczMTlmMmZmMmI3NyIsInN1YiI6IjY0Yzk4MWE5MDAxYmJkMDEyNmE3MjAxOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ZqK6DNET911i81ING_Q6emqC5yGF_TYDy_4Uc1YDGnY",
     },
 };
 
@@ -140,105 +140,105 @@ const options = {
 // //     }
 // // })();
 
-// //ADICIONA FILME
-let count = 0;
-let countPlat = 0;
-(async () => {
-    // await Movie.drop();
-    fs.readFile('./ids/429.txt', 'utf-8', async (err, info) => {
-        if (err) throw err;
-        const dataset = JSON.parse(info);
-        let list = [];
-        for (let element of dataset) {
-            list.push(`https://api.themoviedb.org/3/movie/${element}?language=pt-BR`);
-            if (list.length === 100) {
-                //métodos
-                const allResponse = await axios.all(
-                    list.map(async (endpoint) => {
-                        try {
-                            const res = await axios.get(endpoint, options);
-                            return res.data;
-                        } catch (err) {
-                            fs.appendFileSync(
-                                './logs.txt',
-                                `${JSON.stringify({ path: err.request.path, status: err.response?.status })}, \n`
-                            );
-                            return false;
-                        }
-                    })
-                );
+// // //ADICIONA FILME
+// let count = 0;
+// let countPlat = 0;
+// (async () => {
+//     // await Movie.drop();
+//     fs.readFile('./ids/429.txt', 'utf-8', async (err, info) => {
+//         if (err) throw err;
+//         const dataset = JSON.parse(info);
+//         let list = [];
+//         for (let element of dataset) {
+//             list.push(`https://api.themoviedb.org/3/movie/${element}?language=pt-BR`);
+//             if (list.length === 100) {
+//                 //métodos
+//                 const allResponse = await axios.all(
+//                     list.map(async (endpoint) => {
+//                         try {
+//                             const res = await axios.get(endpoint, options);
+//                             return res.data;
+//                         } catch (err) {
+//                             fs.appendFileSync(
+//                                 './logs.txt',
+//                                 `${JSON.stringify({ path: err.request.path, status: err.response?.status })}, \n`
+//                             );
+//                             return false;
+//                         }
+//                     })
+//                 );
 
-                for (let objt of allResponse) {
-                    if (typeof objt === 'object') {
-                        if (objt.overview) {
-                            if (objt['genres'].length > 0) {
-                                // console.log(objt.title);
-                                const newMovie = await Movie.create({
-                                    title: objt.title,
-                                    sinopse: objt.overview,
-                                    duration: objt.runtime,
-                                    original_title: objt.original_title,
-                                    vote: objt.vote_average,
-                                    count_votes: objt.vote_count,
-                                    release: objt.release_date,
-                                    score_popularity: objt.popularity,
-                                    porter_path: objt.poster_path,
-                                    backdrop_path: objt.backdrop_path,
-                                    adult: objt.adult,
-                                    idAPI: objt.id,
-                                    json: objt,
-                                });
+//                 for (let objt of allResponse) {
+//                     if (typeof objt === 'object') {
+//                         if (objt.overview) {
+//                             if (objt['genres'].length > 0) {
+//                                 // console.log(objt.title);
+//                                 const newMovie = await Movie.create({
+//                                     title: objt.title,
+//                                     sinopse: objt.overview,
+//                                     duration: objt.runtime,
+//                                     original_title: objt.original_title,
+//                                     vote: objt.vote_average,
+//                                     count_votes: objt.vote_count,
+//                                     release: objt.release_date,
+//                                     score_popularity: objt.popularity,
+//                                     porter_path: objt.poster_path,
+//                                     backdrop_path: objt.backdrop_path,
+//                                     adult: objt.adult,
+//                                     idAPI: objt.id,
+//                                     json: objt,
+//                                 });
 
-                                const res = await axios.get(
-                                    `https://api.themoviedb.org/3/movie/${objt.id}/watch/providers`,
-                                    options
-                                );
-                                if (res.data.results.BR) {
-                                    if (res.data.results.BR.flatrate) {
-                                        const listProviders = res.data.results.BR.flatrate.map((provider) => {
-                                            return provider.provider_id;
-                                        });
+//                                 const res = await axios.get(
+//                                     `https://api.themoviedb.org/3/movie/${objt.id}/watch/providers`,
+//                                     options
+//                                 );
+//                                 if (res.data.results.BR) {
+//                                     if (res.data.results.BR.flatrate) {
+//                                         const listProviders = res.data.results.BR.flatrate.map((provider) => {
+//                                             return provider.provider_id;
+//                                         });
 
-                                        const listStreamings = await Streaming.findAll({
-                                            // raw: true,
-                                            where: {
-                                                id: {
-                                                    [Op.in]: listProviders,
-                                                },
-                                            },
-                                        });
+//                                         const listStreamings = await Streaming.findAll({
+//                                             // raw: true,
+//                                             where: {
+//                                                 id: {
+//                                                     [Op.in]: listProviders,
+//                                                 },
+//                                             },
+//                                         });
 
-                                        if (listStreamings.length > 0) {
-                                            countPlat++;
-                                            listStreamings.forEach(async (item) => {
-                                                await newMovie.setStreamings([item]);
-                                            });
-                                        }
-                                    }
-                                }
+//                                         if (listStreamings.length > 0) {
+//                                             countPlat++;
+//                                             listStreamings.forEach(async (item) => {
+//                                                 await newMovie.setStreamings([item]);
+//                                             });
+//                                         }
+//                                     }
+//                                 }
 
-                                objt['genres'].forEach(async (genre) => {
-                                    const newGenre = await Genre.findByPk(genre.id);
-                                    await newMovie.setGenres([newGenre]);
-                                    // console.log(`${objt.title} - ${newGenre.dataValues.id} - ${genre.id}`);
-                                });
-                                count++;
-                            }
-                        }
-                    }
-                }
-                list = [];
+//                                 objt['genres'].forEach(async (genre) => {
+//                                     const newGenre = await Genre.findByPk(genre.id);
+//                                     await newMovie.setGenres([newGenre]);
+//                                     // console.log(`${objt.title} - ${newGenre.dataValues.id} - ${genre.id}`);
+//                                 });
+//                                 count++;
+//                             }
+//                         }
+//                     }
+//                 }
+//                 list = [];
 
-                console.log(
-                    `Index ${dataset.indexOf(element)}, ${count} items inseridos, ${
-                        dataset.length
-                    } total, ${countPlat} possuem plataforma`
-                );
-                await sleep(6000);
-            }
-        }
-    });
-})();
+//                 console.log(
+//                     `Index ${dataset.indexOf(element)}, ${count} items inseridos, ${
+//                         dataset.length
+//                     } total, ${countPlat} possuem plataforma`
+//                 );
+//                 await sleep(6000);
+//             }
+//         }
+//     });
+// })();
 
 // // (async () => {
 // //     const { data } = await axios.get('https://api.themoviedb.org/3/genre/tv/list?language=pt', options);
@@ -376,3 +376,16 @@ let countPlat = 0;
 //         console.log(error);
 //     }
 // })();
+
+(async () => {
+    const movies = await Movie.findAll({ raw: true, limit: 5 });
+    // console.log(movies[0].dataValues);
+    // let count = 0;
+    // for (let movie of movies) {
+    //     movie.poster_path = movie.json.poster_path;
+    //     await movie.save();
+    //     count++;
+    //     console.log(`${count} filmes atualizados, total: ${movies.length}`);
+    // }
+    movies.forEach((m) => console.log(m.poster_path));
+})();
