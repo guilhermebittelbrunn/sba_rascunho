@@ -1,17 +1,13 @@
 import { useEffect, useRef, useContext, useState } from 'react';
-import { Spin,Button, Modal,Input, ColorPicker,  Divider} from 'antd';
+import {Spin, Button, Modal,Input, ColorPicker,  Divider, Statistic} from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import RadioInput from '../Modal/RadioInput'
-
+import { MapaContext } from '../../contexts/MapaContext';
 
 const svgList = [
                 {
                     type: 'svg',
-                    name: `M0 2240 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z
-                            M0 1740 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z
-                            M0 1270 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z
-                            M0 780 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z
-                            M0 290 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z`
+                    name: `M0 1275 l0 -1275 1275 0 1275 0 0 1275 0 1275 -1275 0 -1275 0 0 -1275z`
                 },
                 {
                     type: 'svg',
@@ -67,27 +63,29 @@ const svgList = [
                             -1275z`
                 }  
             ]
-const defaultValue = `M210 1275 l0 -1275 130 0 130 0 0 1275 0 1275 -130 0 -130 0 0 -1275z
-                            M700 1275 l0 -1275 130 0 130 0 0 1275 0 1275 -130 0 -130 0 0 -1275z
-                            M1170 1275 l0 -1275 130 0 130 0 0 1275 0 1275 -130 0 -130 0 0
-                            -1275z
-                            M1660 1275 l0 -1275 130 0 130 0 0 1275 0 1275 -130 0 -130 0 0
-                            -1275z
-                            M2150 1275 l0 -1275 130 0 130 0 0 1275 0 1275 -130 0 -130 0 0
-                            -1275z`
+const defaultValue = `M0 1275 l0 -1275 1275 0 1275 0 0 1275 0 1275 -1275 0 -1275 0 0 -1275z`
 
 
 export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen, setIsModalOpen, addLayer, changeLayer}){
+    const {layers} = useContext(MapaContext);
     const {control, handleSubmit, reset} = useForm({defaultValues: {layerName: layer?.data.layerName || '', fontColor: '#000000', fillColor: '#0084ff'}});
-    console.log('countSelectedFeatures', countSelectedFeatures)
+    
     const handleOk = (data) => {
         layer ? changeLayer(data, layer) : addLayer(data);
         reset();
-        setIsModalOpen(false);
+        disableModal();
     };  
-    const handleCancel = () => {
-        setIsModalOpen(false);
+    
+    const disableModal = () => {
+        setIsModalOpen({newLayerModal: false, addRepModal: false});
     };
+
+    const countFeatures = ()=>{
+        const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
+        if(stateLayer === -1) return
+        const features = layers[stateLayer].properties.getSource().getFeatures();
+        return features.length
+    }
 
     useEffect(()=>{
         if(layer){
@@ -100,13 +98,13 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
 
     return (
         <>
-               <Modal centered={true} title={layer ? "Editar camada" : "Nova camada"} open={isModalOpen} onCancel={handleCancel} okButtonProps={{hidden:true}} cancelButtonProps={{hidden: true}}  width={350}>
+               <Modal centered={true} title={layer ? "Editar camada" : "Nova camada"} open={isModalOpen} onCancel={disableModal} okButtonProps={{hidden:true}} cancelButtonProps={{hidden: true}}  width={350}>
                     <form className='flex flex-col gap-1' onSubmit={handleSubmit(handleOk)}>
 
                         <div>
                             <h3 className='font-bold'>Nome</h3>
                             <Controller name='layerName' control={control} render={({field})=>{
-                                return <Input field={field} value={field.value} onChange={(value)=>field.onChange(value)} placeholder="Título da camada" size='small' className='w-[250px]'/>
+                                return <Input field={field} value={field.value} onChange={(value)=>field.onChange(value)} placeholder="Título da camada" size='small' className='w-[275px]'/>
                             }}/>          
                         </div>
 
@@ -305,14 +303,15 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
                                   
                         <div className='mb-8'>
                             <h3 className='font-bold'>Estilo</h3>
-                              <Controller name='layerName' control={control} render={({field})=>{
-                                return <RadioInput dataset={svgList} defaultValue={defaultValue} field={field} cardStyle={`hover:cursor-pointer p-2 w-16 h-16 border-[1px] rounded-sm relative flex flex-col justify-center items-center`}/>
+                              <Controller name='style' control={control} render={({field})=>{
+                                return <RadioInput defaultValue={defaultValue} dataset={svgList} field={field} cardStyle={`hover:cursor-pointer p-2 w-16 h-16 border-[1px] rounded-sm relative flex flex-col justify-center items-center`}/>
                             }}/>      
                         </div>
 
 
-                        <div className='absolute right-4 bottom-2 flex gap-2'>
-                                <Button htmlType='submit' className='bg-blue-500 text-white hover:bg-white hover:text-blue-500'>{layer ? 'Salvar' : 'Confirmar'}</Button>
+                        <div className='absolute left-0 bottom-2 flex w-full gap-2 items-center justify-between px-6'>
+                                <Statistic title="Camadas" value={countSelectedFeatures} suffix={`/${countFeatures()}`} valueStyle={{fontSize: '18px', marginTop: '-2px'}} className='mb-1 text-sm'/>
+                                <Button htmlType='submit' className='bg-blue-500 mt-4 text-white hover:bg-white hover:text-blue-500'>{layer ? 'Salvar' : 'Confirmar'}</Button>
                         </div> 
                       
                     </form>

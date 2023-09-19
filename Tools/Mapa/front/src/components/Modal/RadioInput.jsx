@@ -14,7 +14,7 @@ export default function RadioInput({dataset, defaultValue, field, cardStyle}){
     return(
         <section className="flex flex-col gap-2">    
              <Radio.Group value={value} className='flex mt-2 gap-2'>
-                {dataset.map(item=>{return <Card {...item} key={item.name} cardStyle={cardStyle} field={field} value={item.name} isChecked={value === item.key} setValue={setValue}/>})}
+                {dataset.map(item=>{return <Card {...item} key={item.name} cardStyle={cardStyle} field={field} value={item.name} isChecked={value === item.name} setValue={setValue}/>})}
             </Radio.Group>
         </section>
     )
@@ -33,7 +33,7 @@ function Card({value, setValue, isChecked, name, type, cardStyle}){
                         width="20.000000pt" height="20.000000pt" viewBox="0 0 255.000000 255.000000"
                         preserveAspectRatio="xMidYMid meet">
                             <g transform="translate(0.000000,255.000000) scale(0.100000,-0.100000)"
-                            fill={`${isChecked? '#ffffff': '#000000'}`} stroke="none">
+                            fill={`#000000`} stroke="none">
                                 <path d={value}/>
                             </g>
                         </svg>

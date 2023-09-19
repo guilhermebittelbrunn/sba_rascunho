@@ -227,7 +227,7 @@ export default function Drawer(){
                           <div className='flex flex-col h-full justify-between'>
                             <div className='w-full flex flex-col gap-4 justify-center'>
                                     <div className='flex flex-col'>
-                                      <label className='font-bold text-sm'>Search City</label>
+                                      <h3 className='font-bold text-sm'>Buscar Cidade</h3>
                                       <Search
                                         placeholder="Nome do município"
                                         value={searchValue}
@@ -240,18 +240,18 @@ export default function Drawer(){
                                     </div>
 
                                     <div className='flex flex-col'>
-                                        <label className='font-bold text-sm' htmlFor='category'>Category layer</label>
+                                        <h3 className='font-bold text-sm' htmlFor='category'>Colorir por Categoria</h3>
                                         <Select dropdownStyle={{ zIndex: 2000 }} value={selectedOption} name='category' options={optionsSelect} defaultValue="Sem categoria" className='w-[275px]' onChange={(value)=>{setSettings(pv=>{return {...pv, selectedOption: value}})}}/>
                                     </div>
 
                                     <div className='flex flex-col'>
-                                        <label className='font-bold text-sm' htmlFor='category'>Category subtitle</label>
+                                        <h3 className='font-bold text-sm' htmlFor='category'>Exibir Subtítulo</h3>
                                         <Select dropdownStyle={{ zIndex: 2000 }} value={subTitle} name='category' options={optionsSubtitle} defaultValue="Sem subtítulo" className='w-[275px]' onChange={(value)=>{setSettings(pv=>{return {...pv, subTitle: value}})}}/>
                                     </div>
 
                                     <div className='flex flex-col'>
                                         <div>
-                                            <label className='font-bold text-sm' htmlFor='category'>Font-Size</label>
+                                            <h3 className='font-bold text-sm inline'>Tamanho da Fonte</h3>
                                             <InputNumber
                                             min={6}
                                             max={36}
@@ -266,7 +266,7 @@ export default function Drawer(){
                                     </div>
 
                                     <div>
-                                      <h3 className='text-sm font-bold mb-1'>Default Layers</h3>
+                                      <h3 className='text-sm font-bold mb-1'>Camadas Matriz</h3>
                                       <div className='flex flex-col gap-1'>
                                         {layers.map(layer=>{
                                         if(layer.value.slice(0,6) === 'custom')return
@@ -285,7 +285,7 @@ export default function Drawer(){
                                     </div>
 
                                     <div className='mt-2'>
-                                      <h3 className={`font-bold text-sm mb-1 ${layers.length <= defaultLayersLength && 'hidden'}`}>Custom Layers</h3>
+                                      <h3 className={`font-bold text-sm mb-1 ${layers.length <= defaultLayersLength && 'hidden'}`}>Camadas Customizáveis</h3>
                                         <div className='overflow-auto h-[270px] w-[285px]'>
                                           {layers.length > defaultLayersLength && 
                                             <DragTable setIsModalOpen ={setEditModal} layers={layers} setLayers={setLayers} handleDelete={handleDeleteLayer} handleChangeVisibleLayer={handleChangeVisibleLayer}/>

@@ -2,10 +2,11 @@ import { useEffect, useRef, useContext, useState } from 'react';
 import { Spin,Button, Modal } from 'antd';
 import {Style,Stroke, Text, Fill} from 'ol/style'
 import { useGeographic } from 'ol/proj';
-import {SettingOutlined,SelectOutlined, FullscreenExitOutlined,PlusOutlined,FullscreenOutlined} from '@ant-design/icons';
+import {SettingOutlined,SelectOutlined, FullscreenExitOutlined,PlusOutlined,FullscreenOutlined, UsergroupAddOutlined} from '@ant-design/icons';
 import { MapaContext } from '../../contexts/MapaContext';
 import ErrorModal from './ErrorModal';
 import NewLayerModal from './NewLayerModal';
+import AddRepModal from './AddRepModal';
 
 
 export default function MapPage({handleClick, handleFullScreenAction, handleContext, isFullScreen, setContextMenu}){
@@ -17,12 +18,15 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
     } = useContext(MapaContext)
     const {interaction, fontSize, subTitle} = settings
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState({newLayerModal: false, addRepModal: false});
 
     const map1 = useRef(null);
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    const showModal = (modalName) => {
+        setIsModalOpen((pv)=>{
+            return {...pv, [modalName]: true}
+        });
+        console.log(isModalOpen);
     }
    
 
@@ -88,11 +92,15 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                             {isFullScreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
                         </button>
                         
-                        <button onClick={()=>setSettings(pv=>{return {...pv, interaction: !interaction}})} id='btn_interaction' className='absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base outline-none' style={{transform: 'translate(20%, 150%)', transition: 'all .4s'}}>
+                        <button onClick={()=>setSettings(pv=>{return {...pv, interaction: !interaction}})} id='btn_interaction' className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px]rounded w-[30px] text-sm text-gray-800 z-50 hover:text-base outline-none ${interaction ? 'bg-slate-200 border-slate-200' : 'bg-slate-100 border-slate-100 '}`} style={{transform: 'translate(20%, 150%)', transition: 'all .4s'}}>
                             <SelectOutlined />
                         </button>
 
-                        <button onClick={()=>{countSeletectedFeatures > 0 && showModal()}} id='btn_add_layer' className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base ${countSeletectedFeatures <= 0 && 'opacity-60 cursor-not-allowed'} outline-none`} style={{transform: 'translate(20%, 275%)', transition: 'all .4s'}}>
+                        <button onClick={()=>{showModal('addRepModal')}} id='btn_add_layer' className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base outline-none`} style={{transform: 'translate(20%, 275%)', transition: 'all .4s'}}>
+                            <UsergroupAddOutlined />
+                        </button>
+
+                        <button onClick={()=>{countSeletectedFeatures > 0 && showModal('newLayerModal')}} id='btn_add_layer' className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base ${countSeletectedFeatures <= 0 && 'opacity-60 cursor-not-allowed'} outline-none`} style={{transform: 'translate(20%, 400%)', transition: 'all .4s'}}>
                             <PlusOutlined />
                              {/* {countSelectedLayers()} */}
                         </button>
@@ -101,7 +109,9 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                         
                         */}
 
-                        <NewLayerModal countSelectedFeatures={countSeletectedFeatures} addLayer={addLayer} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+
+                        <AddRepModal isModalOpen={isModalOpen.addRepModal} setIsModalOpen={setIsModalOpen}/>
+                        <NewLayerModal countSelectedFeatures={countSeletectedFeatures} addLayer={addLayer} isModalOpen={isModalOpen.newLayerModal} setIsModalOpen={setIsModalOpen}/>
                         <div id='map'  onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/> 
                     </>
                     }

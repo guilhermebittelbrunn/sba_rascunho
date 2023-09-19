@@ -6,7 +6,7 @@ import { CalendarOutlined } from '@ant-design/icons'
 
 
 // eslint-disable-next-line react/prop-types
-export default function InputDate({initialDate, type, field, isLoading}){
+export default function InputDate({initialDate, type, field, isLoading, className}){
     const dateFormat = 'DD/MM/YYYY';
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState(initialDate);
@@ -62,7 +62,7 @@ export default function InputDate({initialDate, type, field, isLoading}){
     return(
         <div className={`flex gap-1 ${isLoading && 'cursor-not-allowed'}`}>  
 
-            <Input disabled={isLoading} dsize="middle" defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } className="w-48 rounded-none max-md:w-[400px]" onChange={(e)=>{handleInputChange(e);}} value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } onKeyDown={pressKeyTonInput} onBlur={handleBlurInput}/>
+            <Input disabled={isLoading} dsize="middle" defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } className={`w-48 rounded-none max-md:w-[400px] ${className}`} onChange={(e)=>{handleInputChange(e);}} value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } onKeyDown={pressKeyTonInput} onBlur={handleBlurInput}/>
             <DatePicker
                 disabled={isLoading}
                 open={!isLoading && open}

@@ -178,7 +178,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                         key: 2,
                     },
                     {
-                        name: 'Camada base',
+                        name: 'Camada Base',
                         value: 'baseLayer',
                         properties: baseLayer,
                         status: true,
