@@ -12,7 +12,8 @@ import {
 } from '@dnd-kit/sortable';
 
 
-export default function DragTable({layers, setLayers, handleDelete, handleEditLayer, handleChangeVisibleLayer, setIsModalOpen}){
+export default function DragTable({layers, setLayers, handleDelete, handleChangeVisibleLayer, setIsModalOpen}){
+    
     const columns = [
         {
             key: 'sort',
@@ -24,7 +25,7 @@ export default function DragTable({layers, setLayers, handleDelete, handleEditLa
             width: 300
         },
         { 
-            render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500' onClick={()=>{handleEditLayer(text); setIsModalOpen({status:true, layer:text})}}/>}
+            render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500' onClick={()=>{setIsModalOpen({status:true, layer:text})}}/>}
         },
         { 
             render: (text, record)=>{return <DeleteOutlined className='hover:text-red-400' onClick={()=>{handleDelete(text)}}/>}

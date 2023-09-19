@@ -141,10 +141,6 @@ export default function Drawer(){
         })
     }
 
-    function handleEditLayer(layer){
-      console.log('edit layer',layer);
-    }
-
     function handleChangeVisibleLayer(layer){
       layer.status = !layer.status; 
       layer.properties.setVisible(layer.status);
@@ -292,7 +288,7 @@ export default function Drawer(){
                                       <h3 className={`font-bold text-sm mb-1 ${layers.length <= defaultLayersLength && 'hidden'}`}>Custom Layers</h3>
                                         <div className='overflow-auto h-[270px] w-[285px]'>
                                           {layers.length > defaultLayersLength && 
-                                            <DragTable setIsModalOpen ={setEditModal} layers={layers} setLayers={setLayers} handleDelete={handleDeleteLayer} handleEditLayer={handleEditLayer} handleChangeVisibleLayer={handleChangeVisibleLayer}/>
+                                            <DragTable setIsModalOpen ={setEditModal} layers={layers} setLayers={setLayers} handleDelete={handleDeleteLayer} handleChangeVisibleLayer={handleChangeVisibleLayer}/>
                                           }
                                         </div>
                                     </div>
@@ -305,7 +301,7 @@ export default function Drawer(){
                             </div>   
 
 
-                            <NewLayerModal changeLayer={changeLayer} layer={isEditModal.layer} addLayer={addLayer} isModalOpen={isEditModal.status} setIsModalOpen={setEditModal}/>            
+                            <NewLayerModal countSelectedFeatures={isEditModal.layer && isEditModal.layer.properties.getSource().getFeatures().length} changeLayer={changeLayer} layer={isEditModal.layer} addLayer={addLayer} isModalOpen={isEditModal.status} setIsModalOpen={setEditModal}/>            
                           </div>
             </DrawerAntd>   
     )    

@@ -111,7 +111,7 @@ export default function MapaProvider({url, children, setIsLoading}){
     const [open, setOpen] = useState(false); 
     const [map, setMap] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState({status: false, type: ''});
-
+    const [countSeletectedFeatures, setCountSeletectedFeatures] = useState(0)
     const [searchValue, setSearchValue] = useState('');
 
     useEffect(()=>{
@@ -267,14 +267,14 @@ export default function MapaProvider({url, children, setIsLoading}){
         }
 
         setLayers(pv=>[...pv, newLayer]);
-
+        setCountSeletectedFeatures(0)
         setSettings((pv)=>pv);
         map.addLayer(newLayer.properties);
     }
 
     function changeLayer(data, layer){
 
-        let {fontColor, fillColor} = data
+        let {layerName, fontColor, fillColor} = data
         const features = layer.properties.getSource().getFeatures();
 
         fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
@@ -284,12 +284,17 @@ export default function MapaProvider({url, children, setIsLoading}){
             feature.setProperties({fontColor, fillColor, SELECTED:false, stylesConfig: {...settings, fillColor, fontColor}});
             feature.setStyle(setStyle(feature, {...feature.getProperties().stylesConfig}));
         });
+
+        if(layerName.trim() !== ''){
+            layer.name = layerName;
+        }
     }
 
     
     return(
         <MapaContext.Provider value={{map, error, loading, open, setOpen, error, layers, setLayers,subtitleCategory,
-            isModalOpen, changeLayer, setIsModalOpen,rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings, setStyle, addLayer
+            isModalOpen, changeLayer, setIsModalOpen,rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings,
+            setStyle, addLayer, countSeletectedFeatures, setCountSeletectedFeatures
         }}>
             {children}
         </MapaContext.Provider>
