@@ -17,10 +17,19 @@ import {Style,Stroke, Text, Fill} from 'ol/style'
 const {Search} = Input
 
 export default function AddRepModal({isModalOpen, setIsModalOpen}){
-    const {layers, settings, setStyle, setLayers, map} = useContext(MapaContext);
+    const {layers, settings, createFeatureStyle, setLayers, map, rc} = useContext(MapaContext);
     const {control, handleSubmit, reset} = useForm();
     const [isLoading, setIsLoading] = useState(false);
     const currentDate = new Date(); 
+
+    const generateRandomValue = ()=>{
+        const randomNumber = Math.random(0,255);
+        return Math.floor(randomNumber * 100);
+    }
+
+    const generateRandomColor = ()=>{
+        return `rgba(${generateRandomValue()}, ${generateRandomValue()}, ${generateRandomValue()}, 0.7)`
+    }
 
     const handleOk = async(data) => {
         const url = {
@@ -28,6 +37,13 @@ export default function AddRepModal({isModalOpen, setIsModalOpen}){
             dateStart: data.dateStart.format('YYYY-MM-DD'),    
             dateEnd: data.dateEnd.format('YYYY-MM-DD'),    
         }
+
+        if(rc === url.rc){
+            message.warning('Informe um representante diferente do já buscado');
+            return
+        }
+
+        const fillColor = generateRandomColor();
 
         try{
             setIsLoading(true);
@@ -38,13 +54,18 @@ export default function AddRepModal({isModalOpen, setIsModalOpen}){
                 value: `custom_layer${layers.length + 1}`,
                 status: true,
                 key: layers.length + 1,
+                data:{
+                    layerName: `Vendas RC ${url.rc}`,
+                    fontColor: "#000000",
+                    fillColor
+                },
                 properties: new vector({
                     source: new Vector({
                         features: new GeoJSON().readFeatures(res.data),
                     }),
                     style: (feature,res)=>{
-                        feature.setProperties({SELECTED:false, fillColor: 'rgba(223, 84, 0, 0.8)'});
-                        return setStyle(feature, settings);
+                        feature.setProperties({SELECTED:false, fillColor});
+                        return createFeatureStyle(feature, settings);
                     },
                     zIndex: 4,
                     className: `custom_layer${layers.length + 1}`,
@@ -54,7 +75,7 @@ export default function AddRepModal({isModalOpen, setIsModalOpen}){
 
             setLayers(pv=>{return [...pv, newLayer]});
             map.addLayer(newLayer.properties);
-            reset();
+            reset({rc:'', dateStart: dayjs(currentDate).add(-1, 'y'), dateEnd: dayjs(currentDate)});
             disableModal();          
         }catch(err){
             message.error(`Não foram encontrados dados referentes ao representante: ${url.rc}`);

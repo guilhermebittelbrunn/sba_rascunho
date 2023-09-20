@@ -25,6 +25,7 @@ export default function DragTable({layers, setLayers, handleDelete, handleChange
             width: 300
         },
         { 
+            // render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500' onClick={()=>{console.log(text)}}/>}
             render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500' onClick={()=>{setIsModalOpen({status:true, layer:text})}}/>}
         },
         { 

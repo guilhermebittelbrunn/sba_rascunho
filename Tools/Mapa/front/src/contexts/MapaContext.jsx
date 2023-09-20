@@ -58,12 +58,23 @@ function subtitleCategory(label, option){
 
 
 
-function setStyle(feature, settings, layer){
+function createFeatureStyle(feature, settings, layer){
     const {selectedOption, fontSize, subTitle, fillColor,strokeColor, strokeWidth, fontColor} = settings;
 
     const newStyle = new Style({
               fill: new Fill({
-                  color: feature.getProperties().SELECTED ? 'rgb(255,238,0)' :  (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? ( feature.getProperties().fillColor || "rgba(34, 156, 34, 0.7)") :  (fillColor || "rgba(221,221,223,0.7)")) : layer?.value === 'stateLayer' ? colorCategory(feature.getProperties(), selectedOption) : feature.getProperties().NUMERO_PEDIDO ? feature.getProperties().fillColor : "rgba(221,221,223,0.7)"),
+                  color:
+                        //Está selecionada?
+                        feature.getProperties().SELECTED ? 'rgb(255,238,0)' : 
+                        //Existe alguma categoria selecionada?   
+                        (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? 
+                        //Existe número de pedido na propriedade? 
+                        (feature.getProperties().fillColor || "rgba(34, 156, 34, 0.7)") : (fillColor || "rgba(221,221,223,0.7)")) : 
+                        //a layer atual é a state?
+                        layer?.value === 'stateLayer' ? colorCategory(feature.getProperties(), selectedOption) : 
+                        //Existe número de pedido na propriedade?
+                        feature.getProperties().NUMERO_PEDIDO ? feature.getProperties().fillColor :  "rgba(221,221,223,0.7)"),
+                       
               }),
               stroke: new Stroke({
                   color: strokeColor || "rgba(0,0,0, 1)",
@@ -92,7 +103,7 @@ function handleSelectInteration(settings){
         condition: pointerMove,
         style: (feature, l)=> {
             // console.log('s',feature)    
-            const newStyle = feature.getProperties().CD_MUN ? setStyle(feature, {...settings, strokeWidth: 3, fontSize: settings.fontSize + 0.5}) : setStyle(feature, {...settings, fillColor: ''});
+            const newStyle = feature.getProperties().CD_MUN ? createFeatureStyle(feature, {...settings, strokeWidth: 3, fontSize: settings.fontSize + 0.5}) : createFeatureStyle(feature, {...settings, fillColor: ''});
             return newStyle
         },
     });
@@ -145,7 +156,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                         features: new GeoJSON().readFeatures(data),
                     }),
                     style: (feature,res)=>{
-                        return setStyle(feature, settings);
+                        return createFeatureStyle(feature, settings);
                     },
                     zIndex: 3,
                     className: 'stateLayer',
@@ -156,7 +167,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                             features: new GeoJSON().readFeatures(json),
                         }),
                         style: (feature,res)=>{
-                            return setStyle(feature, {...settings, fillColor: 'rgba(0,0,0,0)', strokeColor: 'rgba(30,30,30)'})
+                            return createFeatureStyle(feature, {...settings, fillColor: 'rgba(0,0,0,0)', strokeColor: 'rgba(30,30,30)'})
                         },
                         zIndex: 2,
                         className: 'countryLayer'
@@ -208,7 +219,7 @@ export default function MapaProvider({url, children, setIsLoading}){
         layers.forEach(layer=>{
             if(layer.properties.className_ !== 'baseLayer' && layer.properties.className_ !== 'countryLayer'){
                 layer.properties.getSource().getFeatures().forEach(feature=>{
-                    const newStyle = setStyle(feature, settings, layer);
+                    const newStyle = createFeatureStyle(feature, settings, layer);
                     feature.setStyle(newStyle);
                     feature.setProperties({stylesConfig: settings});
                 });
@@ -243,7 +254,7 @@ export default function MapaProvider({url, children, setIsLoading}){
 
         featuresSelecteds.forEach(fs=>{
             fs.setProperties({SELECTED: false});
-            fs.setStyle(setStyle(fs, {...settings}));
+            fs.setStyle(createFeatureStyle(fs, {...settings}));
         });
 
         const newLayer = {
@@ -258,7 +269,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                 }),
                 style: (feature,res)=>{
                     feature.setProperties({SELECTED:false, stylesConfig: {...settings, fillColor, fontColor}});
-                    return setStyle(feature, {...feature.getProperties().stylesConfig});
+                    return createFeatureStyle(feature, {...feature.getProperties().stylesConfig});
                 },
                 zIndex: 4,
                 className: `custom_layer${layers.length + 1}`,
@@ -282,19 +293,20 @@ export default function MapaProvider({url, children, setIsLoading}){
 
         features.map(feature=>{
             feature.setProperties({fontColor, fillColor, SELECTED:false, stylesConfig: {...settings, fillColor, fontColor}});
-            feature.setStyle(setStyle(feature, {...feature.getProperties().stylesConfig}));
+            feature.setStyle(createFeatureStyle(feature, {...feature.getProperties().stylesConfig}));
         });
 
         if(layerName.trim() !== ''){
             layer.name = layerName;
         }
+        layer.data = {...data}
     }
 
     
     return(
         <MapaContext.Provider value={{map, error, loading, open, setOpen, error, layers, setLayers,subtitleCategory,
             isModalOpen, changeLayer, setIsModalOpen,rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings,
-            setStyle, addLayer, countSeletectedFeatures, setCountSeletectedFeatures
+            createFeatureStyle, addLayer, countSeletectedFeatures, setCountSeletectedFeatures
         }}>
             {children}
         </MapaContext.Provider>

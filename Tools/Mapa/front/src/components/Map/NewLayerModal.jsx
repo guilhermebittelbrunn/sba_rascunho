@@ -75,6 +75,7 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
         reset();
         disableModal();
     };  
+
     
     const disableModal = () => {
         setIsModalOpen({newLayerModal: false, addRepModal: false});
@@ -119,8 +120,6 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
                                             <ColorPicker
                                                 value={(field?.value?.metaColor?.originalInput || layer?.data.fontColor) || '#000000'}
                                                 onChange={(v)=>{field.onChange(v);}}
-                                      
-                                                onChange={(v)=>{field.onChange(v)}}
                                                 showText={()=>{return <><span>Fonte</span></>}}
                                                 styles={{
                                                     popupOverlayInner: {
@@ -203,7 +202,6 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
                                     return (
                                         <>
                                             <ColorPicker
-                                            
                                                 value={(field?.value?.metaColor?.originalInput ||  layer?.data.fillColor) ||'#0084ff'}
                                                 onChange={(v)=>{field.onChange(v);}}
                                                 showText={()=>{return <><span>Fundo</span></>}}

@@ -13,7 +13,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
     useGeographic();
     
-    const { map, loading, setOpen,error, layers, addLayer, settings, setSettings, subtitleCategory, setStyle,
+    const { map, loading, setOpen,error, layers, addLayer, settings, setSettings, subtitleCategory, createFeatureStyle,
         countSeletectedFeatures, setCountSeletectedFeatures
     } = useContext(MapaContext)
     const {interaction, fontSize, subTitle} = settings
@@ -26,7 +26,6 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         setIsModalOpen((pv)=>{
             return {...pv, [modalName]: true}
         });
-        console.log(isModalOpen);
     }
    
 
@@ -63,7 +62,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                         feature.setProperties({SELECTED: !feature.getProperties().SELECTED});
                         feature.getProperties().SELECTED ? setCountSeletectedFeatures(pv=>pv+1) : setCountSeletectedFeatures(pv=>pv-1)
                         const styleConfig = feature.getProperties().stylesConfig || settings;
-                        const newStyle = feature.getProperties().SELECTED ? setStyle(feature, {...styleConfig, fillColor: 'rgb(255,238,0)'}) : setStyle(feature, {...settings});
+                        const newStyle = feature.getProperties().SELECTED ? createFeatureStyle(feature, {...styleConfig, fillColor: 'rgb(255,238,0)'}) : createFeatureStyle(feature, {...settings});
                         feature.setStyle(newStyle);
                     }
                 })

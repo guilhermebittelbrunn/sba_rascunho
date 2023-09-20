@@ -372,17 +372,17 @@ const controller = {
                 db.detach();
 
                 const cities_codes = rows.map((row) => row.COD_CID);
-
+                // console.log(cities_codes);
                 const cities = await Cidade.findAll({
                     raw: true,
                     attributes: ['GEO_JSON'],
                     where: {
-                        COD_CID: {
+                        CD_MUN: {
                             [Op.in]: cities_codes,
                         },
                     },
                 });
-
+                // console.log('cities', cities);MUN
                 const features = cities.map((cidade) => {
                     let obj = JSON.parse(cidade.GEO_JSON);
                     const index = rows.findIndex((row) => row.COD_CID == obj.properties.CD_MUN);
@@ -394,6 +394,7 @@ const controller = {
 
                 res.send({ type: 'FeatureCollection', features: features });
             } catch (err) {
+                console.log('err', err);
                 res.send(err);
             }
         })();
