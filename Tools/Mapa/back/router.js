@@ -9,5 +9,6 @@ Router.get('/', (req, res) => {
 Router.get('/report/Simples/:id', controller_cidades.getSimpleReport);
 Router.get('/report/Detalhado/:id', controller_cidades.getDetailReport);
 Router.get('/:id', controller_cidades.getByRC);
+Router.get('/sales/:id', controller_cidades.getSalesByRC);
 
 module.exports = Router;

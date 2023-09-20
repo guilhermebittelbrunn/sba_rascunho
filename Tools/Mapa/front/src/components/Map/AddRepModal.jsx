@@ -2,24 +2,69 @@
 
 
 import { useEffect, useRef, useContext, useState } from 'react';
-import {Spin, Button, Modal, Input, ColorPicker,  Divider, Statistic} from 'antd';
+import {Spin, Button, Modal, Input, ColorPicker,  Divider, Statistic, message} from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import RadioInput from '../Modal/RadioInput'
 import { MapaContext } from '../../contexts/MapaContext';
 import InputDate from '../Form/InputDate'
 import dayjs from "dayjs";
 import axios from 'axios';
+import {Vector as vector} from 'ol/layer'
+import {OSM, Vector} from 'ol/source';
+import {GeoJSON} from 'ol/format'
+import {Style,Stroke, Text, Fill} from 'ol/style'
 
 const {Search} = Input
 
 export default function AddRepModal({isModalOpen, setIsModalOpen}){
-    const {layers} = useContext(MapaContext);
+    const {layers, settings, setStyle, setLayers, map} = useContext(MapaContext);
     const {control, handleSubmit, reset} = useForm();
-    const currentDate = new Date();
+    const [isLoading, setIsLoading] = useState(false);
+    const currentDate = new Date(); 
 
-    const handleOk = (data) => {
-        console.log(data);
-        disableModal();
+    const handleOk = async(data) => {
+        const url = {
+            rc: data.rc,
+            dateStart: data.dateStart.format('YYYY-MM-DD'),    
+            dateEnd: data.dateEnd.format('YYYY-MM-DD'),    
+        }
+
+        try{
+            setIsLoading(true);
+            const res = await axios.get(`http://localhost:3535/api/sales/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`)
+
+            const newLayer = {
+                name: `Vendas RC ${url.rc}`,
+                value: `custom_layer${layers.length + 1}`,
+                status: true,
+                key: layers.length + 1,
+                properties: new vector({
+                    source: new Vector({
+                        features: new GeoJSON().readFeatures(res.data),
+                    }),
+                    style: (feature,res)=>{
+                        feature.setProperties({SELECTED:false, fillColor: 'rgba(223, 84, 0, 0.8)'});
+                        return setStyle(feature, settings);
+                    },
+                    zIndex: 4,
+                    className: `custom_layer${layers.length + 1}`,
+                    // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
+                })
+            }
+
+            setLayers(pv=>{return [...pv, newLayer]});
+            map.addLayer(newLayer.properties);
+            reset();
+            disableModal();          
+        }catch(err){
+            message.error(`Não foram encontrados dados referentes ao representante: ${url.rc}`);
+            console.log(err);
+        }finally{
+            setIsLoading(false);
+        }
+        
+        // disableModal();
+
     };  
     
     const disableModal = () => {
@@ -29,7 +74,7 @@ export default function AddRepModal({isModalOpen, setIsModalOpen}){
 
     return (
         <>
-               <Modal centered={true} title={"Importar vendas Representante"} open={isModalOpen}  okButtonProps={{hidden:true}} cancelButtonProps={{hidden: true}}  width={320}>
+               <Modal centered={true} title={"Importar vendas Representante"} open={isModalOpen}  okButtonProps={{hidden:true}} onCancel={disableModal} cancelButtonProps={{hidden: true}}  width={320}>
                     <form className='flex flex-col gap-1' onSubmit={handleSubmit(handleOk)}>
 
                         <div className="flex flex-col"> 
@@ -60,7 +105,9 @@ export default function AddRepModal({isModalOpen, setIsModalOpen}){
                             <h3 className="text-sm font-semibold">Representante</h3>
                             <Controller
                                 render={({field, fieldState})=>{
-                                return <Input {...field} size="middle" required={true} placeholder='Código do representante' name='rc' onChange={(e)=>{field.onChange(e.target.value)}} maxLength={4} minLength={4} allowClear={false} className="w-[270px] outline-none max-md:w-[440px]"/>
+                                // return <Input {...field} size="middle" required={true} placeholder='Código do representante' name='rc' onChange={(e)=>{field.onChange(e.target.value)}} maxLength={4} minLength={4} allowClear={false} className="w-[270px] outline-none max-md:w-[440px]"/>
+                                // }}
+                                return <Input {...field} size="middle" required={true} placeholder='Código do representante' name='rc' onChange={(e)=>{field.onChange(e.target.value)}} maxLength={4} minLength={4} allowClear={false} className="w-full outline-none"/>
                                 }}
                                 name="rc"
                                 control={control}
@@ -70,8 +117,13 @@ export default function AddRepModal({isModalOpen, setIsModalOpen}){
                         </div>    
 
                         <div className='w-full flex flex-col justify-center items-center mt-6'>
-                            <Button htmlType='submit' type='primary' className='w-60 bg-blue-600'>Importar</Button>
+                            {isLoading ?
+                                <Spin size='small'/>
+                                :
+                                <Button htmlType='submit' type='primary' className='w-60 bg-blue-600'>Importar</Button>
+                            }
                         </div>
+
                     </form>   
                 </Modal>  
         </>

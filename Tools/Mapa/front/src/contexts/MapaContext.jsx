@@ -58,12 +58,12 @@ function subtitleCategory(label, option){
 
 
 
-function setStyle(feature, settings){
-    const {selectedOption, fontSize, subTitle, fillColor, strokeColor, strokeWidth, fontColor} = settings;
+function setStyle(feature, settings, layer){
+    const {selectedOption, fontSize, subTitle, fillColor,strokeColor, strokeWidth, fontColor} = settings;
 
     const newStyle = new Style({
               fill: new Fill({
-                  color: feature.getProperties().SELECTED ? 'rgb(255,238,0)' :  ((feature.getProperties().fillColor || fillColor) || (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgba(34, 156, 34, 0.7)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))),
+                  color: feature.getProperties().SELECTED ? 'rgb(255,238,0)' :  (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? ( feature.getProperties().fillColor || "rgba(34, 156, 34, 0.7)") :  (fillColor || "rgba(221,221,223,0.7)")) : layer?.value === 'stateLayer' ? colorCategory(feature.getProperties(), selectedOption) : feature.getProperties().NUMERO_PEDIDO ? feature.getProperties().fillColor : "rgba(221,221,223,0.7)"),
               }),
               stroke: new Stroke({
                   color: strokeColor || "rgba(0,0,0, 1)",
@@ -208,7 +208,7 @@ export default function MapaProvider({url, children, setIsLoading}){
         layers.forEach(layer=>{
             if(layer.properties.className_ !== 'baseLayer' && layer.properties.className_ !== 'countryLayer'){
                 layer.properties.getSource().getFeatures().forEach(feature=>{
-                    const newStyle = setStyle(feature, settings);
+                    const newStyle = setStyle(feature, settings, layer);
                     feature.setStyle(newStyle);
                     feature.setProperties({stylesConfig: settings});
                 });
