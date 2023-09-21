@@ -251,7 +251,7 @@ export default function MapaProvider({url, children, setIsLoading}){
         map.getInteractions().remove(map.getInteractions().item(9));
         settings.interaction && map.addInteraction(handleSelectInteration(settings))
 
-    },[settings, searchValue])
+    },[settings])
 
 
     useEffect(()=>{

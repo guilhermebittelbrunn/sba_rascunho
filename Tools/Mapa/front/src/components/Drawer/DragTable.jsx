@@ -1,17 +1,12 @@
-import { Button, Select, Table ,theme,Slider, Switch, InputNumber, Checkbox, Drawer as DrawerAntd, Input, message } from 'antd';
+import React from 'react';
+import { Table, Checkbox} from 'antd';
 import { MenuOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons';
-import React, { useEffect, useRef, useContext, useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-
-
+import {arrayMove, SortableContext, useSortable, verticalListSortingStrategy} from '@dnd-kit/sortable';
+  
+  
 export default function DragTable({layers, setLayers, handleDelete, handleChangeVisibleLayer, setIsModalOpen}){
     
     const columns = [
@@ -25,7 +20,6 @@ export default function DragTable({layers, setLayers, handleDelete, handleChange
             width: 300
         },
         { 
-            // render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500' onClick={()=>{console.log(text)}}/>}
             render: (text, record)=>{return <EditOutlined className='hover:text-yellow-500' onClick={()=>{setIsModalOpen({status:true, layer:text})}}/>}
         },
         { 
@@ -39,32 +33,23 @@ export default function DragTable({layers, setLayers, handleDelete, handleChange
 
     
     function onDragEnd({ active, over }){
+
       if (active.id !== over?.id) {
         setLayers((previous) => {
           const activeIndex = previous.findIndex((i) => i.key === active.id);
           const overIndex = previous.findIndex((i) => i.key === over?.id);
           return arrayMove(previous, activeIndex, overIndex);
         });
-      }
-      // const list = [];
+      }    
 
-      // console.log(layers.slice(3));
-
-      // const orderData = dataSource.sort((a,b)=> b - a)
-      // dataSource.map((ds,key)=>{
-      //   const stateLayerIndexValue = 3
-      //   ds.properties.setZIndex(key + stateLayerIndexValue);
-      // })
-    
     };
 
 
     return(
-      
             <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
                 <SortableContext
-                items={layers.map((i) => i.key)}
-                strategy={verticalListSortingStrategy}
+                    items={layers.map((i) => i.key)}
+                    strategy={verticalListSortingStrategy}
                 >
                 <Table
                     components={{
@@ -81,26 +66,11 @@ export default function DragTable({layers, setLayers, handleDelete, handleChange
                 />
                 </SortableContext>
             </DndContext>   
-     
     )
 }
 
-
-
-
-
 const Row = ({ children, ...props }) => {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        setActivatorNodeRef,
-        transform,
-        transition,
-        isDragging,
-    } = useSortable({
-        id: props['data-row-key'],
-    });
+    const {attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging} = useSortable({id: props['data-row-key']});
     const style = {
         ...props.style,
         transform: CSS.Transform.toString(
@@ -117,7 +87,6 @@ const Row = ({ children, ...props }) => {
             }
         : {}),
     };
-
 
     return (
         <tr {...props} ref={setNodeRef} style={style} {...attributes}>

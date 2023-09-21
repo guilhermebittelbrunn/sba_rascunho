@@ -66,7 +66,7 @@ const svgList = [
 const defaultValue = `M0 1275 l0 -1275 1275 0 1275 0 0 1275 0 1275 -1275 0 -1275 0 0 -1275z`
 
 
-export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen, setIsModalOpen, addLayer, changeLayer}){
+export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen, disableModal, addLayer, changeLayer}){
     const {layers} = useContext(MapaContext);
     const {control, handleSubmit, reset} = useForm({defaultValues: {layerName: layer?.data.layerName || '', fontColor: '#000000', borderColor: '#000000',fillColor: '#0084ff'}});
     
@@ -76,10 +76,7 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
         disableModal();
     };  
 
-    
-    const disableModal = () => {
-        setIsModalOpen({newLayerModal: false, addRepModal: false});
-    };
+
 
     const countFeatures = ()=>{
         const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');

@@ -6,7 +6,6 @@ import ContextMenu from "./components/Map/ContextMenu";
 import dayjs from "dayjs";
 import Drawer from "./components/Drawer/Drawer";
 import MapaProvider from "./contexts/MapaContext";
-import FormProvider from "./contexts/FormContext";
 import Form from "./components/Form/Form";
 import Modal from "./components/Modal/Modal";
 
@@ -57,9 +56,7 @@ export default function App() {
 
     return(
       <div>
-        <FormProvider>
-          <Form onSearch={onSearch} isLoading={isLoading}/>
-        </FormProvider>
+        <Form onSearch={onSearch} isLoading={isLoading}/>
         {url && 
         <>
           <MapaProvider url={url} setIsLoading={setIsLoading}>
