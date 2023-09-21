@@ -13,7 +13,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
     useGeographic();
     
-    const { map, loading, setOpen,error, layers, addLayer, settings, setSettings, subtitleCategory, createFeatureStyle,
+    const {map, loading, setOpen,error, layers, addLayer, settings, setSettings, subtitleCategory, createFeatureStyle,
         countSeletectedFeatures, setCountSeletectedFeatures
     } = useContext(MapaContext)
     const {interaction, fontSize, subTitle} = settings
@@ -27,7 +27,6 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
             return {...pv, [modalName]: true}
         });
     }
-   
 
     useEffect(()=>{
         if(!map) return
@@ -52,12 +51,11 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                     layerName === 'stateLayer' && setContextMenu((pv)=>{return {...pv, properties}});
                 })
         });
-
+    
 
         map.on('click', (e)=>{
              if(e.originalEvent.ctrlKey){
                 map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
-
                     if(layer.className_ === "stateLayer"){
                         feature.setProperties({SELECTED: !feature.getProperties().SELECTED});
                         feature.getProperties().SELECTED ? setCountSeletectedFeatures(pv=>pv+1) : setCountSeletectedFeatures(pv=>pv-1)
@@ -68,8 +66,6 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                 })
             }
         });
-     
-   
 
     },[map])
 
@@ -111,7 +107,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
                         <AddRepModal isModalOpen={isModalOpen.addRepModal} setIsModalOpen={setIsModalOpen}/>
                         <NewLayerModal countSelectedFeatures={countSeletectedFeatures} addLayer={addLayer} isModalOpen={isModalOpen.newLayerModal} setIsModalOpen={setIsModalOpen}/>
-                        <div id='map'  onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/> 
+                        <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/> 
                     </>
                     }
                 </>

@@ -56,7 +56,8 @@ export default function AddRepModal({isModalOpen, setIsModalOpen}){
                 key: layers.length + 1,
                 data:{
                     layerName: `Vendas RC ${url.rc}`,
-                    fontColor: "#000000",
+                    fontColor: 'rgb(255, 0, 0)',
+                    borderColor: '#000000',
                     fillColor
                 },
                 properties: new vector({
@@ -64,7 +65,7 @@ export default function AddRepModal({isModalOpen, setIsModalOpen}){
                         features: new GeoJSON().readFeatures(res.data),
                     }),
                     style: (feature,res)=>{
-                        feature.setProperties({SELECTED:false, fillColor});
+                        feature.setProperties({SELECTED:false, fillColor, fontColor: 'rgb(255, 0, 0)', strokeColor: '#000000'});
                         return createFeatureStyle(feature, settings);
                     },
                     zIndex: 4,

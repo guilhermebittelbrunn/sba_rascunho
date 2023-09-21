@@ -56,37 +56,58 @@ function subtitleCategory(label, option){
         return res
 }
 
+function createColor(feature, selectedOption, layer){
+    let color;
 
+    if(feature.SELECTED) color = 'rgb(255,238,0)';
+    else{
+        if(feature.NUMERO_PEDIDO){
+            if(layer?.value === 'stateLayer'){
+                if(selectedOption) color = colorCategory(feature, selectedOption);
+                else color = "rgba(34, 156, 34, 0.7)";
+            }
+            else color = feature.fillColor || "rgba(34, 156, 34, 0.7)";
+        }
+        else color = feature.fillColor || "rgba(221,221,223,0.7)";
+    }
+    return color
+}
 
 function createFeatureStyle(feature, settings, layer){
-    const {selectedOption, fontSize, subTitle, fillColor,strokeColor, strokeWidth, fontColor} = settings;
+
+    const {selectedOption, fontSize, subTitle, fontColor, strokeColor, strokeWidth} = settings;
+    const featureProperties = feature.getProperties();
+    const color = createColor(featureProperties, selectedOption, layer);
 
     const newStyle = new Style({
               fill: new Fill({
-                  color:
-                        //Está selecionada?
-                        feature.getProperties().SELECTED ? 'rgb(255,238,0)' : 
-                        //Existe alguma categoria selecionada?   
-                        (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? 
-                        //Existe número de pedido na propriedade? 
-                        (feature.getProperties().fillColor || "rgba(34, 156, 34, 0.7)") : (fillColor || "rgba(221,221,223,0.7)")) : 
-                        //a layer atual é a state?
-                        layer?.value === 'stateLayer' ? colorCategory(feature.getProperties(), selectedOption) : 
-                        //Existe número de pedido na propriedade?
-                        feature.getProperties().NUMERO_PEDIDO ? feature.getProperties().fillColor :  "rgba(221,221,223,0.7)"),
+                //   color:
+                //         //Está selecionada?
+                //         feature.getProperties().SELECTED ? 'rgb(255,238,0)' : 
+                //         //Existe alguma categoria selecionada?   
+                //         (selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? 
+                //         //Existe número de pedido na propriedade? 
+                //         (feature.getProperties().fillColor || "rgba(34, 156, 34, 0.7)") : (fillColor || "rgba(221,221,223,0.7)")) : 
+                //         //a layer atual é a state?
+                //         layer?.value === 'stateLayer' ? colorCategory(feature.getProperties(), selectedOption) : 
+                //         //Existe número de pedido na propriedade?
+                //         feature.getProperties().NUMERO_PEDIDO ? feature.getProperties().fillColor :  "rgba(221,221,223,0.7)"),
+                    color,
+                        // feature.getProperties().SELECTED ? 'rgb(255,238,0)' :
+                        // (feature.getProperties().NUMERO_PEDIDO ? (layer?.value === 'stateLayer' ? (selectedOption === '' ? colorCategory(feature.getProperties(), selectedOption):"rgba(34, 156, 34, 0.7)") : feature.getProperties().fillColor || "rgba(34, 156, 34, 0.7)"): (feature.getProperties().fillColor ||  "rgba(221,221,223,0.7)")) 
                        
               }),
               stroke: new Stroke({
-                  color: strokeColor || "rgba(0,0,0, 1)",
-                  width: strokeWidth || 1,
+                  color: featureProperties.strokeColor || (strokeColor || "rgba(0,0,0, 1)"),
+                  width: featureProperties.strokeWidth || (strokeWidth || 1),
               }),
               text: new Text({
-                  text: subTitle === '' ? feature.getProperties().NM_MUN : 
-                  (feature.getProperties()[subTitle]? `${feature.getProperties().NM_MUN} \n ${subtitleCategory(feature.getProperties()[subTitle], subTitle)}` : 
-                  feature.getProperties().NM_MUN),  
+                  text: subTitle === '' ? featureProperties.NM_MUN : 
+                  (featureProperties[subTitle]? `${featureProperties.NM_MUN} \n ${subtitleCategory(featureProperties[subTitle], subTitle)}` : 
+                  featureProperties.NM_MUN),  
                   font: `bold ${fontSize}px ${"Segoe UI"}`,
                   fill: new Fill({
-                        color: (feature.getProperties().fontColor || fontColor) || (feature.getProperties().NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)')
+                        color: (featureProperties.fontColor || fontColor) || (featureProperties.NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)')
                   }),
                   // backgroundFill: new Stroke({
                   //   color: "rgba(255,255,255)",
@@ -101,9 +122,9 @@ function handleSelectInteration(settings){
 
     const select = new Select({
         condition: pointerMove,
-        style: (feature, l)=> {
+        style: (feature)=> {
             // console.log('s',feature)    
-            const newStyle = feature.getProperties().CD_MUN ? createFeatureStyle(feature, {...settings, strokeWidth: 3, fontSize: settings.fontSize + 0.5}) : createFeatureStyle(feature, {...settings, fillColor: ''});
+            const newStyle = createFeatureStyle(feature, {...settings, strokeWidth: 3, fontSize: settings.fontSize + 0.5}, {value: 'stateLayer'});
             return newStyle
         },
     });
@@ -167,7 +188,8 @@ export default function MapaProvider({url, children, setIsLoading}){
                             features: new GeoJSON().readFeatures(json),
                         }),
                         style: (feature,res)=>{
-                            return createFeatureStyle(feature, {...settings, fillColor: 'rgba(0,0,0,0)', strokeColor: 'rgba(30,30,30)'})
+                            feature.setProperties({fillColor: 'rgba(0,0,0,0)', strokeColor: 'rgba(30,30,30)', strokeWidth: 1});
+                            return createFeatureStyle(feature, {...settings});
                         },
                         zIndex: 2,
                         className: 'countryLayer'
@@ -238,9 +260,11 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     function addLayer(data){
         const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
-        let {layerName, fontColor, fillColor} = data;
+        let {layerName, fontColor, fillColor, borderColor} = data;
         fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
         fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor;
+        borderColor = typeof borderColor === 'object' ?  borderColor.toRgbString() : borderColor;
+        
         layerName = layerName ||  `Camada ${layers.length + 1}`;
 
         if(stateLayer === -1)return
@@ -248,7 +272,7 @@ export default function MapaProvider({url, children, setIsLoading}){
         const featuresSelecteds =  features.filter(fs=> fs.getProperties().SELECTED);
 
         const geoJSON = {
-            features: featuresSelecteds.map(f=>{return {type: 'Feature',properties:{...f.getProperties(), fontColor, fillColor} ,geometry: {type: 'Polygon',coordinates: f.getProperties().geometry.getCoordinates()}}}),
+            features: featuresSelecteds.map(f=>{return {type: 'Feature',properties:{...f.getProperties(), fontColor, fillColor, strokeColor: borderColor} ,geometry: {type: 'Polygon',coordinates: f.getProperties().geometry.getCoordinates()}}}),
             type: "FeatureCollection"
         }
 
@@ -268,8 +292,8 @@ export default function MapaProvider({url, children, setIsLoading}){
                     features: new GeoJSON().readFeatures(geoJSON),
                 }),
                 style: (feature,res)=>{
-                    feature.setProperties({SELECTED:false, stylesConfig: {...settings, fillColor, fontColor}});
-                    return createFeatureStyle(feature, {...feature.getProperties().stylesConfig});
+                    feature.setProperties({SELECTED:false, fillColor, fontColor, strokeColor: borderColor});
+                    return createFeatureStyle(feature, {...settings});
                 },
                 zIndex: 4,
                 className: `custom_layer${layers.length + 1}`,
@@ -285,15 +309,16 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     function changeLayer(data, layer){
 
-        let {layerName, fontColor, fillColor} = data
+        let {layerName, fontColor, fillColor, borderColor} = data
         const features = layer.properties.getSource().getFeatures();
 
         fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
         fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor;
+        borderColor = typeof borderColor === 'object' ?  borderColor.toRgbString() : borderColor;
 
         features.map(feature=>{
-            feature.setProperties({fontColor, fillColor, SELECTED:false, stylesConfig: {...settings, fillColor, fontColor}});
-            feature.setStyle(createFeatureStyle(feature, {...feature.getProperties().stylesConfig}));
+            feature.setProperties({fontColor, fillColor, strokeColor: borderColor, SELECTED:false});
+            feature.setStyle(createFeatureStyle(feature, {...settings}));
         });
 
         if(layerName.trim() !== ''){

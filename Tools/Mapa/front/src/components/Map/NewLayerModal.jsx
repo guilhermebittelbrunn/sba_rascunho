@@ -68,7 +68,7 @@ const defaultValue = `M0 1275 l0 -1275 1275 0 1275 0 0 1275 0 1275 -1275 0 -1275
 
 export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen, setIsModalOpen, addLayer, changeLayer}){
     const {layers} = useContext(MapaContext);
-    const {control, handleSubmit, reset} = useForm({defaultValues: {layerName: layer?.data.layerName || '', fontColor: '#000000', fillColor: '#0084ff'}});
+    const {control, handleSubmit, reset} = useForm({defaultValues: {layerName: layer?.data.layerName || '', fontColor: '#000000', borderColor: '#000000',fillColor: '#0084ff'}});
     
     const handleOk = (data) => {
         layer ? changeLayer(data, layer) : addLayer(data);
@@ -91,8 +91,8 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
     useEffect(()=>{
         if(layer){
             // setValue([{layerName: '123'}, {fontColor: '#111111'}, {fillColor: '#777777'}]);
-            const {fontColor, fillColor} = layer?.data;
-            reset({layerName: layer.name, fontColor, fillColor});
+            const {fontColor, fillColor, borderColor} = layer?.data;
+            reset({layerName: layer.name, borderColor, fontColor, fillColor});
         }
     }, [layer])
 
@@ -105,7 +105,7 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
                         <div>
                             <h3 className='font-bold'>Nome</h3>
                             <Controller name='layerName' control={control} render={({field})=>{
-                                return <Input field={field} value={field.value} onChange={(value)=>field.onChange(value)} placeholder="Título da camada" size='small' className='w-[275px]'/>
+                                return <Input field={field} value={field.value} onChange={(value)=>field.onChange(value)} placeholder="Título da camada" size='small' className='w-[300px]'/>
                             }}/>          
                         </div>
 
@@ -130,16 +130,80 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
                                                 {
                                                     label: 'Recommended',
                                                     colors: [
-                                                    '#000000',
-                                                    '#000000E0',
-                                                    '#000000A6',
-                                                    '#00000073',
-                                                    '#00000040',
-                                                    '#00000026',
-                                                    '#0000001A',
-                                                    '#00000012',
-                                                    '#0000000A',
-                                                    '#00000005',
+                                                    '#F5222D',
+                                                    '#FA8C16',
+                                                    '#FADB14',
+                                                    '#8BBB11',
+                                                    '#52C41A',
+                                                    '#13A8A8',
+                                                    '#1677FF',
+                                                    '#2F54EB',
+                                                    '#722ED1',
+                                                    '#EB2F96',
+                                                    '#F5222D4D',
+                                                    '#FA8C164D',
+                                                    '#FADB144D',
+                                                    '#8BBB114D',
+                                                    '#52C41A4D',
+                                                    '#13A8A84D',
+                                                    '#1677FF4D',
+                                                    '#2F54EB4D',
+                                                    '#722ED14D',
+                                                    '#EB2F964D',
+                                                    ],
+                                                },
+                                                ]}
+                                                panelRender={(_, { components: { Picker, Presets } }) => (
+                                                <div
+                                                    className="custom-panel"
+                                                    style={{
+                                                    display: 'flex',
+                                                    width: 298,
+                                                    }}
+                                                >
+                                                    <div
+                                                    style={{
+                                                        flex: 1,
+                                                    }}
+                                                    >
+                                                    <Presets />
+                                                    </div>
+                                                    <Divider
+                                                        type="vertical"
+                                                        style={{
+                                                            height: 'auto',
+                                                        }}
+                                                    />
+                                                    <div
+                                                        style={{
+                                                            width: 200,
+                                                        }}
+                                                    >
+                                                    <Picker />
+                                                    </div>
+                                                </div>
+                                                )}
+                                            />
+                                        </>
+                                    )
+                                    
+                                }}/>
+                                <Controller name='borderColor' control={control} render={({field})=>{
+                                    return (
+                                        <>
+                                            <ColorPicker
+                                                value={(field?.value?.metaColor?.originalInput || layer?.data.borderColor) || '#000000'}
+                                                onChange={(v)=>{field.onChange(v);}}
+                                                showText={()=>{return <><span>Borda</span></>}}
+                                                styles={{
+                                                    popupOverlayInner: {
+                                                        width: 288 + 40,
+                                                    },
+                                                }}
+                                                presets={[
+                                                {
+                                                    label: 'Recommended',
+                                                    colors: [
                                                     '#F5222D',
                                                     '#FA8C16',
                                                     '#FADB14',
@@ -214,16 +278,6 @@ export default function NewLayerModal({countSelectedFeatures, layer, isModalOpen
                                                 {
                                                     label: 'Recommended',
                                                     colors: [
-                                                    '#000000',
-                                                    '#000000E0',
-                                                    '#000000A6',
-                                                    '#00000073',
-                                                    '#00000040',
-                                                    '#00000026',
-                                                    '#0000001A',
-                                                    '#00000012',
-                                                    '#0000000A',
-                                                    '#00000005',
                                                     '#F5222D',
                                                     '#FA8C16',
                                                     '#FADB14',
