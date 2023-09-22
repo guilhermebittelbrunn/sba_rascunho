@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Button, Select, Slider, InputNumber, Checkbox, message, Drawer as DrawerAntd } from 'antd';
 import { MapaContext } from '../../contexts/MapaContext';
 import DragTable from './DragTable';
-import NewLayerModal from '../Map/newLayerModal';
+import LayerModal from '../Modal/LayerModal'
 import Search from 'antd/es/input/Search';
 
 const defaultLayersLength = 3
@@ -84,7 +84,7 @@ const optionsSubtitle = [
 export default function Drawer(){
 
     const {
-      map, layers, open, setOpen, setIsModalOpen, changeLayer, addLayer, setLayers, 
+      map, layers, open, setOpen, setIsModalOpen, setLayers, 
       settings, setSettings, searchValue, setSearchValue, createFeatureStyle
     } = useContext(MapaContext);
     
@@ -209,7 +209,7 @@ export default function Drawer(){
               open={open}
               getContainer={false}
             >
-                <div className='w-full flex flex-col gap-3 justify-center'>
+                <div className='w-full flex flex-col gap-3 justify-between h-[100%]'>
 
                     <div className='flex flex-col'>
                           <h3 className='font-bold text-sm'>Buscar Cidade</h3>
@@ -273,9 +273,9 @@ export default function Drawer(){
                         </div>
                     </div>
 
-                    <div className='mt-2'>
+                    <div className={`w-full mt-2`}>
                       <h3 className={`font-bold text-sm mb-1 ${layers.length <= defaultLayersLength && 'hidden'}`}>Camadas Customizáveis</h3>
-                      <div className='overflow-auto h-[270px] w-[285px]'>
+                          <div className={`overflow-auto mb-6 h-[240px] ${layers.length <= 9 ? 'w-[285px]' : 'w-[300px]'}`}>
                           {layers.length > defaultLayersLength && 
                             <DragTable 
                               setIsModalOpen={setEditModal} layers={layers} setLayers={setLayers} 
@@ -285,7 +285,7 @@ export default function Drawer(){
                       </div>
                     </div>
                                           
-                    <div id='bts' className='w-full flex flex-col gap-2'>
+                    <div className='w-full flex flex-col gap-2'>
                         <Button onClick={()=>{setIsModalOpen({status:true, type:'export'})}}>Imprimir Mapa</Button>
                         <Button onClick={()=>{setIsModalOpen({status:true, type:'report'})}}>Exportar Relatório</Button>
                     </div>   
@@ -294,10 +294,10 @@ export default function Drawer(){
                                     
             </DrawerAntd>  
 
-            <NewLayerModal 
-                countSelectedFeatures={isEditModal?.layer?.properties.getSource().getFeatures().length || 0} 
-                changeLayer={changeLayer} layer={isEditModal.layer} addLayer={addLayer} 
-                isModalOpen={isEditModal.status} disableModal={setEditModal}
+            <LayerModal 
+                layer={isEditModal?.layer} 
+                isModalOpen={isEditModal?.status} 
+                disableModal={setEditModal}
             />            
         </> 
     )    

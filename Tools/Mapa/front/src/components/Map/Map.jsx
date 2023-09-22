@@ -2,20 +2,21 @@ import { useEffect, useRef, useContext, useState } from 'react';
 import { Spin } from 'antd';
 import { SettingOutlined, SelectOutlined, FullscreenExitOutlined, PlusOutlined, FullscreenOutlined, UsergroupAddOutlined} from '@ant-design/icons';
 import { MapaContext } from '../../contexts/MapaContext';
-import ErrorModal from './ErrorModal';
-import NewLayerModal from './NewLayerModal';
-import AddRepModal from './AddRepModal';
+import ErrorModal from '../Modal/ErrorModal';
+import LayerModal from '../Modal/LayerModal';
+import AddRepModal from '../Modal/AddRepModal';
 
 
 export default function MapPage({handleClick, handleFullScreenAction, handleContext, isFullScreen, setContextMenu}){
 
-    const [isModalOpen, setIsModalOpen] = useState({newLayerModal: false, addRepModal: false});
-    const {map, loading, setOpen,error, addLayer, settings, setSettings, createFeatureStyle,
-            countSeletectedFeatures, setCountSeletectedFeatures
+    const [isModalOpen, setIsModalOpen] = useState({layerModal: false, addRepModal: false});
+    const {map, loading, setOpen,error, settings, setSettings, createFeatureStyle,
+            countSelectedFeatures, setCountSelectedFeatures
         } = useContext(MapaContext);
     
     const {interaction, fontSize, subTitle} = settings
     const map1 = useRef(null);
+
 
     function showModal(modalName){
         setIsModalOpen((pv)=>{
@@ -24,7 +25,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
     }
 
     function disableModal(){
-        setIsModalOpen({newLayerModal: false, addRepModal: false});
+        setIsModalOpen({layerModal: false, addRepModal: false});
     };
 
 
@@ -63,10 +64,11 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                         feature.setProperties({SELECTED: !featureProperties.SELECTED});
 
                         if(feature.getProperties().SELECTED){
-                            setCountSeletectedFeatures(pv=>pv+1);
+                            setCountSelectedFeatures(pv=>pv+1);
                             return feature.setStyle(createFeatureStyle(feature, {...styleConfig, fillColor: 'rgb(255,238,0)'}));
                         }
-                        setCountSeletectedFeatures(pv=>pv-1);
+                        setCountSelectedFeatures(pv=>pv-1);
+                        console.log('map', countSelectedFeatures)
                         feature.setStyle(createFeatureStyle(feature, {...settings}))
                     }
                 })
@@ -122,10 +124,10 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                         </button>
 
                         <button 
-                            onClick={()=>{countSeletectedFeatures > 0 && showModal('newLayerModal')}} 
+                            onClick={()=>{countSelectedFeatures > 0 && showModal('layerModal')}} 
                             className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px]
                             border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 
-                            hover:text-base ${countSeletectedFeatures <= 0 && 'opacity-60 cursor-not-allowed'} 
+                            hover:text-base ${countSelectedFeatures <= 0 && 'opacity-60 cursor-not-allowed'} 
                             outline-none`} style={{transform: 'translate(20%, 400%)', transition: 'all .4s'}}
                         >
                             <PlusOutlined />
@@ -133,7 +135,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
 
                         <AddRepModal isModalOpen={isModalOpen.addRepModal} disableModal={disableModal}/>
-                        <NewLayerModal countSelectedFeatures={countSeletectedFeatures} addLayer={addLayer} isModalOpen={isModalOpen.newLayerModal} disableModal={disableModal}/>
+                        <LayerModal  isModalOpen={isModalOpen.layerModal} disableModal={disableModal}/>
                         <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/> 
                     </>
                     }

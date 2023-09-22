@@ -143,7 +143,7 @@ export default function MapaProvider({url, children, setIsLoading}){
     const [open, setOpen] = useState(false); 
     const [map, setMap] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState({status: false, type: ''});
-    const [countSeletectedFeatures, setCountSeletectedFeatures] = useState(0)
+    const [countSelectedFeatures, setCountSelectedFeatures] = useState(0)
     const [searchValue, setSearchValue] = useState('');
 
     useEffect(()=>{
@@ -258,80 +258,80 @@ export default function MapaProvider({url, children, setIsLoading}){
         setIsLoading(loading);
     },[loading])
 
-    function addLayer(data){
-        const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
-        let {layerName, fontColor, fillColor, borderColor} = data;
-        fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
-        fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor;
-        borderColor = typeof borderColor === 'object' ?  borderColor.toRgbString() : borderColor;
+    // function addLayer(data){
+    //     const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
+    //     let {layerName, fontColor, fillColor, borderColor} = data;
+    //     fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
+    //     fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor;
+    //     borderColor = typeof borderColor === 'object' ?  borderColor.toRgbString() : borderColor;
         
-        layerName = layerName ||  `Camada ${layers.length + 1}`;
+    //     layerName = layerName ||  `Camada ${layers.length + 1}`;
 
-        if(stateLayer === -1)return
-        const features = layers[stateLayer].properties.getSource().getFeatures();
-        const featuresSelecteds =  features.filter(fs=> fs.getProperties().SELECTED);
+    //     if(stateLayer === -1)return
+    //     const features = layers[stateLayer].properties.getSource().getFeatures();
+    //     const featuresSelecteds =  features.filter(fs=> fs.getProperties().SELECTED);
 
-        const geoJSON = {
-            features: featuresSelecteds.map(f=>{return {type: 'Feature',properties:{...f.getProperties(), fontColor, fillColor, strokeColor: borderColor} ,geometry: {type: 'Polygon',coordinates: f.getProperties().geometry.getCoordinates()}}}),
-            type: "FeatureCollection"
-        }
+    //     const geoJSON = {
+    //         features: featuresSelecteds.map(f=>{return {type: 'Feature',properties:{...f.getProperties(), fontColor, fillColor, strokeColor: borderColor} ,geometry: {type: 'Polygon',coordinates: f.getProperties().geometry.getCoordinates()}}}),
+    //         type: "FeatureCollection"
+    //     }
 
-        featuresSelecteds.forEach(fs=>{
-            fs.setProperties({SELECTED: false});
-            fs.setStyle(createFeatureStyle(fs, {...settings}));
-        });
+    //     featuresSelecteds.forEach(fs=>{
+    //         fs.setProperties({SELECTED: false});
+    //         fs.setStyle(createFeatureStyle(fs, {...settings}));
+    //     });
 
-        const newLayer = {
-            name: layerName || `Camada ${layers.length + 1}`,
-            value: `custom_layer${layers.length + 1}`,
-            status: true,
-            data: {...data},
-            key: layers.length + 1,
-            properties: new vector({
-                source: new Vector({
-                    features: new GeoJSON().readFeatures(geoJSON),
-                }),
-                style: (feature,res)=>{
-                    feature.setProperties({SELECTED:false, fillColor, fontColor, strokeColor: borderColor});
-                    return createFeatureStyle(feature, {...settings});
-                },
-                zIndex: 4,
-                className: `custom_layer${layers.length + 1}`,
-                // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
-            })
-        }
+    //     const newLayer = {
+    //         name: layerName || `Camada ${layers.length + 1}`,
+    //         value: `custom_layer${layers.length + 1}`,
+    //         status: true,
+    //         data: {...data},
+    //         key: layers.length + 1,
+    //         properties: new vector({
+    //             source: new Vector({
+    //                 features: new GeoJSON().readFeatures(geoJSON),
+    //             }),
+    //             style: (feature,res)=>{
+    //                 feature.setProperties({SELECTED:false, fillColor, fontColor, strokeColor: borderColor});
+    //                 return createFeatureStyle(feature, {...settings});
+    //             },
+    //             zIndex: 4,
+    //             className: `custom_layer${layers.length + 1}`,
+    //             // properties: {color: (feature,res)=>(selectedOption === '' ?  (feature.getProperties().NUMERO_PEDIDO ? "rgb(34, 156, 34)" :  "rgba(221,221,223,0.7)") : colorCategory(feature.getProperties(), selectedOption))},
+    //         })
+    //     }
 
-        setLayers(pv=>[...pv, newLayer]);
-        setCountSeletectedFeatures(0)
-        setSettings((pv)=>pv);
-        map.addLayer(newLayer.properties);
-    }
+    //     setLayers(pv=>[...pv, newLayer]);
+    //     setCountSeletectedFeatures(0);
+    //     setSettings((pv)=>pv);
+    //     map.addLayer(newLayer.properties);
+    // }
 
-    function changeLayer(data, layer){
+    // function changeLayer(data, layer){
 
-        let {layerName, fontColor, fillColor, borderColor} = data
-        const features = layer.properties.getSource().getFeatures();
+    //     let {layerName, fontColor, fillColor, borderColor} = data
+    //     const features = layer.properties.getSource().getFeatures();
 
-        fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
-        fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor;
-        borderColor = typeof borderColor === 'object' ?  borderColor.toRgbString() : borderColor;
+    //     fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
+    //     fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor;
+    //     borderColor = typeof borderColor === 'object' ?  borderColor.toRgbString() : borderColor;
 
-        features.map(feature=>{
-            feature.setProperties({fontColor, fillColor, strokeColor: borderColor, SELECTED:false});
-            feature.setStyle(createFeatureStyle(feature, {...settings}));
-        });
+    //     features.map(feature=>{
+    //         feature.setProperties({fontColor, fillColor, strokeColor: borderColor, SELECTED:false});
+    //         feature.setStyle(createFeatureStyle(feature, {...settings}));
+    //     });
 
-        if(layerName.trim() !== ''){
-            layer.name = layerName;
-        }
-        layer.data = {...data}
-    }
+    //     if(layerName.trim() !== ''){
+    //         layer.name = layerName;
+    //     }
+    //     layer.data = {...data}
+    // }
 
     
     return(
         <MapaContext.Provider value={{map, error, loading, open, setOpen, error, layers, setLayers,subtitleCategory,
-            isModalOpen, changeLayer, setIsModalOpen,rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings,
-            createFeatureStyle, addLayer, countSeletectedFeatures, setCountSeletectedFeatures
+            isModalOpen, setIsModalOpen,rc: url.rc,  url, searchValue, setSearchValue, settings, setSettings,
+            createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures
         }}>
             {children}
         </MapaContext.Provider>
