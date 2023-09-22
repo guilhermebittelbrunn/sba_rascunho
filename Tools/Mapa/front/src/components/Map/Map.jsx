@@ -7,12 +7,10 @@ import LayerModal from '../Modal/LayerModal';
 import AddRepModal from '../Modal/AddRepModal';
 
 
-export default function MapPage({handleClick, handleFullScreenAction, handleContext, isFullScreen, setContextMenu}){
+export default function MapPage({handleClick, handleFullScreenAction, handleContext, isFullScreen, setContextMenu, setOpen}){
 
     const [isModalOpen, setIsModalOpen] = useState({layerModal: false, addRepModal: false});
-    const {map, loading, setOpen,error, settings, setSettings, createFeatureStyle,
-            countSelectedFeatures, setCountSelectedFeatures
-        } = useContext(MapaContext);
+    const {map, loading,error, settings, setSettings, createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures} = useContext(MapaContext);
     
     const {interaction, fontSize, subTitle} = settings
     const map1 = useRef(null);
@@ -68,7 +66,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                             return feature.setStyle(createFeatureStyle(feature, {...styleConfig, fillColor: 'rgb(255,238,0)'}));
                         }
                         setCountSelectedFeatures(pv=>pv-1);
-                        console.log('map', countSelectedFeatures)
+                        // console.log('map', countSelectedFeatures)
                         feature.setStyle(createFeatureStyle(feature, {...settings}))
                     }
                 })

@@ -7,17 +7,19 @@ export default function useFetch(url){
   const [data, setData] = useState([]);
 
   useEffect(()=>{
+
     (async()=>{
+      
       try{
-        setLoading(true)
+        setLoading(true);
         const res = await axios.get(url);
-        // console.log(res)
         setData(res.data);
       }catch(err){
         setError(err)
       }finally{
         setLoading(false)
       }
+      
     })()
 
     

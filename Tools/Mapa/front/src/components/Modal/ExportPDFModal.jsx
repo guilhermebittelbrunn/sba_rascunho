@@ -1,9 +1,10 @@
-import { Button, Spin } from 'antd';
+import { Button, Spin, Tooltip, Modal as ModalAntd} from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons'
 import { useForm, Controller } from 'react-hook-form';
 import { useContext, useState } from 'react';
 import { MapaContext } from '../../contexts/MapaContext';
 import RadioInput from '../Form/RadioInput';
-import {jsPDF} from 'jspdf'
+import { jsPDF } from 'jspdf'
 
 const sizeDataSet = [
     {
@@ -52,7 +53,7 @@ const dims = {
 const sizeDefaultValue = 'A3'
 const dpiDefaultValue = 300
 
-export default function ExportPDFModal({ handleCancel }){
+export default function ExportPDFModal({ handleCancel, isModalOpen}){
     
     const [isLoading, setIsLoading] = useState(false);
     const { handleSubmit, control } = useForm({defaultValues:{paperSize: sizeDefaultValue, dpiValue: dpiDefaultValue}});
@@ -114,45 +115,64 @@ export default function ExportPDFModal({ handleCancel }){
     }
 
     return(
-        <form className='flex flex-col gap-2 justify-center ml-2' onSubmit={handleSubmit(sendForm)}>
 
-                    <div>
-                        <h3 className='font-semibold mt-2'>Tamanho da folha</h3>
-                        <Controller name='paperSize' control={control} render={({field})=>{
-                            return (
-                                <RadioInput 
-                                    field={field} dataset={sizeDataSet} defaultValue={sizeDefaultValue} 
-                                    cardStyle={`hover:cursor-pointer w-16 h-16 border-[1px] rounded-sm relative 
-                                    flex flex-col justify-center items-center`}
-                                />
-                            )
-                        }}/>
-                    </div>
+        <ModalAntd 
+                title={'Gerar PDF'} width={350} 
+                centered={true} open={isModalOpen} okButtonProps={{hidden: true}} 
+                cancelButtonProps={{hidden: true}} onCancel={handleCancel} handleCancel={handleCancel}
+        >
+        
+            <form className='flex flex-col gap-2 justify-center ml-2' onSubmit={handleSubmit(sendForm)}>
 
-                    <div className='mb-12'>
-                        <h3 className='font-semibold mt-2'>Resolução</h3>
-                        <Controller name='dpiValue' control={control} render={({field})=>{
-                            return (
-                                <RadioInput 
-                                    field={field} dataset={dpiValueSet} defaultValue={dpiDefaultValue} 
-                                    cardStyle={`hover:cursor-pointer w-16 h-16 border-[1px] rounded-sm relative
-                                    flex flex-col justify-center items-center`}
-                                />
-                            )
-                        }}/>
-                    </div>
-                
-                    <div className='absolute right-4 bottom-4 flex gap-2'>
-                        {isLoading ? 
-                            <Spin/> 
-                            : 
-                            <>
-                                <Button onClick={handleCancel}>Cancelar</Button>
-                                <Button htmlType='submit' type='primary' className='bg-blue-500'>Exportar</Button>
-                            </>
-                        }
-                    </div>
-        </form>
+                        <div className='flex flex-col'>
+                            <div className='flex items-center justify-between  gap-2 mt-2'>
+                                <h3 className='font-semibold'>Tamanho da folha</h3>
+                                <Tooltip title='Dimensões da impressão, utilizar tamanho A4 para impressoras convencionais'>
+                                    <QuestionCircleOutlined/>
+                                </Tooltip>
+                            </div>
+                            <Controller name='paperSize' control={control} render={({field})=>{
+                                return (
+                                    <RadioInput 
+                                        field={field} dataset={sizeDataSet} defaultValue={sizeDefaultValue} 
+                                        cardStyle={`hover:cursor-pointer w-full h-16 border-[1px] rounded-sm relative 
+                                        flex flex-col justify-center items-center`}
+                                    />
+                                )
+                            }}/>
+                        </div>
+
+                        <div className='flex flex-col mb-12'>
+                            <div className='flex items-center justify-between gap-2 mt-2'>
+                                <h3 className='font-semibold'>Resolução</h3>
+                                <Tooltip title='Quanto maior a resolução, maior a qualidade e tamanho do arquivo gerado'>
+                                    <QuestionCircleOutlined/>
+                                </Tooltip>
+                            </div>
+                            <Controller name='dpiValue' control={control} render={({field})=>{
+                                return (
+                                    <RadioInput 
+                                        field={field} dataset={dpiValueSet} defaultValue={dpiDefaultValue} 
+                                        cardStyle={`hover:cursor-pointer w-full h-16 border-[1px] rounded-sm relative
+                                        flex flex-col justify-center items-center`}
+                                    />
+                                )
+                            }}/>
+                        </div>
+                    
+                        <div className='absolute right-4 bottom-4 flex gap-2'>
+                            {isLoading ? 
+                                <Spin/> 
+                                : 
+                                <>
+                                    <Button onClick={handleCancel}>Cancelar</Button>
+                                    <Button htmlType='submit' type='primary' className='bg-blue-500'>Exportar</Button>
+                                </>
+                            }
+                        </div>
+            </form>
+
+         </ModalAntd>
     )
 }
 

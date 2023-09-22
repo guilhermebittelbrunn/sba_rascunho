@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { useContext, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, Spin, message } from 'antd';
+import { Button, Spin, message, Tooltip, Modal as ModalAntd } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons'
 import { MapaContext } from '../../contexts/MapaContext';
 import RadioInput from '../Form/RadioInput';
 
 const reportOptions = [{name: 'Simples'},{name: 'Detalhado'}];
 
-export default function ReportModal({ handleCancel }){
+export default function ReportModal({ handleCancel, isModalOpen }){
     const { url } = useContext(MapaContext)
     const { handleSubmit, control } = useForm({defaultValues:{reportType: 'Detalhado'}});
     const [isLoading, setIsLoading] = useState(false);
@@ -31,14 +32,41 @@ export default function ReportModal({ handleCancel }){
     }
 
     return(
+        <ModalAntd 
+                title={'Gerar Relatório'} width={350} 
+                centered={true} open={isModalOpen} okButtonProps={{hidden: true}} 
+                cancelButtonProps={{hidden: true}} onCancel={handleCancel} handleCancel={handleCancel}
+            >
             <form onSubmit={handleSubmit(sendForm)}>
 
-                <h3 className='font-semibold mt-2'>Tipo</h3>
+                <div className='flex justify-between items-center mt-4'>
+                    <h3 className='font-semibold'>Tipo</h3>
+                    <Tooltip  title={
+                     
+               
+                        ()=>{return (
+                            <>
+                                <p>
+                                    Simples: informações agrupadas do pedido mais recente realizado em cada cidade.
+                                    <br/>(processo rápido)
+                                </p>
+                                <br/>
+                                <p>
+                                    Detalhado: informações detalhadas sobre todos os pedidos realizados em cada cidade com resumo
+                                    e agrupamentos por cidade.
+                                    <br/>(processo lento)
+                                </p>
+                            </>
+                        )}
+                        }>
+                        <QuestionCircleOutlined/>
+                    </Tooltip>
+                </div>
                 <Controller name='reportType' control={control} render={({field})=>{
                     return (
                         <RadioInput 
                             dataset={reportOptions} defaultValue={'Simples'} field={field} 
-                            cardStyle={`hover:cursor-pointer w-32 h-16 mb-10 border-[1px] 
+                            cardStyle={`hover:cursor-pointer w-full h-16 mb-10 border-[1px] 
                             rounded-sm relative flex flex-col justify-center items-center`}
                         />
                     )
@@ -56,6 +84,7 @@ export default function ReportModal({ handleCancel }){
                 </div>     
                      
             </form>
+        </ModalAntd>
     )
 }
 

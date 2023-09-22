@@ -292,7 +292,7 @@ export default function NewLayerModal({layer, isModalOpen, disableModal}){
 
                         <div className='absolute left-0 bottom-2 flex w-full gap-2 items-center justify-between px-6'>
                                 <Statistic 
-                                    title="Camadas" value={layer?.properties.getSource().getFeatures().length || 0} suffix={`/${countFeatures()}`} 
+                                    title="Camadas" value={layer?.properties.getSource().getFeatures().length || countSelectedFeatures} suffix={`/${countFeatures()}`} 
                                     valueStyle={{fontSize: '18px', marginTop: '-2px'}} className='mb-1 text-sm'
                                 />
                                 <Button htmlType='submit' type='primary' className='bg-blue-600 mt-4'>

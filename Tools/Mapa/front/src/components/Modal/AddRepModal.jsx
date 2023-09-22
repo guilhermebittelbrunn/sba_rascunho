@@ -21,11 +21,13 @@ export default function AddRepModal({isModalOpen, disableModal}){
 
 
     function generateRandomColor(){
-        const generateRandomValue = () =>{
-            const randomNumber = Math.random(0,255);
-            return Math.floor(randomNumber * 100);
-        }
-        return `rgba(${generateRandomValue()}, ${generateRandomValue()}, ${generateRandomValue()}, 0.7)`
+        return (
+            `rgba(
+            ${Math.floor(Math.random() * (255 - 0) + 0)}, 
+            ${Math.floor(Math.random() * (255 - 0) + 0)}, 
+            ${Math.floor(Math.random() * (255 - 0) + 0)}, 
+            0.7)`
+        )
     }
 
 
