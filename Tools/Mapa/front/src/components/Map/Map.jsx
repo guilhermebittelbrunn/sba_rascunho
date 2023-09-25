@@ -63,7 +63,7 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
                         if(feature.getProperties().SELECTED){
                             setCountSelectedFeatures(pv=>pv+1);
-                            return feature.setStyle(createFeatureStyle(feature, {...styleConfig, fillColor: 'rgb(255,238,0)'}));
+                            return feature.setStyle(createFeatureStyle(feature, {...styleConfig, zIndex: 100, fillColor: 'rgb(255,238,0)'}));
                         }
                         setCountSelectedFeatures(pv=>pv-1);
                         // console.log('map', countSelectedFeatures)

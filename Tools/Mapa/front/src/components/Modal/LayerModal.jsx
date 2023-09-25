@@ -12,11 +12,14 @@ const recomendColors = ['#F5222D','#FA8C16','#FADB14','#8BBB11','#52C41A','#13A8
 const svgList = [
                     {
                         type: 'svg',
-                        name: `M0 1275 l0 -1275 1275 0 1275 0 0 1275 0 1275 -1275 0 -1275 0 0 -1275z`
+                        name: false,
+                        svgName: `M0 1275 l0 -1275 1275 0 1275 0 0 1275 0 1275 -1275 0 -1275 0 0 -1275z`
+
                     },
                     {
                         type: 'svg',
-                        name: `M0 2240 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z
+                        name: 110,
+                        svgName: `M0 2240 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z
                                 M0 1740 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z
                                 M0 1270 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z
                                 M0 780 l0 -130 1275 0 1275 0 0 130 0 130 -1275 0 -1275 0 0 -130z
@@ -24,7 +27,8 @@ const svgList = [
                     },
                     {
                         type: 'svg',
-                        name: `M200 2536 c8 -8 535 -415 1170 -906 635 -491 1161 -897 1168 -903 9
+                        name: 45,
+                        svgName: `M200 2536 c8 -8 535 -415 1170 -906 635 -491 1161 -897 1168 -903 9
                                 -7 12 25 12 155 l0 164 -972 752 -973 752 -209 0 c-180 0 -208 -2 -196 -14z
                                 M991 2546 c2 -2 354 -276 782 -609 l777 -606 -1 167 0 167 -570 443
                                 -569 442 -212 0 c-116 0 -209 -2 -207 -4z
@@ -41,7 +45,8 @@ const svgList = [
                     },
                     {
                         type: 'svg',
-                        name: `M152 2433 l-152 -117 0 -164 c0 -130 3 -162 12 -155 7 6 164 126 348
+                        name: 90,
+                        svgName: `M152 2433 l-152 -117 0 -164 c0 -130 3 -162 12 -155 7 6 164 126 348
                                 268 184 142 342 264 350 271 12 12 -18 14 -196 14 l-210 0 -152 -117z
                                 M582 2097 l-582 -450 0 -165 c0 -130 3 -162 13 -155 6 6 361 279 787
                                 608 426 329 779 602 784 606 6 5 -83 9 -205 8 l-214 -1 -583 -451z
@@ -58,7 +63,8 @@ const svgList = [
                     },
                     {
                         type: 'svg',
-                        name: `M210 1275 l0 -1275 130 0 130 0 0 1275 0 1275 -130 0 -130 0 0 -1275z
+                        name: 300,
+                        svgName: `M210 1275 l0 -1275 130 0 130 0 0 1275 0 1275 -130 0 -130 0 0 -1275z
                                 M700 1275 l0 -1275 130 0 130 0 0 1275 0 1275 -130 0 -130 0 0 -1275z
                                 M1170 1275 l0 -1275 130 0 130 0 0 1275 0 1275 -130 0 -130 0 0
                                 -1275z
@@ -69,19 +75,27 @@ const svgList = [
                     }  
             
 ]
-const defaultValue = `M0 1275 l0 -1275 1275 0 1275 0 0 1275 0 1275 -1275 0 -1275 0 0 -1275z`
+const defaultValue = 45
 
-
-export default function NewLayerModal({layer, isModalOpen, disableModal}){
+export default function LayerModal({layer, isModalOpen, disableModal}){
     const { map, settings, layers, setLayers, createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures, setSettings } = useContext(MapaContext);
-    const {control, handleSubmit, reset} = useForm({defaultValues: {layerName: layer?.data.layerName || '', fontColor: '#000000', borderColor: '#000000',fillColor: '#0084ff'}});
+    const {control, handleSubmit, reset} = useForm({
+        defaultValues: {
+            layerName: layer?.data.layerName || '', 
+            fontColor: '#000000', 
+            borderColor: '#000000', 
+            fillColor: '#0084ff', 
+            fillStyle: layer?.data.fillStyle || defaultValue
+        }
+    });
     
+
     function addLayer(data){
 
         const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
         if(stateLayer === -1) return
             
-        let {layerName, fontColor, fillColor, borderColor} = data;
+        let {layerName, fontColor, fillColor, borderColor, fillStyle} = data;
         fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
         fillColor = typeof fillColor === 'object' ?  fillColor.toRgbString() : fillColor;
         borderColor = typeof borderColor === 'object' ?  borderColor.toRgbString() : borderColor;
@@ -93,7 +107,7 @@ export default function NewLayerModal({layer, isModalOpen, disableModal}){
             features: featuresSelecteds.map(feature=>{
                 return ({
                     type: 'Feature',
-                    properties: {...feature.getProperties(), strokeColor: borderColor, fontColor, fillColor},
+                    properties: {...feature.getProperties(), strokeColor: borderColor, fontColor, fillColor, fillStyle},
                     geometry: {type: 'Polygon', coordinates: feature.getProperties().geometry.getCoordinates()}
                 })
             }),
@@ -116,7 +130,7 @@ export default function NewLayerModal({layer, isModalOpen, disableModal}){
                     features: new GeoJSON().readFeatures(geoJSON),
                 }),
                 style: (feature,res)=>{
-                    feature.setProperties({SELECTED:false, fillColor, fontColor, strokeColor: borderColor});
+                    feature.setProperties({SELECTED:false, zIndex: 1, fillColor, fontColor, fillStyle, strokeColor: borderColor});
                     return createFeatureStyle(feature, {...settings});
                 },
                 zIndex: 4,
@@ -126,13 +140,11 @@ export default function NewLayerModal({layer, isModalOpen, disableModal}){
 
         setLayers(pv=>[...pv, newLayer]);
         setCountSelectedFeatures(0);
-        setSettings((pv)=>pv);
         map.addLayer(newLayer.properties);
     }
 
     function changeLayer(data, layer){
-
-        let {layerName, fontColor, fillColor, borderColor} = data
+        let {layerName, fontColor, fillColor, borderColor, fillStyle} = data
         const features = layer.properties.getSource().getFeatures();
 
         fontColor = typeof fontColor === 'object' ?  fontColor.toRgbString() : fontColor;
@@ -140,7 +152,7 @@ export default function NewLayerModal({layer, isModalOpen, disableModal}){
         borderColor = typeof borderColor === 'object' ?  borderColor.toRgbString() : borderColor;
 
         features.map(feature=>{
-            feature.setProperties({fontColor, fillColor, strokeColor: borderColor, SELECTED:false});
+            feature.setProperties({fillStyle, fontColor, fillColor, strokeColor: borderColor, SELECTED:false});
             feature.setStyle(createFeatureStyle(feature, {...settings}));
         });
 
@@ -167,8 +179,8 @@ export default function NewLayerModal({layer, isModalOpen, disableModal}){
 
     useEffect(()=>{
         if(layer){
-            const {fontColor, fillColor, borderColor} = layer?.data;
-            reset({layerName: layer.name, borderColor, fontColor, fillColor});
+            const {fontColor, fillColor, borderColor, fillStyle} = layer?.data;
+            reset({layerName: layer.name, borderColor, fontColor, fillColor, fillStyle});
         }
     }, [layer])
 
@@ -279,10 +291,10 @@ export default function NewLayerModal({layer, isModalOpen, disableModal}){
                         
                         <div className='mb-8'>
                             <h3 className='font-bold'>Estilo</h3>
-                              <Controller name='style' control={control} render={({field})=>{
+                              <Controller name='fillStyle' control={control} render={({field})=>{
                                 return (
                                     <RadioInput
-                                        defaultValue={defaultValue} dataset={svgList} field={field} cardStyle={`
+                                        defaultValue={field.value} dataset={svgList} field={field} cardStyle={`
                                         hover:cursor-pointer p-2 w-16 h-16 border-[1px] rounded-sm relative flex 
                                         flex-col justify-center items-center`}
                                     />

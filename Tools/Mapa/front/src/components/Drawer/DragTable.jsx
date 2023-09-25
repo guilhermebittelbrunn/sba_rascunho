@@ -27,6 +27,7 @@ export default function DragTable({layers, setLayers, handleDelete, handleChange
         },
         { 
             render: (text, record)=>{return <Checkbox defaultChecked={true} onClick={()=>{handleChangeVisibleLayer(text)}}/>}
+            // render: (text, record)=>{return <Checkbox defaultChecked={true} onClick={()=>{console.log(text.properties.getSource().getFeatures());handleChangeVisibleLayer(text)}}/>}
         },
     ];
 

@@ -4,6 +4,7 @@ import { Vector as vector } from 'ol/layer'
 import { OSM, Vector } from 'ol/source';
 import { GeoJSON } from 'ol/format'
 import { Style,Stroke, Text, Fill } from 'ol/style'
+import { DEVICE_PIXEL_RATIO } from 'ol/has';
 import TileLayer from 'ol/layer/Tile';
 import Select from 'ol/interaction/Select.js';
 import { pointerMove } from 'ol/events/condition.js';
@@ -12,20 +13,43 @@ import json from '../../geojson'
 
 
 
-//  function createAARotatedPattern(lineWidth, spacing, ang, color) {
-//     const can = document.createElement('canvas');
-//     const w = (can.width = 2);
-//     const h = (can.height = spacing);
-//     const ctx = can.getContext('2d');
-//     ctx.fillStyle = color;
-//     ctx.fillRect(0, 0, 2, lineWidth);
+ function createAARotatedPattern(lineWidth, spacing, ang, color) {
+    const can = document.createElement('canvas');
+    const ctx = can.getContext('2d');
+    const w = (can.width = 2);
+    const h = (can.height = spacing);
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, 2, lineWidth);
 
-//     const pat = ctx.createPattern(can, 'repeat');
-//     const xAx = Math.cos(ang);
-//     const xAy = Math.sin(ang);
-//     pat.setTransform(new DOMMatrix([xAx, xAy, -xAy, xAx, 0, 0]));
-//     return pat;
-// }
+    const pat = ctx.createPattern(can, 'repeat');
+    const xAx = Math.cos(ang);
+    const xAy = Math.sin(ang);
+    pat.setTransform(new DOMMatrix([xAx, xAy, -xAy, xAx, 0, 0]));
+    return pat;
+}
+
+function pattern(){
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const pixelRatio = DEVICE_PIXEL_RATIO;
+    canvas.width = 20 * pixelRatio;
+    canvas.height = 20 * pixelRatio;
+    context.fillStyle = 'rgba(255, 255, 255, 0)';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    context.translate(canvas.width / 2, canvas.width / 2);
+    context.rotate((45 * Math.PI) / 180);
+    context.translate(-canvas.width / 2, -canvas.width / 2);
+
+    context.fillStyle = '#ffbb22'; //'rgb(0, 155, 0)';
+    context.fillRect(-5, 0, 10, 20);
+                                                                    // context.fillRect(-40, -20, 10, 100);
+                                                                    // context.fillRect(-20, -20, 10, 100);
+                                                                    // context.fillRect(0, -20, 10, 100);
+                                                                    // context.fillRect(20, -20, 10, 100);
+                                                                    // context.fillRect(40, -20, 10, 100);
+    return context.createPattern(canvas, 'repeat');
+};
 
 function colorCategory(label, option){
         if(!label[option]){
@@ -82,20 +106,34 @@ function createColor(feature, selectedOption, layer){
                 if(selectedOption) color = colorCategory(feature, selectedOption);
                 else color = "rgba(34, 156, 34, 0.7)";
             }
-            else color = feature.fillColor || "rgba(34, 156, 34, 0.7)";
+            else{
+                if(feature.fillStyle){
+                    color = createAARotatedPattern(2, 10, feature.fillStyle, feature.fillColor) || "rgba(34, 156, 34, 0.7)";
+                }
+                else color = feature.fillColor || "rgba(34, 156, 34, 0.7)";
+            }
         }
-        else color = feature.fillColor || "rgba(221,221,223,0.7)";
+        else{
+            if(feature.fillStyle){
+                color = createAARotatedPattern(2, 10, feature.fillStyle, feature.fillColor) || "rgba(221,221,223,0.7)";
+                // color = createAARotatedPattern(2, 10, 110, "rgba(221,221,223,0.7)") || "rgba(221,221,223,0.7)";
+            }
+            else color = feature.fillColor || "rgba(221,221,223,0.7)";
+        }
     }
     return color
 }
 
+// list = [false, 110, 45, 90, 300]
+
+
 function createFeatureStyle(feature, settings, layer){
 
-    const {selectedOption, fontSize, subTitle, fontColor, strokeColor, strokeWidth} = settings;
+    const {selectedOption, fontSize, subTitle, fontColor, strokeColor, strokeWidth, zIndex} = settings;
     const featureProperties = feature.getProperties();
     const color = createColor(featureProperties, selectedOption, layer);
 
-    const newStyle = new Style({
+    let newStyle = new Style({
               fill: new Fill({color}),
               stroke: new Stroke({
                   color: featureProperties.strokeColor || (strokeColor || "rgba(0,0,0, 1)"),
@@ -116,8 +154,18 @@ function createFeatureStyle(feature, settings, layer){
                   // }),
               }),
     })  
+
+    // if(zIndex){
+    //     console.log('zIndex', zIndex)
+    //     newStyle.setZIndex(zIndex);
+    //     console.log(newStyle)
+    // }
+
+
     return newStyle
 }
+
+
 
 function handleSelectInteration(settings){
 

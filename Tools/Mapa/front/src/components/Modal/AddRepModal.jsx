@@ -65,7 +65,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
                         features: new GeoJSON().readFeatures(res.data),
                     }),
                     style: (feature)=>{
-                        feature.setProperties({SELECTED:false, fontColor: 'rgb(255, 0, 0)', strokeColor: '#000000', fillColor});
+                        feature.setProperties({SELECTED:false, fontColor: 'rgb(255, 0, 0)', strokeColor: '#000000', fillStyle: 45, fillColor});
                         return createFeatureStyle(feature, settings);
                     },
                     zIndex: 4,

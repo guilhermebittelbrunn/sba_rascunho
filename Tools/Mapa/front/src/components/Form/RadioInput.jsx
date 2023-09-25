@@ -1,31 +1,25 @@
-import { useEffect, useState } from 'react';
 import { Radio } from 'antd';
 import { FilePdfOutlined } from '@ant-design/icons'
 
 
-export default function RadioInput({dataset, defaultValue, field, cardStyle}){
-    const [value, setValue] = useState(defaultValue || dataset[0].item.name);
-    
-    useEffect(()=>{
-        field.onChange(value)
-    },[value])
+export default function RadioInput({dataset, field, cardStyle}){
 
     return(
         <section className="flex flex-col gap-2">    
-             <Radio.Group value={value} className='flex mt-2 gap-2'>
-                {dataset.map(item=>{return <Card {...item} key={item.name} cardStyle={cardStyle} field={field} value={item.name} isChecked={value === item.name} setValue={setValue}/>})}
+             <Radio.Group onChange={()=>{field.onChange(value)}} value={field.value} className='flex mt-2 gap-2'>
+                {dataset.map(item=>{return <Card {...item} key={item.name} cardStyle={cardStyle} field={field} value={item.name} isChecked={field.value === item.name}/>})}
             </Radio.Group>
         </section>
     )
 }
 
 
-function Card({value, setValue, isChecked, name, type, cardStyle}){
+function Card({field, value, isChecked, name, type, cardStyle, svgName}){
    
     return(
-            <div id={`div${value}`} className={`${cardStyle} ${isChecked ? 'border-blue-600 ' : 'border-gray-300 '}`} onClick={()=>{setValue(value)}}>
+            <div id={`div${value}`} className={`${cardStyle} ${isChecked ? 'border-blue-600 ' : 'border-gray-300 '}`} onClick={()=>{field.onChange(value);}}>
 
-                <Radio value={value} className='absolute top-[1px] right-[-6px]'/>
+                <Radio value={value} field={field} className='absolute top-[1px] right-[-6px]'/>
                 <div id="body" className='flex flex-col items-center mt-2'>
                     {type === 'pdf' && <FilePdfOutlined className={`text-xl mt-2 ${isChecked ? 'text-blue-600' : 'text-slate-950'}`}/>}
                     {type === 'svg' ? 
@@ -40,7 +34,7 @@ function Card({value, setValue, isChecked, name, type, cardStyle}){
                                 transform="translate(0.000000,255.000000) scale(0.100000,-0.100000)"
                                 fill={`#000000`} stroke="none"
                             >
-                                <path d={value}/>
+                                <path d={svgName}/>
                             </g>
                         </svg>
                         

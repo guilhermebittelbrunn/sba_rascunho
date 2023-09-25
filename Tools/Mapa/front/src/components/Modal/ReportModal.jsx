@@ -10,7 +10,7 @@ const reportOptions = [{name: 'Simples'},{name: 'Detalhado'}];
 
 export default function ReportModal({ handleCancel, isModalOpen }){
     const { url } = useContext(MapaContext)
-    const { handleSubmit, control } = useForm({defaultValues:{reportType: 'Detalhado'}});
+    const { handleSubmit, control } = useForm({defaultValues:{reportType: 'Simples'}});
     const [isLoading, setIsLoading] = useState(false);
     
     async function sendForm(fv){
