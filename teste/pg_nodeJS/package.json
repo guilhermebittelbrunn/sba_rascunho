@@ -1,0 +1,12 @@
+{
+  "name": "pg_nodeJS",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon ./index.js"
+  },
+  "dependencies": {
+    "numeral": "^2.0.6"
+  }
+}

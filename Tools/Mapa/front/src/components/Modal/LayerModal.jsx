@@ -82,7 +82,7 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
     const {control, handleSubmit, reset} = useForm({
         defaultValues: {
             layerName: layer?.data.layerName || '', 
-            fontColor: '#000000', 
+            fontColor: layer?.data.fontColor || '#000000', 
             borderColor: '#000000', 
             fillColor: '#0084ff', 
             fillStyle: layer?.data.fillStyle || defaultValue

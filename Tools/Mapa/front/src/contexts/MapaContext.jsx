@@ -12,7 +12,6 @@ import useFetch from '../hooks/useFetch';
 import json from '../../geojson'
 
 
-
  function createAARotatedPattern(lineWidth, spacing, ang, color) {
     const can = document.createElement('canvas');
     const ctx = can.getContext('2d');
@@ -27,29 +26,6 @@ import json from '../../geojson'
     pat.setTransform(new DOMMatrix([xAx, xAy, -xAy, xAx, 0, 0]));
     return pat;
 }
-
-function pattern(){
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const pixelRatio = DEVICE_PIXEL_RATIO;
-    canvas.width = 20 * pixelRatio;
-    canvas.height = 20 * pixelRatio;
-    context.fillStyle = 'rgba(255, 255, 255, 0)';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    context.translate(canvas.width / 2, canvas.width / 2);
-    context.rotate((45 * Math.PI) / 180);
-    context.translate(-canvas.width / 2, -canvas.width / 2);
-
-    context.fillStyle = '#ffbb22'; //'rgb(0, 155, 0)';
-    context.fillRect(-5, 0, 10, 20);
-                                                                    // context.fillRect(-40, -20, 10, 100);
-                                                                    // context.fillRect(-20, -20, 10, 100);
-                                                                    // context.fillRect(0, -20, 10, 100);
-                                                                    // context.fillRect(20, -20, 10, 100);
-                                                                    // context.fillRect(40, -20, 10, 100);
-    return context.createPattern(canvas, 'repeat');
-};
 
 function colorCategory(label, option){
         if(!label[option]){
@@ -145,7 +121,7 @@ function createFeatureStyle(feature, settings, layer){
                   featureProperties.NM_MUN),  
                   font: `bold ${fontSize}px ${"Segoe UI"}`,
                   fill: new Fill({
-                        color: (featureProperties.fontColor || fontColor) || (featureProperties.NUMERO_PEDIDO ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)')
+                        color: (featureProperties.fontColor || fontColor) || (featureProperties.NUMERO_PEDIDO ? 'rgb(207, 58, 58)' : 'rgb(0,0,0)')
                   }),
                 //   overflow: true
                   // backgroundFill: new Stroke({

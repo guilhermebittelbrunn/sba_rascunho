@@ -26,7 +26,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
             ${Math.floor(Math.random() * (255 - 0) + 0)}, 
             ${Math.floor(Math.random() * (255 - 0) + 0)}, 
             ${Math.floor(Math.random() * (255 - 0) + 0)}, 
-            0.7)`
+            1)`
         )
     }
 
@@ -38,10 +38,10 @@ export default function AddRepModal({isModalOpen, disableModal}){
             dateEnd: data.dateEnd.format('YYYY-MM-DD'),    
         }
 
-        if(rc === url.rc){
-            message.warning('Informe um representante diferente do já buscado');
-            return
-        }
+        // if(rc === url.rc){
+        //     message.warning('Informe um representante diferente do já buscado');
+        //     return
+        // }
 
         const fillColor = generateRandomColor();
 
@@ -56,7 +56,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
                 key: layers.length + 1,
                 data:{
                     layerName: `Vendas RC ${url.rc}`,
-                    fontColor: 'rgb(255, 0, 0)',
+                    fontColor: 'ffffff',
                     borderColor: '#000000',
                     fillColor
                 },
@@ -65,7 +65,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
                         features: new GeoJSON().readFeatures(res.data),
                     }),
                     style: (feature)=>{
-                        feature.setProperties({SELECTED:false, fontColor: 'rgb(255, 0, 0)', strokeColor: '#000000', fillStyle: 45, fillColor});
+                        feature.setProperties({SELECTED:false, fontColor: 'ffffff', strokeColor: '#000000', fillStyle: 45, fillColor});
                         return createFeatureStyle(feature, settings);
                     },
                     zIndex: 4,
