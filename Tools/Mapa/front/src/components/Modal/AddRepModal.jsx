@@ -58,7 +58,8 @@ export default function AddRepModal({isModalOpen, disableModal}){
                     layerName: `Vendas RC ${url.rc}`,
                     fontColor: 'ffffff',
                     borderColor: '#000000',
-                    fillColor
+                    fillStyle: 45,
+                    fillColor,
                 },
                 properties: new vector({
                     source: new Vector({

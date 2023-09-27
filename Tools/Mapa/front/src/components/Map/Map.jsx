@@ -42,12 +42,23 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         if(!map)return
 
         map.addEventListener('contextmenu', (e)=>{
+                e.preventDefault();
                 handleContext(e.originalEvent);
+                const contextMenuHTML = document.getElementById('contextMenu');
+    
                 const pixels = e.pixel;
                 map.forEachFeatureAtPixel(pixels, (feature, layer)=>{
+                    const listLayers = [];
                     const properties = feature.getProperties();
                     const layerName = layer.getClassName();
-                    layerName === 'stateLayer' && setContextMenu((pv)=>{return {...pv, properties}});
+                    // if(layerName !== 'countryLayer'){
+                    //     listLayers.push(properties);
+                    // }
+                    // console.log(listLayers)
+                    if(properties.CD_MUN){
+                        contextMenuHTML.style.display = 'flex';
+                    }
+                    layerName === 'stateLayer' && setContextMenu((pv)=>{return {...pv, properties, pixel: e.pixel}});
                 })
         });
     

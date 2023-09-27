@@ -21,6 +21,7 @@ export default function App() {
 
     function onSearch(value){
         const {dateStart, dateEnd, rc} = value
+        handleClick();
         setUrl({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc});
     }
 
@@ -50,6 +51,8 @@ export default function App() {
 
     function handleClick(){
       if(contextMenu.status){
+        const contextMenuHTML = document.getElementById('contextMenu');
+        contextMenuHTML.style.display = 'none';
         setContextMenu((pv)=> {
             return {...pv,status: false}
         })
@@ -74,7 +77,7 @@ export default function App() {
                         
                       </div>
               
-                      <ContextMenu contextMenu={contextMenu}/>        
+                      <ContextMenu contextMenu={contextMenu} isFullScreen={isFullScreen} setContextMenu={setContextMenu}/>        
                   
               </main>
             </MapaProvider>
