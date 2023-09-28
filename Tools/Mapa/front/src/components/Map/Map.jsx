@@ -41,25 +41,56 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
     useEffect(()=>{
         if(!map)return
 
-        map.addEventListener('contextmenu', (e)=>{
+            map.addEventListener('contextmenu', (e)=>{
                 e.preventDefault();
-                handleContext(e.originalEvent);
-                const contextMenuHTML = document.getElementById('contextMenu');
-    
-                const pixels = e.pixel;
-                map.forEachFeatureAtPixel(pixels, (feature, layer)=>{
-                    const listLayers = [];
+                const pixel = e.pixel;
+                const listLayers = [];
+
+
+                map.forEachFeatureAtPixel(pixel, (feature, layer)=>{
                     const properties = feature.getProperties();
                     const layerName = layer.getClassName();
-                    // if(layerName !== 'countryLayer'){
-                    //     listLayers.push(properties);
-                    // }
-                    // console.log(listLayers)
-                    if(properties.CD_MUN){
-                        contextMenuHTML.style.display = 'flex';
+
+                    if(layerName !== 'countryLayer'){
+                        listLayers.push({
+                            properties,
+                            layer: layerName, 
+                            rc: layer.values_.rc, 
+                        });
                     }
-                    layerName === 'stateLayer' && setContextMenu((pv)=>{return {...pv, properties, pixel: e.pixel}});
+                });
+
+
+                const mapHTML = document.getElementById('map');
+                const mapWidth = mapHTML.offsetWidth; 
+                const mapHeight = mapHTML.offsetHeight; 
+
+                const contextWidth = 150;
+                const contextHeight = 200 + ((listLayers.length) * 25);
+                const aditionalWidth = isFullScreen ? -50 : 0
+                const aditonalHeight = isFullScreen ? -50 : 0
+
+                let { pageX, pageY } = e.originalEvent
+
+                pageX = (pageX + contextWidth) >= mapWidth ? mapWidth - contextWidth + aditionalWidth : pageX 
+                pageY = (pageY + contextHeight) >= mapHeight ? mapHeight - contextHeight + aditonalHeight: pageY 
+                
+                
+                map.forEachFeatureAtPixel(pixel, (feature, layer)=>{
+
+                    if(layer.getClassName() !== 'countryLayer'){
+                        setContextMenu({
+                            pageX, 
+                            pageY, 
+                            pixel,
+                            status:true, 
+                            layers: listLayers, 
+                            properties: listLayers[0].properties
+                        })
+                    }
+
                 })
+
         });
     
         map.on('click', (e)=>{

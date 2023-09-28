@@ -201,6 +201,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                     },
                     zIndex: 3,
                     className: 'stateLayer',
+                    rc: url.rc
                 });
 
                 const countryLayer = new vector({

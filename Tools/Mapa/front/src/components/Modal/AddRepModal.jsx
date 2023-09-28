@@ -71,6 +71,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
                     },
                     zIndex: 4,
                     className: `custom_layer${layers.length + 1}`,
+                    rc: url.rc
                 })
             }
 

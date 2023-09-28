@@ -51,10 +51,10 @@ export default function App() {
 
     function handleClick(){
       if(contextMenu.status){
-        const contextMenuHTML = document.getElementById('contextMenu');
-        contextMenuHTML.style.display = 'none';
+        // const contextMenuHTML = document.getElementById('contextMenu');
+        // contextMenuHTML.style.display = 'none';
         setContextMenu((pv)=> {
-            return {...pv,status: false}
+            return {...pv, status: false, pageX: 0, pageY: 0}
         })
       }
     }
@@ -77,7 +77,7 @@ export default function App() {
                         
                       </div>
               
-                      <ContextMenu contextMenu={contextMenu} isFullScreen={isFullScreen} setContextMenu={setContextMenu}/>        
+                      <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} isFullScreen={isFullScreen} setContextMenu={setContextMenu}/>        
                   
               </main>
             </MapaProvider>
