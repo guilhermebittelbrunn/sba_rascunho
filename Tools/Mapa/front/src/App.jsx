@@ -66,7 +66,7 @@ export default function App() {
             <MapaProvider url={url} setIsLoading={setIsLoading}>
               <main id="main_content" className={`m-auto w-[95%] ${isFullScreen ? 'absolute top-0 p-0 left-0 w-screen h-screen' : 'p-4'}`}> 
                       
-                      <div className={`w-full relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
+                      <div className={`w-full bg-red-300 relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
 
                         <Map 
                           setOpen={setOpen} handleFullScreenAction={handleFullScreenAction} 
@@ -77,7 +77,10 @@ export default function App() {
                         
                       </div>
               
-                      <ContextMenu contextMenu={contextMenu} setContextMenu={setContextMenu} isFullScreen={isFullScreen} setContextMenu={setContextMenu}/>        
+                      <ContextMenu 
+                        contextMenu={contextMenu} setContextMenu={setContextMenu} 
+                        isFullScreen={isFullScreen} setContextMenu={setContextMenu}
+                      />        
                   
               </main>
             </MapaProvider>

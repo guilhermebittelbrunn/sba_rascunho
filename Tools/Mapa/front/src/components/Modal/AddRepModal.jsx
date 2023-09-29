@@ -19,7 +19,6 @@ export default function AddRepModal({isModalOpen, disableModal}){
     const {control, handleSubmit, reset} = useForm();
     const [isLoading, setIsLoading] = useState(false);
 
-
     function generateRandomColor(){
         return (
             `rgba(

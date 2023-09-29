@@ -73,9 +73,9 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
         map.once('rendercomplete', function () {
             
             const mapCanvas = document.createElement('canvas');
+            const mapContext = mapCanvas.getContext('2d');
             mapCanvas.width = width;
             mapCanvas.height = height;
-            const mapContext = mapCanvas.getContext('2d');
             Array.prototype.forEach.call(
                 document.querySelectorAll('.ol-layers canvas'),
                 function (canvas) {

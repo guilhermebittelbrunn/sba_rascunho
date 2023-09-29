@@ -121,7 +121,7 @@ function createFeatureStyle(feature, settings, layer){
                   featureProperties.NM_MUN),  
                   font: `bold ${fontSize}px ${"Segoe UI"}`,
                   fill: new Fill({
-                        color: (featureProperties.fontColor || fontColor) || (featureProperties.NUMERO_PEDIDO ? 'rgb(207, 58, 58)' : 'rgb(0,0,0)')
+                        color: (featureProperties.fontColor || fontColor) || (featureProperties.NUMERO_PEDIDO ? 'rgb(0, 0, 0)' : 'rgb(0,0,0)')
                   }),
                 //   overflow: true
                   // backgroundFill: new Stroke({
