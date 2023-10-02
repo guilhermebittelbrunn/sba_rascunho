@@ -134,17 +134,19 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
             
 
             if(pageY <= mapHeight){
-                console.log('y', pageY, legendHeight, mapHeight);
+                // console.log('y', pageY, legendHeight, mapHeight);
                 if(pageY - legendHeight > 0){
                     const newY = isFullScreen ? pageY : pageY - legendHeight 
                     legenda.style.top = `${newY}px`;
+                    legenda.top = newY
                 }
             }
             if(pageX <= mapWidth){
-                console.log('x', pageX, legendWidth, mapWidth);
+                // console.log('x', pageX, legendWidth, mapWidth);
                 if(pageX - legendWidth > 0){
                     const newX = isFullScreen ? pageX : pageX - legendWidth
                     legenda.style.left = `${newX}px`;
+                    legenda.left = newX
                 }
             }
         }
@@ -314,19 +316,21 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                             {!isSubtitle &&
                                 <div 
                                     id='legenda' 
+                                    top={600}
+                                    left={600}
                                     onMouseMove={(e)=>{handleLegendMove(e)}}
                                     onMouseDown={()=>{setIsMouseHold(true)}} 
                                     onMouseUp={()=>{setIsMouseHold(false)}}
                                     onMouseOver={()=>{setIsMouseHold(false)}}
                                     onMouseLeave={()=>{setIsMouseHold(false)}}
-                                    className='flex flex-col w-[300px] h-[300px] opacity-95 gap-6 shadow-lg rounded-lg bg-slate-100 z-30 absolute top-[0px] left-[0px]'
+                                    className='flex flex-col w-[200px] h-[200px] opacity-100 gap-6 shadow-lg rounded-lg bg-slate-100 z-30 absolute top-[600px] left-[600px]'
                                     >
-                                        <div id='header' className='w-full h-[20px] bg-blue-300'>
+                                        {/* <div id='header' className='w-full h-[20px] bg-blue-300'>
 
                                         </div>
                                         <div id='body'>
                                             <p>corpo</p>
-                                        </div>
+                                        </div> */}
                                   
                                         {/* <div className='w-full h-[100%] bg-blue-300 relative'>
                                             <div className='w-full h-[100%] bg-red-300 absolute top-0 z-40 opacity-0'

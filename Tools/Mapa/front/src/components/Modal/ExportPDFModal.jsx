@@ -3,8 +3,9 @@ import { QuestionCircleOutlined } from '@ant-design/icons'
 import { useForm, Controller } from 'react-hook-form';
 import { useContext, useState } from 'react';
 import { MapaContext } from '../../contexts/MapaContext';
-import RadioInput from '../Form/RadioInput';
 import { jsPDF } from 'jspdf'
+import RadioInput from '../Form/RadioInput';
+import html2canvas from 'html2canvas';
 
 const sizeDataSet = [
     {
@@ -47,7 +48,7 @@ const dims = {
     A2: [594,420],
     A3: [420,297],
     A4: [297,210],
-    A5: [210, 148],
+    A5: [210,148],
 }
 
 const sizeDefaultValue = 'A3'
@@ -70,7 +71,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
 
         setIsLoading(true);
 
-        map.once('rendercomplete', function () {
+        map.once('rendercomplete', async function () {
             
             const mapCanvas = document.createElement('canvas');
             const mapContext = mapCanvas.getContext('2d');
@@ -78,6 +79,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
             mapCanvas.height = height;
             mapContext.fillStyle = 'white'; 
             mapContext.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
+
             Array.prototype.forEach.call(
                 document.querySelectorAll('.ol-layers canvas'),
                 function (canvas) {
@@ -92,8 +94,33 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                 }
             );
 
-            mapContext.globalAlpha = 1;
-            mapContext.setTransform(1, 0, 0, 1, 0, 0);
+            const legendCanvas = document.createElement('canvas');
+            const legendContext = legendCanvas.getContext('2d');
+
+            const canvas = await html2canvas(document.getElementById('legenda'));
+
+            // console.log(canvas.width)
+            // console.log(canvas.height)
+
+            const legenda = document.querySelector('#legenda');
+            let {top, left} = legenda
+            console.log('width', width)
+            console.log('height', height)
+            console.log('top', top, canvas.height)
+            console.log('top', left, canvas.width)
+            
+            top = top ? ((top * 25.4) / data.dpiValue) + ((canvas.height * 25.6) / data.dpiValue) : 600
+            left = left ? (((left * 25.4) / data.dpiValue) - ((canvas.width * 25.6) / data.dpiValue)) : 600
+            console.log('-----------------');
+            console.log('top', top, canvas.height)
+            console.log('top', left, canvas.width)
+
+            document.body.appendChild(canvas);
+            legendContext.drawImage(canvas, 0, 0);
+            
+            // mapContext.globalAlpha = 1;
+            // mapContext.setTransform(1, 0, 0, 1, 0, 0);
+            
             pdf.addImage(
                 mapCanvas.toDataURL('image/jpeg'),
                 'JPEG',
@@ -102,6 +129,20 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                 dim[0],
                 dim[1]
             );
+            
+            pdf.addImage(
+                canvas.toDataURL('image/jpeg'),
+                'JPEG',
+                // 101.60 + ((canvas.width * 25.6) / data.dpiValue) * 1.2,
+                dim[0]  - 25,
+                // 101.60 + ((canvas.height * 25.6) / data.dpiValue) * 1.2,
+                dim[1]  - 25,
+                50,
+                50,
+                // ((canvas.width * 25.6) / data.dpiValue) * 1.2,
+                // ((canvas.height * 25.6) / data.dpiValue) * 1.2
+            );
+
             pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
             map.setSize(size);
             map.getView().setResolution(viewResolution);
