@@ -1,4 +1,4 @@
-import { Button, Spin, Tooltip, Modal as ModalAntd} from 'antd';
+import { Button, Spin, Tooltip, Modal as ModalAntd, message} from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { useForm, Controller } from 'react-hook-form';
 import { useContext, useState } from 'react';
@@ -68,93 +68,106 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
         const size = map.getSize();
         const viewResolution = map.getView().getResolution();
         const pdf = new jsPDF('landscape', 'mm', dim);
-
         setIsLoading(true);
 
-        map.once('rendercomplete', async function () {
-            
-            const mapCanvas = document.createElement('canvas');
-            const mapContext = mapCanvas.getContext('2d');
-            mapCanvas.width = width;
-            mapCanvas.height = height;
-            mapContext.fillStyle = 'white'; 
-            mapContext.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
 
-            Array.prototype.forEach.call(
-                document.querySelectorAll('.ol-layers canvas'),
-                function (canvas) {
-                    if (canvas.width > 0) {
-                        const opacity = canvas.parentNode.style.opacity;
-                        mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
-                        const transform = canvas.style.transform;
-                        const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
-                        CanvasRenderingContext2D.prototype.setTransform.apply(mapContext,matrix);
-                        mapContext.drawImage(canvas, 0, 0);
+       try{
+            map.once('rendercomplete', async function () {
+                const mapCanvas = document.createElement('canvas');
+                const mapContext = mapCanvas.getContext('2d');
+                mapCanvas.width = width;
+                mapCanvas.height = height;
+                mapContext.fillStyle = 'white'; 
+                mapContext.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
+
+                Array.prototype.forEach.call(
+                    document.querySelectorAll('.ol-layers canvas'),
+                    function (canvas) {
+                        if (canvas.width > 0) {
+                            const opacity = canvas.parentNode.style.opacity;
+                            mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                            const transform = canvas.style.transform;
+                            const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
+                            CanvasRenderingContext2D.prototype.setTransform.apply(mapContext,matrix);
+                            mapContext.drawImage(canvas, 0, 0);
+                        }
                     }
-                }
-            );
+                );
 
-            const legendCanvas = document.createElement('canvas');
-            const legendContext = legendCanvas.getContext('2d');
-
-            const canvas = await html2canvas(document.getElementById('legenda'));
-
-            // console.log(canvas.width)
-            // console.log(canvas.height)
-
-            const legenda = document.querySelector('#legenda');
-            let {top, left} = legenda
-            console.log('width', width)
-            console.log('height', height)
-            console.log('top', top, canvas.height)
-            console.log('top', left, canvas.width)
-            
-            top = top ? ((top * 25.4) / data.dpiValue) + ((canvas.height * 25.6) / data.dpiValue) : 600
-            left = left ? (((left * 25.4) / data.dpiValue) - ((canvas.width * 25.6) / data.dpiValue)) : 600
-            console.log('-----------------');
-            console.log('top', top, canvas.height)
-            console.log('top', left, canvas.width)
-
-            document.body.appendChild(canvas);
-            legendContext.drawImage(canvas, 0, 0);
-            
-            // mapContext.globalAlpha = 1;
-            // mapContext.setTransform(1, 0, 0, 1, 0, 0);
-            
-            pdf.addImage(
-                mapCanvas.toDataURL('image/jpeg'),
-                'JPEG',
-                0,
-                0,
-                dim[0],
-                dim[1]
-            );
-            
-            pdf.addImage(
-                canvas.toDataURL('image/jpeg'),
-                'JPEG',
-                // 101.60 + ((canvas.width * 25.6) / data.dpiValue) * 1.2,
-                dim[0]  - 25,
-                // 101.60 + ((canvas.height * 25.6) / data.dpiValue) * 1.2,
-                dim[1]  - 25,
-                50,
-                50,
-                // ((canvas.width * 25.6) / data.dpiValue) * 1.2,
-                // ((canvas.height * 25.6) / data.dpiValue) * 1.2
-            );
-
-            pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
-            map.setSize(size);
-            map.getView().setResolution(viewResolution);
-            setIsLoading(false)
-            
-        });
-
-        const printSize = [width, height];
-        const scaling = Math.min(width / size[0], height / size[1]);
+                const subtitle = document.getElementById('subtitle');
+                const status = subtitle.getAttribute('status');
+                const table = document.getElementById('subtitle-table');
+                
+                console.log(status);
+                
+                pdf.addImage(
+                    mapCanvas.toDataURL('image/jpeg'),
+                    'JPEG',
+                    0,
+                    0,
+                    dim[0],
+                    dim[1]
+                );
+                
+                if (status > 0){
+                    const subtitleCanvas = document.createElement('canvas');
+                    subtitleCanvas.width = table.offsetWidth;
+                    subtitleCanvas.height = table.offsetHeight;
+                    const subtitleContext = subtitleCanvas.getContext('2d');
+                    const canvas = await html2canvas(table);
+                    subtitleContext.drawImage(canvas, 0, 0);
+                    // console.log(subtitleCanvas.toDataURL());
         
-        map.setSize(printSize);
-        map.getView().setResolution(viewResolution / scaling);
+                    let x,y
+                    switch(parseInt(status)){
+                        case 1:
+                            x = 10;
+                            y = dim[1] - dim[1] * 0.19;
+                            break
+                        case 2:
+                            x = dim[0] - dim[0] * 0.15;
+                            y = dim[1] - dim[1] * 0.19;
+                            break
+                        case 3:
+                            x = dim[0] - dim[0] * 0.15;
+                            y = 10;
+                            break
+                        case 4:
+                            x = 10;
+                            y = 10;
+                            break
+                    }
+
+                    console.log(x,y);
+
+                    pdf.addImage(
+                        canvas.toDataURL('image/jpeg'),
+                        'JPEG',
+                        x,
+                        y,
+                        dim[0] * 0.15,
+                        dim[1] * 0.19,
+                    );   
+                }
+                
+
+                pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
+                map.setSize(size);
+                map.getView().setResolution(viewResolution);
+                
+            });
+
+            const printSize = [width, height];
+            const scaling = Math.min(width / size[0], height / size[1]);
+            
+            map.setSize(printSize);
+            map.getView().setResolution(viewResolution / scaling);
+       }catch(err){
+            message.error('Um erro ocorreu ao exportar o arquivo');
+            throw err
+        }finally{
+            setIsLoading(false)
+       }
     }
 
     return(

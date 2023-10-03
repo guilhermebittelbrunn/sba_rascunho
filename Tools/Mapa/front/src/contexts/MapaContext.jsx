@@ -84,7 +84,7 @@ function createColor(feature, selectedOption, layer){
             }
             else{
                 if(feature.fillStyle){
-                    color = createAARotatedPattern(2, 10, feature.fillStyle, feature.fillColor) || "rgba(34, 156, 34, 0.7)";
+                    color = createAARotatedPattern(4, 10, feature.fillStyle, feature.fillColor) || "rgba(34, 156, 34, 0.7)";
                 }
                 else color = feature.fillColor || "rgba(34, 156, 34, 0.7)";
             }

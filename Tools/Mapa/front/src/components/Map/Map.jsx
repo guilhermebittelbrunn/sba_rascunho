@@ -6,7 +6,6 @@ import ErrorModal from '../Modal/ErrorModal';
 import LayerModal from '../Modal/LayerModal';
 import AddRepModal from '../Modal/AddRepModal';
 
-
 const columns = [
         {
             render: (text,record)=>{
@@ -32,7 +31,6 @@ const columns = [
             }
         }
 ]
-
 
 const svgList = [
                     {
@@ -101,14 +99,13 @@ const svgList = [
             
 ]
 
+export default function MapPage({handleClick, handleFullScreenAction, isFullScreen, setContextMenu, setOpen}){
 
-export default function MapPage({handleClick, handleFullScreenAction, handleContext, isFullScreen, setContextMenu, setOpen}){
-
-    const [isModalOpen, setIsModalOpen] = useState({layerModal: false, addRepModal: false});
     const {map, loading, error, layers, settings, setSettings, createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures} = useContext(MapaContext);
-    const {interaction, fontSize, subTitle} = settings
-    const [isMouseHold, setIsMouseHold] = useState(false);
-    const [isSubtitle, setIsSubtitle] = useState(false);
+    const { interaction } = settings
+    const [isModalOpen, setIsModalOpen] = useState({layerModal: false, addRepModal: false});
+    const [showSubtitle, setShowSubtitle] = useState(false);
+    
     const map1 = useRef(null);
 
     function showModal(modalName){
@@ -121,35 +118,29 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
         setIsModalOpen({layerModal: false, addRepModal: false});
     };
 
-    function handleLegendMove(e){
-        if(isMouseHold){
-            const { pageX, pageY } = e;
-            console.log(e);
-            const map = document.getElementById('map');
-            const legenda = document.getElementById('legenda');
-            const legendWidth = legenda.offsetWidth;
-            const legendHeight = legenda.offsetHeight;
-            const mapWidth = map.offsetWidth;
-            const mapHeight = map.offsetHeight;
-            
+    function changeSubtitleStatus(){
+        const subtitle = document.getElementById('subtitle');
+        const table = document.getElementById('subtitle-table');
+        const height = table.offsetHeight;
+        const status = subtitle.getAttribute('status');
+        const newStatus = status == 4 ? 0 : +status + 1;
+        const pos = [
+            [],
+            ['', '', `${height}px`, '4px'],
+            ['', '4px', `${height}px`, ''],
+            ['4px', '4px', '', ''],
+            ['4px', '', '', '4px'],
+        ];
+        
+        subtitle.setAttribute('status', newStatus);
 
-            if(pageY <= mapHeight){
-                // console.log('y', pageY, legendHeight, mapHeight);
-                if(pageY - legendHeight > 0){
-                    const newY = isFullScreen ? pageY : pageY - legendHeight 
-                    legenda.style.top = `${newY}px`;
-                    legenda.top = newY
-                }
-            }
-            if(pageX <= mapWidth){
-                // console.log('x', pageX, legendWidth, mapWidth);
-                if(pageX - legendWidth > 0){
-                    const newX = isFullScreen ? pageX : pageX - legendWidth
-                    legenda.style.left = `${newX}px`;
-                    legenda.left = newX
-                }
-            }
-        }
+        if(newStatus === 0) return setShowSubtitle(false);
+        
+        setShowSubtitle(true);
+        subtitle.style.top = `${pos[newStatus][0]}`;
+        subtitle.style.right = `${pos[newStatus][1]}`;
+        subtitle.style.bottom = `${pos[newStatus][2]}`;
+        subtitle.style.left = `${pos[newStatus][3]}`;
     }
 
     useEffect(()=>{
@@ -241,6 +232,14 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
     },[map])
 
+    useEffect(()=>{
+        const subtitle = document.getElementById('subtitle');
+        if(!subtitle)return
+        const status = subtitle.getAttribute('status');
+        subtitle.setAttribute('status', parseInt(status) - 1);
+        changeSubtitleStatus();
+    },[layers])
+
   return (
    
             <>  
@@ -298,10 +297,10 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
                         </button>
                         
                         <button 
-                            onClick={()=>{layers.length >= 4 && setIsSubtitle(pv=>!pv)}} 
+                            onClick={()=>{(layers.length > 3) && changeSubtitleStatus()}} 
                             className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px]
                             border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 
-                            hover:text-base ${layers.length <= 4 && 'opacity-60 cursor-not-allowed'} 
+                            hover:text-base ${layers.length < 4 && 'opacity-60 cursor-not-allowed'} 
                             outline-none`} style={{transform: 'translate(20%, 525%)', transition: 'all .4s'}}
                         >
                             <UnorderedListOutlined />
@@ -311,47 +310,22 @@ export default function MapPage({handleClick, handleFullScreenAction, handleCont
 
                         <AddRepModal isModalOpen={isModalOpen.addRepModal} disableModal={disableModal}/>
                         <LayerModal  isModalOpen={isModalOpen.layerModal} disableModal={disableModal}/>
-{/* 
-                        <div className='relative w-[95%]'> */}
-                            {!isSubtitle &&
-                                <div 
-                                    id='legenda' 
-                                    top={600}
-                                    left={600}
-                                    onMouseMove={(e)=>{handleLegendMove(e)}}
-                                    onMouseDown={()=>{setIsMouseHold(true)}} 
-                                    onMouseUp={()=>{setIsMouseHold(false)}}
-                                    onMouseOver={()=>{setIsMouseHold(false)}}
-                                    onMouseLeave={()=>{setIsMouseHold(false)}}
-                                    className='flex flex-col w-[200px] h-[200px] opacity-100 gap-6 shadow-lg rounded-lg bg-slate-100 z-30 absolute top-[600px] left-[600px]'
-                                    >
-                                        {/* <div id='header' className='w-full h-[20px] bg-blue-300'>
-
-                                        </div>
-                                        <div id='body'>
-                                            <p>corpo</p>
-                                        </div> */}
-                                  
-                                        {/* <div className='w-full h-[100%] bg-blue-300 relative'>
-                                            <div className='w-full h-[100%] bg-red-300 absolute top-0 z-40 opacity-0'
-                                                onMouseMove={(e)=>{handleLegendMove(e)}}
-                                                onMouseDown={()=>{setIsMouseHold(true)}} 
-                                                onMouseUp={()=>{setIsMouseHold(false)}}
-                                                onMouseOver={()=>{setIsMouseHold(false)}}
-                                                onMouseLeave={()=>{setIsMouseHold(false)}}
-                                                onClick={()=>{console.log(1)}}
-                                            >
-                                            </div>
-                                            <Table className='z-0 w-full absolute top-0' columns={columns} dataSource={layers.slice(3).reverse()} pagination={false} showHeader={false}/>
-                                            {/* <div className='z-0 absolute top-0' onClick={()=>{console.log(1)}}>hello world</div> */}
-                                        {/* </div>  */}
-                                        {/* <h3 className='bg-red-300 w-4'>Hello world</h3> */}
-                                </div>
-                            }
-                            <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full relati'>
-                                
-                            </div> 
-                        {/* </div> */}
+                            <div 
+                                id='subtitle' 
+                                status={0}
+                                className={`flex flex-col w-[190px] gap-6 shadow-lg rounded-lg bg-slate-100 z-30 
+                                absolute ${(showSubtitle && layers.length > 3) ? 'opacity-90' : 'opacity-0'}`}
+                            >
+                                <Table
+                                    id='subtitle-table'
+                                    className='z-0 w-full absolute top-0' 
+                                    size='small'
+                                    columns={columns} dataSource={layers.slice(3).reverse()} 
+                                    pagination={false} showHeader={false}
+                                />
+                            </div>
+                        
+                            <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/>
                     </>
                     }
                 </>

@@ -20,8 +20,6 @@ export default function ContextMenu({contextMenu, setContextMenu}){
     
                     if(feature.getProperties().SELECTED){
                         setCountSelectedFeatures(pv=>pv+1);
-                        // console.log(layer.setZIndex(100));
-                        // console.log(layer.getZIndex(100));
                         return feature.setStyle(createFeatureStyle(feature, {...styleConfig, zIndex: 100, fillColor: 'rgb(255,238,0)'}));
                     }
                     setCountSelectedFeatures(pv=>pv-1);
@@ -159,8 +157,8 @@ export default function ContextMenu({contextMenu, setContextMenu}){
                                                 <li className="px-1 w-full text-sm flex justify-between"> 
                                                     <span className="font-semibold">Nome</span>
                                                     <p className="ml-4 text-right text-sm">
-                                                        {String(layer.properties.NOME_CLIENTE).substring(0,19)}
-                                                        {layer.properties.NOME_CLIENTE.length > 21 && '...'}
+                                                        {String(layer.properties.NOME_CLIENTE).substring(0,16)}
+                                                        {layer.properties.NOME_CLIENTE.length > 16 && '...'}
                                                     </p>
                                                 </li>
 
