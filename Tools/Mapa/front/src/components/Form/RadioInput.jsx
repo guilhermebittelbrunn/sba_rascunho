@@ -6,7 +6,7 @@ export default function RadioInput({dataset, field, cardStyle}){
 
     return(
         <section className="flex flex-col gap-2">    
-             <Radio.Group onChange={()=>{field.onChange(value)}} value={field.value} className='flex mt-2 gap-2'>
+             <Radio.Group onChange={()=>{field.onChange(field.value)}} value={field.value} className='flex mt-2 gap-2'>
                 {dataset.map(item=>{return <Card {...item} key={item.name} cardStyle={cardStyle} field={field} value={item.name} isChecked={field.value === item.name}/>})}
             </Radio.Group>
         </section>
@@ -15,9 +15,12 @@ export default function RadioInput({dataset, field, cardStyle}){
 
 
 function Card({field, value, isChecked, name, type, cardStyle, svgName}){
-   
     return(
-            <div id={`div${value}`} className={`${cardStyle} ${isChecked ? 'border-blue-600 ' : 'border-gray-300 '}`} onClick={()=>{field.onChange(value);}}>
+            <div 
+                id={`div${value}`} 
+                className={`${cardStyle} ${isChecked ? 'border-blue-600 ' : 'border-gray-300 '}`} 
+                onClick={(e)=>{field.onChange(value);}}
+            >
 
                 <Radio value={value} field={field} className='absolute top-[1px] right-[-6px]'/>
                 <div id="body" className='flex flex-col items-center mt-2'>

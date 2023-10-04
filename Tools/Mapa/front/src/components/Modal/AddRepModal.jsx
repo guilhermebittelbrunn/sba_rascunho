@@ -48,6 +48,9 @@ export default function AddRepModal({isModalOpen, disableModal}){
             setIsLoading(true);
             
             const res = await axios.get(`http://localhost:3535/api/sales/${String(url.rc).padStart(4, 0)}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`);
+            if(res.data.features.length === 0){
+                throw `${url.rc} não possui features, features:${res.data.features.length}`
+            }
             const newLayer = {
                 name: `Vendas RC ${url.rc}`,
                 value: `custom_layer${layers.length + 1}`,
@@ -70,7 +73,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
                     },
                     zIndex: 4,
                     className: `custom_layer${layers.length + 1}`,
-                    rc: url.rc
+                    rc: String(url.rc).padStart(4,0)
                 })
             }
 

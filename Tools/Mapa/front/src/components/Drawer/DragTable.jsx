@@ -74,7 +74,7 @@ const svgList = [
 ]
 
   
-export default function DragTable({layers, setLayers, handleDelete, handleChangeVisibleLayer, setIsModalOpen}){
+export default function DragTable({layers, setLayers, handleCheck, handleDelete, setIsModalOpen}){
     
     const columns = [
         {
@@ -82,28 +82,31 @@ export default function DragTable({layers, setLayers, handleDelete, handleChange
             width: 30
         },
         {
-            title: 'Name',
-            // dataIndex: 'name',
+            render: (text,record)=>{
+                return (
+                    <svg 
+                        version="1.0" 
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10.000000pt" height="10.000000pt" 
+                        viewBox="0 0 255.000000 255.000000"
+                        preserveAspectRatio="xMidYMid meet"
+                    >
+                        <g 
+                            transform="translate(0.000000,255.000000) scale(0.100000,-0.100000)"
+                            fill={`${typeof text.data.fillColor === 'object' ?  
+                            text.data.fillColor.toRgbString() : text.data.fillColor}`} stroke="none"
+                        >
+                            <path d={(svgList.filter(svg=> svg.name === text.data.fillStyle)[0].svgName)}/>
+                        </g>
+                    </svg>
+                )
+            }
+        },
+        {
             width: 300,
             render: (text,record)=>{
                 return (
-                    <p className='flex items-center gap-2'>
-                        <svg 
-                            version="1.0" 
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="10.000000pt" height="10.000000pt" 
-                            viewBox="0 0 255.000000 255.000000"
-                            preserveAspectRatio="xMidYMid meet"
-                        >
-                            <g 
-                                transform="translate(0.000000,255.000000) scale(0.100000,-0.100000)"
-                                fill={`${typeof text.data.fillColor === 'object' ?  text.data.fillColor.toRgbString() : text.data.fillColor}`} stroke="none"
-                            >
-                                <path d={(svgList.filter(svg=> svg.name === text.data.fillStyle)[0].svgName)}/>
-                            </g>
-                    </svg>
-                    {text.name}
-                    </p>
+                    <p className='flex items-center gap-2'>{text.name}</p>
                 )
             }
         },
@@ -114,7 +117,7 @@ export default function DragTable({layers, setLayers, handleDelete, handleChange
             render: (text, record)=>{return <DeleteOutlined className='hover:text-red-400' onClick={()=>{handleDelete(text)}}/>}
         },
         { 
-            render: (text, record)=>{return <Checkbox defaultChecked={true} onClick={()=>{handleChangeVisibleLayer(text)}}/>}
+            render: (text, record)=>{return <Checkbox value={text.value} checked={text.status} onClick={(e)=>{handleCheck(e)}}/>}
             // render: (text, record)=>{return <Checkbox defaultChecked={true} onClick={()=>{console.log(text.properties.getSource().getFeatures());handleChangeVisibleLayer(text)}}/>}
         },
     ];

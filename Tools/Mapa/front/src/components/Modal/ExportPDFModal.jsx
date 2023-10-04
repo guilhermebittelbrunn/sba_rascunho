@@ -71,15 +71,17 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
         setIsLoading(true);
 
 
-       try{
-            map.once('rendercomplete', async function () {
+       
+        map.once('rendercomplete', async function () {
+            
+            try{
                 const mapCanvas = document.createElement('canvas');
                 const mapContext = mapCanvas.getContext('2d');
                 mapCanvas.width = width;
                 mapCanvas.height = height;
                 mapContext.fillStyle = 'white'; 
                 mapContext.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
-
+    
                 Array.prototype.forEach.call(
                     document.querySelectorAll('.ol-layers canvas'),
                     function (canvas) {
@@ -93,12 +95,10 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                         }
                     }
                 );
-
+    
                 const subtitle = document.getElementById('subtitle');
                 const status = subtitle.getAttribute('status');
                 const table = document.getElementById('subtitle-table');
-                
-                console.log(status);
                 
                 pdf.addImage(
                     mapCanvas.toDataURL('image/jpeg'),
@@ -114,22 +114,22 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                     subtitleCanvas.width = table.offsetWidth;
                     subtitleCanvas.height = table.offsetHeight;
                     const subtitleContext = subtitleCanvas.getContext('2d');
-                    const canvas = await html2canvas(table);
+                    const canvas = await html2canvas(subtitle);
                     subtitleContext.drawImage(canvas, 0, 0);
-                    // console.log(subtitleCanvas.toDataURL());
+                    console.log(subtitleCanvas.toDataURL());
         
                     let x,y
                     switch(parseInt(status)){
                         case 1:
                             x = 10;
-                            y = dim[1] - dim[1] * 0.19;
+                            y = dim[1] - dim[1] * 0.13;
                             break
                         case 2:
-                            x = dim[0] - dim[0] * 0.15;
-                            y = dim[1] - dim[1] * 0.19;
+                            x = dim[0] - dim[0] * 0.17;
+                            y = dim[1] - dim[1] * 0.13;
                             break
                         case 3:
-                            x = dim[0] - dim[0] * 0.15;
+                            x = dim[0] - dim[0] * 0.17;
                             y = 10;
                             break
                         case 4:
@@ -137,37 +137,36 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                             y = 10;
                             break
                     }
-
-                    console.log(x,y);
-
+    
+    
                     pdf.addImage(
                         canvas.toDataURL('image/jpeg'),
                         'JPEG',
                         x,
                         y,
-                        dim[0] * 0.15,
-                        dim[1] * 0.19,
+                        dim[0] * 0.16,
+                        dim[1] * 0.12,
                     );   
                 }
                 
-
-                pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
+    
+                // pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
                 map.setSize(size);
                 map.getView().setResolution(viewResolution);
-                
-            });
-
-            const printSize = [width, height];
-            const scaling = Math.min(width / size[0], height / size[1]);
+            }catch(err){
+                message.error('Ocorreu um erro durante a exportação do arquivo');
+                throw err
+            }finally{
+                setIsLoading(false);
+            }
             
-            map.setSize(printSize);
-            map.getView().setResolution(viewResolution / scaling);
-       }catch(err){
-            message.error('Um erro ocorreu ao exportar o arquivo');
-            throw err
-        }finally{
-            setIsLoading(false)
-       }
+        });
+
+        const printSize = [width, height];
+        const scaling = Math.min(width / size[0], height / size[1]);
+        
+        map.setSize(printSize);
+        map.getView().setResolution(viewResolution / scaling);
     }
 
     return(

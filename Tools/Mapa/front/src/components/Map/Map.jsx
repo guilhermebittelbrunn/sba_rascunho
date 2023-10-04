@@ -6,32 +6,6 @@ import ErrorModal from '../Modal/ErrorModal';
 import LayerModal from '../Modal/LayerModal';
 import AddRepModal from '../Modal/AddRepModal';
 
-const columns = [
-        {
-            render: (text,record)=>{
-                return (
-                    <p className='flex items-center text-lg gap-2'>
-                        <svg 
-                            version="1.0" 
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="14.000000pt" height="14.000000pt" 
-                            viewBox="0 0 255.000000 255.000000"
-                            preserveAspectRatio="xMidYMid meet"
-                        >
-                            <g 
-                                transform="translate(0.000000,255.000000) scale(0.100000,-0.100000)"
-                                fill={`${typeof text.data.fillColor === 'object' ?  text.data.fillColor.toRgbString() : text.data.fillColor}`} stroke="none"
-                            >
-                                <path d={(svgList.filter(svg=> svg.name === text.data.fillStyle)[0].svgName)}/>
-                            </g>
-                    </svg>
-                    {text.name}
-                    </p>
-                )
-            }
-        }
-]
-
 const svgList = [
                     {
                         type: 'svg',
@@ -99,12 +73,49 @@ const svgList = [
             
 ]
 
+const columns = [
+        {
+            render: (text,record)=>{
+                return (
+                    <p className='text-lg'>
+                        <svg 
+                            version="1.0" 
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14.000000pt" height="14.000000pt" 
+                            viewBox="0 0 255.000000 255.000000"
+                            preserveAspectRatio="xMidYMid meet"
+                        >
+                            <g 
+                                transform="translate(0.000000,255.000000) scale(0.100000,-0.100000)"
+                                fill={`${typeof text.data.fillColor === 'object' ?  text.data.fillColor.toRgbString() : text.data.fillColor}`} stroke="none"
+                            >
+                                <path d={(svgList.filter(svg=> svg.name === text.data.fillStyle)[0].svgName)}/>
+                            </g>
+                        </svg>
+                    </p>
+                )
+            }
+        },
+        {
+            render: (text,record)=>{
+                return (
+                    <p className='text-lg'>
+                    {text.name}
+                    </p>
+                )
+            }
+        },
+]
+
+
+
 export default function MapPage({handleClick, handleFullScreenAction, isFullScreen, setContextMenu, setOpen}){
 
     const {map, loading, error, layers, settings, setSettings, createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures} = useContext(MapaContext);
     const { interaction } = settings
     const [isModalOpen, setIsModalOpen] = useState({layerModal: false, addRepModal: false});
     const [showSubtitle, setShowSubtitle] = useState(false);
+    const layersVisibles = layers.slice(2).reverse().filter(lyr=>{return lyr.status})
     
     const map1 = useRef(null);
 
@@ -126,8 +137,8 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
         const newStatus = status == 4 ? 0 : +status + 1;
         const pos = [
             [],
-            ['', '', `${height}px`, '4px'],
-            ['', '4px', `${height}px`, ''],
+            ['', '', '4px', '4px'],
+            ['', '4px', '4px', ''],
             ['4px', '4px', '', ''],
             ['4px', '', '', '4px'],
         ];
@@ -287,24 +298,25 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
                         </button>
 
                         <button 
+                            onClick={()=>{(layersVisibles.length > 0) && changeSubtitleStatus()}} 
+                            className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px]
+                            border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 
+                            hover:text-base ${layersVisibles.length === 0 && 'opacity-60 cursor-not-allowed'} 
+                            outline-none`} style={{transform: 'translate(20%, 400%)', transition: 'all .4s'}}
+                        >
+                            <UnorderedListOutlined />
+                        </button>
+                            
+                        <button 
                             onClick={()=>{countSelectedFeatures > 0 && showModal('layerModal')}} 
                             className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px]
                             border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 
                             hover:text-base ${countSelectedFeatures <= 0 && 'opacity-60 cursor-not-allowed'} 
-                            outline-none`} style={{transform: 'translate(20%, 400%)', transition: 'all .4s'}}
+                            outline-none`} style={{transform: 'translate(20%, 525%)', transition: 'all .4s'}}
                         >
                             <PlusOutlined />
                         </button>
                         
-                        <button 
-                            onClick={()=>{(layers.length > 3) && changeSubtitleStatus()}} 
-                            className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px]
-                            border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 
-                            hover:text-base ${layers.length < 4 && 'opacity-60 cursor-not-allowed'} 
-                            outline-none`} style={{transform: 'translate(20%, 525%)', transition: 'all .4s'}}
-                        >
-                            <UnorderedListOutlined />
-                        </button>
 
 
 
@@ -313,15 +325,18 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
                             <div 
                                 id='subtitle' 
                                 status={0}
-                                className={`flex flex-col w-[190px] gap-6 shadow-lg rounded-lg bg-slate-100 z-30 
-                                absolute ${(showSubtitle && layers.length > 3) ? 'opacity-90' : 'opacity-0'}`}
+                                className={`shadow-xl border-[2px] border-gray-400 min-w-[180px] max-w-[280px] z-30 
+                                absolute ${(showSubtitle && layersVisibles.length > 0) ? 'opacity-90' : 'opacity-0'}`}
                             >
                                 <Table
+                                    bordered={false}
                                     id='subtitle-table'
-                                    className='z-0 w-full absolute top-0' 
                                     size='small'
-                                    columns={columns} dataSource={layers.slice(3).reverse()} 
-                                    pagination={false} showHeader={false}
+                                    columns={columns} 
+                                    dataSource={layersVisibles} 
+                                    pagination={false} 
+                                    showHeader={false}
+                                    rowClassName='flex items-center'
                                 />
                             </div>
                         

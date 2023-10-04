@@ -91,47 +91,6 @@ export default function Drawer({open, setOpen}){
     const [isModalOpen, setIsModalOpen] = useState({exportPDFModal: false,  reportModal: false});
     const [searchValue, setSearchValue] = useState('');
     const [isEditModal, setEditModal] = useState({status: false, layer: null});
-    
-    useEffect(()=>{
-        setOpen(false);
-        setSettings((pv)=>{
-          return {...pv, selectedOption: ''};
-        });
-
-    },[map])
-
-    useEffect(()=>{
-
-        if(!map) return
-        layers.forEach(layer=>{
-          const index = layers.findIndex(lyr => lyr.value === layer.value);
-          const status = layers[index].status;
-          layer.properties.setVisible(status);
-        });
-
-        layers.slice(defaultLayersLength).forEach(layer=>{
-          const index = layers.findIndex(layerMap => layerMap.name === layer.name);
-          layer.properties.setZIndex(index);
-        })
-
-    },[layers])
-
-
-    function handleDeleteLayer(layer){
-      
-        map.getLayers().getArray().forEach(layerMap=>{
-          layerMap.getClassName() === layer.value && map.removeLayer(layerMap);
-        });
-        setLayers(pv=>{
-            return pv.filter(l=>l.value !== layer.value)
-        });
-
-    }
-
-    function handleChangeVisibleLayer(layer){
-      layer.status = !layer.status; 
-      layer.properties.setVisible(layer.status);
-    }
 
     function handleSeach(value){
 
@@ -196,6 +155,44 @@ export default function Drawer({open, setOpen}){
         callback
       );
     }
+    
+    useEffect(()=>{
+        setOpen(false);
+        setSettings((pv)=>{
+          return {...pv, selectedOption: ''};
+        });
+
+    },[map])
+
+    useEffect(()=>{
+
+      if(!map) return
+        layers.forEach(layer=>{
+          const index = layers.findIndex(lyr => lyr.value === layer.value);
+          const status = layers[index].status;
+          layer.properties.setVisible(status);
+        });
+
+        layers.slice(defaultLayersLength).forEach(layer=>{
+          const index = layers.findIndex(layerMap => layerMap.name === layer.name);
+          layer.properties.setZIndex(index);
+        })
+
+    },[layers])
+
+
+    function handleDeleteLayer(layer){
+      
+        map.getLayers().getArray().forEach(layerMap=>{
+          layerMap.getClassName() === layer.value && map.removeLayer(layerMap);
+        });
+        setLayers(pv=>{
+            return pv.filter(l=>l.value !== layer.value)
+        });
+
+    }
+
+    
 
 
     return(
@@ -276,11 +273,14 @@ export default function Drawer({open, setOpen}){
 
                       <div className={`w-full mt-2`}>
                         <h3 className={`font-bold text-sm mb-1 ${layers.length <= defaultLayersLength && 'hidden'}`}>Camadas Customizáveis</h3>
-                            <div className={`overflow-auto mb-6 h-[240px] ${layers.length <= 9 ? 'w-[285px]' : 'w-[300px]'}`}>
+                            <div className={`overflow-auto mb-6 max-h-[240px] w-[285px]`}>
                             {layers.length > defaultLayersLength && 
                               <DragTable 
-                                setIsModalOpen={setEditModal} layers={layers} setLayers={setLayers} 
-                                handleDelete={handleDeleteLayer} handleChangeVisibleLayer={handleChangeVisibleLayer}
+                                handleCheck={handleCheck}
+                                setIsModalOpen={setEditModal} 
+                                layers={layers} 
+                                setLayers={setLayers} 
+                                handleDelete={handleDeleteLayer}
                               />
                             }
                         </div>

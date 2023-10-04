@@ -217,10 +217,10 @@ export default function MapaProvider({url, children, setIsLoading}){
                 });
 
                 const newLayers = [
-                    {
-                        name: 'Camada Estado',
-                        value: 'stateLayer',
-                        properties: stateLayer,
+                     {
+                        name: 'Camada Base',
+                        value: 'baseLayer',
+                        properties: baseLayer,
                         status: true,
                         key: 1,
                     },
@@ -232,19 +232,21 @@ export default function MapaProvider({url, children, setIsLoading}){
                         key: 2,
                     },
                     {
-                        name: 'Camada Base',
-                        value: 'baseLayer',
-                        properties: baseLayer,
+                        name: `Camada RC (${stateLayer.values_.rc})`,
+                        value: 'stateLayer',
+                        properties: stateLayer,
                         status: true,
                         key: 3,
+                        data: {
+                            fillColor: "rgba(34, 156, 34, 0.7)",
+                            fillStyle: false,
+                        },
                     },
                 ]
 
                 setLayers(newLayers);
 
-                newLayers.forEach(layer=>{
-                    map.addLayer(layer.properties);
-                });
+                newLayers.forEach(layer=>{map.addLayer(layer.properties)});
                 map.getView().setCenter(data.features[0].geometry.coordinates[0][0]);
                 setError(false);
             }catch(error){

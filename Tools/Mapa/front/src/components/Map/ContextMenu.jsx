@@ -127,7 +127,7 @@ export default function ContextMenu({contextMenu, setContextMenu}){
                                     >
                                         <div>
                                             <InfoCircleOutlined />
-                                            <span className="ml-2 text-base">Venda {layer.rc}</span>
+                                            <span className="ml-2 text-base">Venda {String(layer.rc).padStart(4, 0)}</span>
                                         </div>
                                         <RightOutlined className="text-sm"/>
 
