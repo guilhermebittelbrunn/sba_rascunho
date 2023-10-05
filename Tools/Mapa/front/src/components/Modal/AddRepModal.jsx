@@ -52,12 +52,12 @@ export default function AddRepModal({isModalOpen, disableModal}){
                 throw `${url.rc} não possui features, features:${res.data.features.length}`
             }
             const newLayer = {
-                name: `Vendas RC ${url.rc}`,
+                name: `Vendas RC ${String(url.rc).padStart(4,0)}`,
                 value: `custom_layer${layers.length + 1}`,
                 status: true,
                 key: layers.length + 1,
                 data:{
-                    layerName: `Vendas RC ${url.rc}`,
+                    layerName: `Vendas RC ${String(url.rc).padStart(4,0)}`,
                     fontColor: '#000000',
                     borderColor: '#000000',
                     fillStyle: 45,
@@ -67,9 +67,9 @@ export default function AddRepModal({isModalOpen, disableModal}){
                     source: new Vector({
                         features: new GeoJSON().readFeatures(res.data),
                     }),
-                    style: (feature)=>{
+                    style: (feature, res)=>{
                         feature.setProperties({SELECTED:false, fontColor: '#000000', strokeColor: '#000000', fillStyle: 45, fillColor});
-                        return createFeatureStyle(feature, settings);
+                        return createFeatureStyle(feature, settings, null, res);
                     },
                     zIndex: 4,
                     className: `custom_layer${layers.length + 1}`,
@@ -94,7 +94,6 @@ export default function AddRepModal({isModalOpen, disableModal}){
     return (
                <Modal centered={true} title="Importar vendas Representante" open={isModalOpen} onCancel={disableModal} width={320} cancelButtonProps={{hidden: true}} okButtonProps={{hidden:true}}>
                     <form className='flex flex-col gap-1' onSubmit={handleSubmit(handleOk)}>
-
                         <div className="flex flex-col"> 
                             <h3 className="text-sm font-semibold">Data inicial</h3>
                             <Controller

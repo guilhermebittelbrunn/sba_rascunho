@@ -99,7 +99,7 @@ const columns = [
         {
             render: (text,record)=>{
                 return (
-                    <p className='text-lg'>
+                    <p className='text-subtitle text-lg'>
                     {text.name}
                     </p>
                 )

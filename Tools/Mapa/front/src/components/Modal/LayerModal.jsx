@@ -131,7 +131,7 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
                 }),
                 style: (feature,res)=>{
                     feature.setProperties({SELECTED:false, zIndex: 1, fillColor, fontColor, fillStyle, strokeColor: borderColor});
-                    return createFeatureStyle(feature, {...settings});
+                    return createFeatureStyle(feature, {...settings}, null, res);
                 },
                 zIndex: 4,
                 className: `custom_layer${layers.length + 1}`,

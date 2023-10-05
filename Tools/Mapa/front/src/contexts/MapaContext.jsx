@@ -12,13 +12,19 @@ import useFetch from '../hooks/useFetch';
 import json from '../../geojson'
 
 
- function createAARotatedPattern(lineWidth, spacing, ang, color) {
+ function createAARotatedPattern(lineWidth, spacing, ang, color, resolution=1200) {
     const can = document.createElement('canvas');
     const ctx = can.getContext('2d');
-    const w = (can.width = 2);
-    const h = (can.height = spacing);
+    let lineWidthByResolution = Math.round(resolution / 250);
+    let spacingByResolution = Math.round(resolution / 50);
+    
+    lineWidthByResolution = lineWidthByResolution > 4 || lineWidthByResolution < 3 ? 4 : lineWidthByResolution
+    spacingByResolution = spacingByResolution  > 20 || spacingByResolution  < 15 ? 20 : spacingByResolution
+
+    can.width = 2;
+    can.height = spacingByResolution;
     ctx.fillStyle = color;
-    ctx.fillRect(0, 0, 2, lineWidth);
+    ctx.fillRect(0, 0, 2, lineWidthByResolution);
 
     const pat = ctx.createPattern(can, 'repeat');
     const xAx = Math.cos(ang);
@@ -72,7 +78,7 @@ function subtitleCategory(label, option){
         return res
 }
 
-function createColor(feature, selectedOption, layer){
+function createColor(feature, selectedOption, layer, res){
     let color;
 
     if(feature.SELECTED) color = 'rgb(255,238,0)';
@@ -84,14 +90,14 @@ function createColor(feature, selectedOption, layer){
             }
             else{
                 if(feature.fillStyle){
-                    color = createAARotatedPattern(4, 10, feature.fillStyle, feature.fillColor) || "rgba(34, 156, 34, 0.7)";
+                    color = createAARotatedPattern(6, 35, feature.fillStyle, feature.fillColor, res) || "rgba(34, 156, 34, 0.7)";
                 }
                 else color = feature.fillColor || "rgba(34, 156, 34, 0.7)";
             }
         }
         else{
             if(feature.fillStyle){
-                color = createAARotatedPattern(2, 10, feature.fillStyle, feature.fillColor) || "rgba(221,221,223,0.7)";
+                color = createAARotatedPattern(6, 35, feature.fillStyle, feature.fillColor, res) || "rgba(221,221,223,0.7)";
                 // color = createAARotatedPattern(2, 10, 110, "rgba(221,221,223,0.7)") || "rgba(221,221,223,0.7)";
             }
             else color = feature.fillColor || "rgba(221,221,223,0.7)";
@@ -99,49 +105,6 @@ function createColor(feature, selectedOption, layer){
     }
     return color
 }
-
-// list = [false, 110, 45, 90, 300]
-
-
-function createFeatureStyle(feature, settings, layer){
-
-    const {selectedOption, fontSize, subTitle, fontColor, strokeColor, strokeWidth, zIndex} = settings;
-    const featureProperties = feature.getProperties();
-    const color = createColor(featureProperties, selectedOption, layer);
-
-    let newStyle = new Style({
-              fill: new Fill({color}),
-              stroke: new Stroke({
-                  color: featureProperties.strokeColor || (strokeColor || "rgba(0,0,0, 1)"),
-                  width: featureProperties.strokeWidth || (strokeWidth || 1),
-              }),
-              text: new Text({
-                  text: subTitle === '' ? featureProperties.NM_MUN : 
-                  (featureProperties[subTitle]? `${featureProperties.NM_MUN} \n ${subtitleCategory(featureProperties[subTitle], subTitle)}` : 
-                  featureProperties.NM_MUN),  
-                  font: `bold ${fontSize}px ${"Segoe UI"}`,
-                  fill: new Fill({
-                        color: (featureProperties.fontColor || fontColor) || (featureProperties.NUMERO_PEDIDO ? 'rgb(0, 0, 0)' : 'rgb(0,0,0)')
-                  }),
-                //   overflow: true
-                  // backgroundFill: new Stroke({
-                  //   color: "rgba(255,255,255)",
-                  //   width: 1,
-                  // }),
-              }),
-    })  
-
-    // if(zIndex){
-    //     console.log('zIndex', zIndex)
-    //     newStyle.setZIndex(zIndex);
-    //     console.log(newStyle)
-    // }
-
-
-    return newStyle
-}
-
-
 
 function handleSelectInteration(settings){
 
@@ -155,6 +118,28 @@ function handleSelectInteration(settings){
     return select
 }
    
+
+function stringDivider(str, width, spaceReplacer) {
+  if(!str)return
+  if (str.length > width) {
+    let p = width;
+    while (p > 0 && str[p] != ' ' && str[p] != '-') {
+      p--;
+    }
+    if (p > 0) {
+      let left;
+      if (str.substring(p, p + 1) == '-') {
+        left = str.substring(0, p + 1);
+      } else {
+        left = str.substring(0, p);
+      }
+      const right = str.substring(p + 1);
+      return left + spaceReplacer + stringDivider(right, width, spaceReplacer);
+    }
+  }
+  return str;
+}
+
 export const MapaContext = createContext();
 
 export default function MapaProvider({url, children, setIsLoading}){
@@ -165,6 +150,51 @@ export default function MapaProvider({url, children, setIsLoading}){
     const [error,setError] = useState(err);
     const [map, setMap] = useState(null);
     const [countSelectedFeatures, setCountSelectedFeatures] = useState(0);
+
+    function createFeatureStyle(feature, settings, layer, res=1200){
+
+    const {selectedOption, fontSize, subTitle, fontColor, strokeColor, strokeWidth} = settings;
+    const featureProperties = feature.getProperties();
+    const color = createColor(featureProperties, selectedOption, layer, res);
+
+     var zoomLevel = map.getView().getZoom();
+
+    // Defina o tamanho mínimo da fonte e um fator de escala
+    var minFontSize = 6;
+    var scaleFactor = 0.5; // ajuste conforme necessário
+
+    // Calcule o tamanho da fonte com base no zoom
+    var size = Math.max(minFontSize, minFontSize + (zoomLevel - 10) * scaleFactor);
+    
+
+    const newStyle = new Style({
+              fill: new Fill({color}),
+              stroke: new Stroke({
+                  color: featureProperties.strokeColor || (strokeColor || "rgba(0,0,0, 1)"),
+                  width: featureProperties.strokeWidth || (strokeWidth || 1),
+              }),
+              text: new Text({
+                  text: subTitle === '' ? stringDivider(featureProperties.NM_MUN, 10, '\n') : 
+                  (featureProperties[subTitle]? `${featureProperties.NM_MUN} \n ${subtitleCategory(featureProperties[subTitle], subTitle)}` : 
+                  featureProperties.NM_MUN),  
+                //   font: `bold ${size * featureProperties.AREA_KM2 / 1000 > 12 ? 12 : size * featureProperties.AREA_KM2 / 1000}px ${"Segoe UI"}`,
+                  font: `bold ${fontSize}px ${"Segoe UI"}`,
+                  fill: new Fill({
+                        color: (featureProperties.fontColor || fontColor) 
+                        || 
+                        (featureProperties.NUMERO_PEDIDO ? 'rgb(0, 0, 0)' : 'rgb(0,0,0)')
+                  }),
+               overflow: true
+                  // backgroundFill: new Stroke({
+                  //   color: "rgba(255,255,255)",
+                  //   width: 1,
+                  // }),
+              }),
+    })  
+
+    return newStyle
+}
+
 
     useEffect(()=>{
 
@@ -196,7 +226,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                     source: new Vector({
                         features: new GeoJSON().readFeatures(data),
                     }),
-                    style: (feature,res)=>{
+                    style: (feature)=>{
                         return createFeatureStyle(feature, settings);
                     },
                     zIndex: 3,
@@ -232,7 +262,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                         key: 2,
                     },
                     {
-                        name: `Camada RC (${stateLayer.values_.rc})`,
+                        name: `Vendas RC ${stateLayer.values_.rc}`,
                         value: 'stateLayer',
                         properties: stateLayer,
                         status: true,

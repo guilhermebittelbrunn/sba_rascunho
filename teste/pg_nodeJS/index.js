@@ -1,5 +1,25 @@
-const numeral = require('numeral');
+// const sayHello = (name, fn) => {
+//     console.log('Hello ' + name);
+//     fn();
+// };
 
-const x = 5053.46;
+// const sayGoodBye = () => {
+//     console.log('goodbye');
+// };
 
-console.log(numeral(x).format(0.0).replace(',', '.'));
+// sayHello['nome'] = 'Gustavo';
+// sayHello['funcao'] = sayGoodBye;
+
+// sayHello(sayHello.nome, sayHello.funcao);
+
+// console.log(sayHello);
+
+const list = [10, 20, 30];
+const fn = () => {
+    return 1;
+};
+
+fn['nome'] = 'testse';
+fn[3] = 'testse';
+console.log(typeof list);
+console.log(fn);

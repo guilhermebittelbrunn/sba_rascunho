@@ -96,9 +96,12 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                     }
                 );
     
-                const subtitle = document.getElementById('subtitle');
                 const status = subtitle.getAttribute('status');
-                const table = document.getElementById('subtitle-table');
+                const elementsSubtitle = document.querySelectorAll('.text-subtitle');
+
+                elementsSubtitle.forEach(element=>{
+                    element.style.marginBottom = '18px'
+                })
                 
                 pdf.addImage(
                     mapCanvas.toDataURL('image/jpeg'),
@@ -110,49 +113,57 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                 );
                 
                 if (status > 0){
-                    const subtitleCanvas = document.createElement('canvas');
-                    subtitleCanvas.width = table.offsetWidth;
-                    subtitleCanvas.height = table.offsetHeight;
-                    const subtitleContext = subtitleCanvas.getContext('2d');
+                    const subtitle = document.getElementById('subtitle');
+                    const table = document.getElementById('subtitle-table');
+                    
                     const canvas = await html2canvas(subtitle);
-                    subtitleContext.drawImage(canvas, 0, 0);
-                    console.log(subtitleCanvas.toDataURL());
+                    const canvasWidth = ((dim[1] * (table.offsetHeight * 100) / 2480) / 100) * 2;   
+                    const canvasHeight = ((dim[0] * (table.offsetWidth * 100) / 3508) / 100) * 2;
+                    const padding = 2
+                    
         
-                    let x,y
+                    let posX,posY
                     switch(parseInt(status)){
                         case 1:
-                            x = 10;
-                            y = dim[1] - dim[1] * 0.13;
+                            posX = padding;
+                            posY = dim[1] - (canvasWidth  * 1.02);
                             break
                         case 2:
-                            x = dim[0] - dim[0] * 0.17;
-                            y = dim[1] - dim[1] * 0.13;
+                            posX = dim[0] - (canvasHeight  * 1.05);
+                            posY = dim[1] - (canvasWidth  * 1.02);
                             break
                         case 3:
-                            x = dim[0] - dim[0] * 0.17;
-                            y = 10;
+                            posX = dim[0] - (canvasHeight  + padding)
+                            posY = padding;
                             break
                         case 4:
-                            x = 10;
-                            y = 10;
+                            posX = padding;
+                            posY = padding;
                             break
                     }
-    
-    
+                    
+                    console.log(status, posX, posY);
                     pdf.addImage(
                         canvas.toDataURL('image/jpeg'),
                         'JPEG',
-                        x,
-                        y,
-                        dim[0] * 0.16,
-                        dim[1] * 0.12,
-                    );   
+                        posX,
+                        posY,
+                        canvasHeight,
+                        canvasWidth,
+                    );
+                    
+                    
                 }
                 
-    
-                // pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
+                elementsSubtitle.forEach(element=>{
+                    element.style.marginBottom = '0px'
+                })
+
+                pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
                 map.setSize(size);
                 map.getView().setResolution(viewResolution);
+
+                
             }catch(err){
                 message.error('Ocorreu um erro durante a exportação do arquivo');
                 throw err
