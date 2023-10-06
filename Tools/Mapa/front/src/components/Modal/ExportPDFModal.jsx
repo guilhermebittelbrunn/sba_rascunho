@@ -106,22 +106,31 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
     
     const [isLoading, setIsLoading] = useState(false);
     const { handleSubmit, control } = useForm({defaultValues:{paperSize: 'A3', dpiValue: 300, overflow: 'off', orientation: 'Paisagem'}});
-    const { map, rc } = useContext(MapaContext)
+    const { map, rc, layers, createFeatureStyle, settings } = useContext(MapaContext);
 
     const sendForm = (data)=>{
-        console.log(dims[data.paperSize]);
-        const dim = data.orientation === 'Paisagem' ? [...dims[data.paperSize]] : [...dims[data.paperSize].sort((a,b)=>b-a)];
-        console.log(data.orientation, dim)
+
+        const dim = data.orientation === 'Paisagem' ? dims[data.paperSize] : [...dims[data.paperSize]].reverse();
         const width = Math.round((dim[0] * data.dpiValue) / 25.4);
         const height = Math.round((dim[1] * data.dpiValue) / 25.4);
         const size = map.getSize();
         const viewResolution = map.getView().getResolution();
-        const pdf = new jsPDF('landscape', 'mm', dim);
+        const pdf = new jsPDF(data.orientation === 'Paisagem' ? 'landscape' : 'portrait', 'mm', dim);
+      
+
+        
         setIsLoading(true);
-
-
-       
         map.once('rendercomplete', async function () {
+            if(data.overflow === 'on'){
+                layers.forEach(layer=>{
+                    if(layer.properties.className_ === "baseLayer")return
+                    const features = layer.properties.getSource().getFeatures();
+                    features.forEach(feature=>{
+                        const newStyle = createFeatureStyle(feature, {...settings, overflow: true}, null);
+                        feature.setStyle(newStyle);
+                    })
+                });
+            }
             
             try{
                 const mapCanvas = document.createElement('canvas');
@@ -130,7 +139,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                 mapCanvas.height = height;
                 mapContext.fillStyle = 'white'; 
                 mapContext.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
-    
+                
                 Array.prototype.forEach.call(
                     document.querySelectorAll('.ol-layers canvas'),
                     function (canvas) {
@@ -138,13 +147,13 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                             const opacity = canvas.parentNode.style.opacity;
                             mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
                             const transform = canvas.style.transform;
+    
                             const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
                             CanvasRenderingContext2D.prototype.setTransform.apply(mapContext,matrix);
                             mapContext.drawImage(canvas, 0, 0);
                         }
                     }
                 );
-    
                 const status = subtitle.getAttribute('status');
                 const elementsSubtitle = document.querySelectorAll('.text-subtitle');
 
@@ -191,7 +200,6 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                             break
                     }
                     
-                    console.log(status, posX, posY);
                     pdf.addImage(
                         canvas.toDataURL('image/jpeg'),
                         'JPEG',
@@ -200,15 +208,13 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                         canvasHeight,
                         canvasWidth,
                     );
-                    
-                    
                 }
                 
                 elementsSubtitle.forEach(element=>{
                     element.style.marginBottom = '0px'
                 })
 
-                // pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
+                pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
                 map.setSize(size);
                 map.getView().setResolution(viewResolution);
 
@@ -217,11 +223,21 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                 message.error('Ocorreu um erro durante a exportação do arquivo');
                 throw err
             }finally{
+
+                if(data.overflow === 'on'){
+                    layers.forEach(layer=>{
+                        if(layer.properties.className_ === "baseLayer")return
+                        const features = layer.properties.getSource().getFeatures();
+                        features.forEach(feature=>{
+                            const newStyle = createFeatureStyle(feature, {...settings, overflow: false}, null);
+                            feature.setStyle(newStyle);
+                        })
+                    });
+                }
                 setIsLoading(false);
             }
             
         });
-
         const printSize = [width, height];
         const scaling = Math.min(width / size[0], height / size[1]);
         

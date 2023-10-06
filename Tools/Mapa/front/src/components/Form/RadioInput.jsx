@@ -1,6 +1,4 @@
 import { Radio } from 'antd';
-import { FilePdfOutlined } from '@ant-design/icons'
-
 
 export default function RadioInput({dataset, field, cardStyle}){
 
@@ -15,7 +13,6 @@ export default function RadioInput({dataset, field, cardStyle}){
 
 
 function Icon({children, isChecked, type}){
-    // console.log(children)
     return(
         <p className={`text-base ${isChecked ? 'text-blue-600' : 'text-slate-950'} ${type === 'dpi' && 'font-bold'}`}>
             {children}
@@ -26,7 +23,6 @@ function Icon({children, isChecked, type}){
 
 function Card({field, value, isChecked, name, type, cardStyle, svgName, icon}){
   
-
     return(
             <div 
                 id={`div${value}`} 
@@ -36,13 +32,6 @@ function Card({field, value, isChecked, name, type, cardStyle, svgName, icon}){
 
                 <Radio value={value} field={field} className='absolute top-[1px] right-[-6px]'/>
                 <div id="body" className='flex flex-col items-center mt-2'>
-                    {/* {icon && 
-                        <>
-                            <Icon>
-                                {icon}
-                            </Icon>
-                        </>
-                    }  */}
                     {icon && 
                             <Icon isChecked={isChecked} type={type}>
                                 {icon()}

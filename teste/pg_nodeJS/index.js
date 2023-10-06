@@ -1,25 +1,34 @@
-// const sayHello = (name, fn) => {
-//     console.log('Hello ' + name);
-//     fn();
+// // const sayHello = (name, fn) => {
+// //     console.log('Hello ' + name);
+// //     fn();
+// // };
+
+// // const sayGoodBye = () => {
+// //     console.log('goodbye');
+// // };
+
+// // sayHello['nome'] = 'Gustavo';
+// // sayHello['funcao'] = sayGoodBye;
+
+// // sayHello(sayHello.nome, sayHello.funcao);
+
+// // console.log(sayHello);
+
+// const list = [10, 20, 30];
+// const fn = () => {
+//     return 1;
 // };
 
-// const sayGoodBye = () => {
-//     console.log('goodbye');
-// };
+// fn['nome'] = 'testse';
+// fn[3] = 'testse';
+// console.log(typeof list);
+// console.log(fn);
 
-// sayHello['nome'] = 'Gustavo';
-// sayHello['funcao'] = sayGoodBye;
+const list = [10, 20, 30, 40];
 
-// sayHello(sayHello.nome, sayHello.funcao);
+const list2 = [...list];
 
-// console.log(sayHello);
+list2[4] = 50;
 
-const list = [10, 20, 30];
-const fn = () => {
-    return 1;
-};
-
-fn['nome'] = 'testse';
-fn[3] = 'testse';
-console.log(typeof list);
-console.log(fn);
+console.log('list', list);
+console.log('list2', list2);
