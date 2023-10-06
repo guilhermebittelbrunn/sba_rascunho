@@ -1,5 +1,5 @@
 import { Button, Spin, Tooltip, Modal as ModalAntd, message} from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons'
+import { QuestionCircleOutlined, FilePdfOutlined, FileOutlined } from '@ant-design/icons'
 import { useForm, Controller } from 'react-hook-form';
 import { useContext, useState } from 'react';
 import { MapaContext } from '../../contexts/MapaContext';
@@ -7,28 +7,50 @@ import { jsPDF } from 'jspdf'
 import RadioInput from '../Form/RadioInput';
 import html2canvas from 'html2canvas';
 
+
+function Teste(){
+    return(
+        <>
+            <h3>Teste</h3>
+        </>
+    )
+}
+
 const sizeDataSet = [
     {
         type: 'pdf',
-        name: 'A2'
+        name: 'A2',
+        icon: ()=>{
+            return <FilePdfOutlined/>
+        }
+        
     },
     {
         type: 'pdf',
-        name: 'A3'
+        name: 'A3',
+        icon: ()=>{
+            return <FilePdfOutlined />
+        }
     },
     {
         type: 'pdf',
-        name: 'A4'
+        name: 'A4',
+        icon: ()=>{
+            return <FilePdfOutlined />
+        }
     },
     {
         type: 'pdf',
-        name: 'A5'
+        name: 'A5',
+        icon: ()=>{
+            return <FilePdfOutlined />
+        }
     },
 ];
 const dpiValueSet = [
     {
         type: 'dpi',
-        name: 150
+        name: 150,
     },
     {
         type: 'dpi',
@@ -44,6 +66,34 @@ const dpiValueSet = [
     },
 ];
 
+const overflowOptions = [
+    {
+        type: 'overflow',
+        name: 'on',
+    },
+    {
+        type: 'overflow',
+        name: 'off',
+    },
+]
+
+const orientationOptions = [
+    {
+        type: 'orientation',
+        name: 'Retrato',
+        icon: ()=>{
+            return <FileOutlined/>
+        }
+    },
+    {
+        type: 'orientation',
+        name: 'Paisagem',
+        icon: ()=>{
+            return <FileOutlined className='rotate-[270deg]'/>
+        }
+    },
+]
+
 const dims = {
     A2: [594,420],
     A3: [420,297],
@@ -51,18 +101,17 @@ const dims = {
     A5: [210,148],
 }
 
-const sizeDefaultValue = 'A3'
-const dpiDefaultValue = 300
 
 export default function ExportPDFModal({ handleCancel, isModalOpen}){
     
     const [isLoading, setIsLoading] = useState(false);
-    const { handleSubmit, control } = useForm({defaultValues:{paperSize: sizeDefaultValue, dpiValue: dpiDefaultValue}});
+    const { handleSubmit, control } = useForm({defaultValues:{paperSize: 'A3', dpiValue: 300, overflow: 'off', orientation: 'Paisagem'}});
     const { map, rc } = useContext(MapaContext)
 
     const sendForm = (data)=>{
-        
-        const dim = dims[data.paperSize];
+        console.log(dims[data.paperSize]);
+        const dim = data.orientation === 'Paisagem' ? [...dims[data.paperSize]] : [...dims[data.paperSize].sort((a,b)=>b-a)];
+        console.log(data.orientation, dim)
         const width = Math.round((dim[0] * data.dpiValue) / 25.4);
         const height = Math.round((dim[1] * data.dpiValue) / 25.4);
         const size = map.getSize();
@@ -159,7 +208,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                     element.style.marginBottom = '0px'
                 })
 
-                pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
+                // pdf.output('save', {filename: `map_${rc}_${data.paperSize}_${data.dpiValue}`});
                 map.setSize(size);
                 map.getView().setResolution(viewResolution);
 
@@ -200,7 +249,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                             <Controller name='paperSize' control={control} render={({field})=>{
                                 return (
                                     <RadioInput 
-                                        field={field} dataset={sizeDataSet} defaultValue={sizeDefaultValue} 
+                                        field={field} dataset={sizeDataSet} 
                                         cardStyle={`hover:cursor-pointer w-full h-16 border-[1px] rounded-sm relative 
                                         flex flex-col justify-center items-center`}
                                     />
@@ -208,7 +257,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                             }}/>
                         </div>
 
-                        <div className='flex flex-col mb-12'>
+                        <div className='flex flex-col'>
                             <div className='flex items-center justify-between gap-2 mt-2'>
                                 <h3 className='font-semibold'>Resolução</h3>
                                 <Tooltip title='Quanto maior a resolução, maior a qualidade e tamanho do arquivo gerado'>
@@ -218,12 +267,50 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                             <Controller name='dpiValue' control={control} render={({field})=>{
                                 return (
                                     <RadioInput 
-                                        field={field} dataset={dpiValueSet} defaultValue={dpiDefaultValue} 
+                                        field={field} dataset={dpiValueSet} 
                                         cardStyle={`hover:cursor-pointer w-full h-16 border-[1px] rounded-sm relative
                                         flex flex-col justify-center items-center`}
                                     />
                                 )
                             }}/>
+                        </div>
+
+                        <div className='flex  gap-6 mb-12'>
+                            <div className='w-2/4'>
+                                <div className='flex items-center justify-between gap-2 mt-2'>
+                                    <h3 className='font-semibold'>Overflow</h3>
+                                    <Tooltip title='Faz com que o nome de todas as cidades sejam mostrados, mesmo que fique um por cima do outro'>
+                                        <QuestionCircleOutlined/>
+                                    </Tooltip>
+                                </div>
+                                <Controller name='overflow' control={control} render={({field})=>{
+                                    return (
+                                        <RadioInput 
+                                            field={field} dataset={overflowOptions} 
+                                            cardStyle={`hover:cursor-pointer w-full h-16 border-[1px] rounded-sm relative
+                                            flex flex-col justify-center items-center`}
+                                        />
+                                    )
+                                }}/>
+                            </div>
+
+                            <div className='w-2/4'>
+                                <div className='flex items-center justify-between gap-2 mt-2'>
+                                    <h3 className='font-semibold'>Orientação</h3>
+                                    <Tooltip title='Define o formato da página'>
+                                        <QuestionCircleOutlined/>
+                                    </Tooltip>
+                                </div>
+                                <Controller name='orientation' control={control} render={({field})=>{
+                                    return (
+                                        <RadioInput 
+                                            field={field} dataset={orientationOptions} 
+                                            cardStyle={`hover:cursor-pointer w-full h-16 border-[1px] rounded-sm relative
+                                            flex flex-col justify-center items-center`}
+                                        />
+                                    )
+                                }}/>
+                            </div>
                         </div>
                     
                         <div className='absolute right-4 bottom-4 flex gap-2'>

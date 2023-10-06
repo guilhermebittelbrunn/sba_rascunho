@@ -14,7 +14,19 @@ export default function RadioInput({dataset, field, cardStyle}){
 }
 
 
-function Card({field, value, isChecked, name, type, cardStyle, svgName}){
+function Icon({children, isChecked, type}){
+    // console.log(children)
+    return(
+        <p className={`text-base ${isChecked ? 'text-blue-600' : 'text-slate-950'} ${type === 'dpi' && 'font-bold'}`}>
+            {children}
+        </p>
+    )
+}
+
+
+function Card({field, value, isChecked, name, type, cardStyle, svgName, icon}){
+  
+
     return(
             <div 
                 id={`div${value}`} 
@@ -24,7 +36,18 @@ function Card({field, value, isChecked, name, type, cardStyle, svgName}){
 
                 <Radio value={value} field={field} className='absolute top-[1px] right-[-6px]'/>
                 <div id="body" className='flex flex-col items-center mt-2'>
-                    {type === 'pdf' && <FilePdfOutlined className={`text-xl mt-2 ${isChecked ? 'text-blue-600' : 'text-slate-950'}`}/>}
+                    {/* {icon && 
+                        <>
+                            <Icon>
+                                {icon}
+                            </Icon>
+                        </>
+                    }  */}
+                    {icon && 
+                            <Icon isChecked={isChecked} type={type}>
+                                {icon()}
+                            </Icon>
+                    }
                     {type === 'svg' ? 
                         <svg 
                             className='mt-1.5' version="1.0" 
@@ -43,7 +66,7 @@ function Card({field, value, isChecked, name, type, cardStyle, svgName}){
                         
                         :
                         
-                        <p className={`text-base ${isChecked ? 'text-blue-600' : 'text-slate-950'} ${type === 'dpi' && 'font-bold'}`}>
+                        <p className={`text-sm ${isChecked ? 'text-blue-600' : 'text-slate-950'} ${type === 'dpi' && 'font-bold'}`}>
                             {name}
                         </p>
                     }
@@ -52,6 +75,5 @@ function Card({field, value, isChecked, name, type, cardStyle, svgName}){
             </div>
     )
 }
-
 
 
