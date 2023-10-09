@@ -4,7 +4,7 @@ import { ZoomInOutlined, ZoomOutOutlined, InfoCircleOutlined, FormOutlined, Righ
 import moment from "moment";
 import numeral from 'numeral';
 
-export default function ContextMenu({contextMenu, setContextMenu, showSubtitle, setShowSubtitle}){
+export default function ContextMenu({contextMenu, setContextMenu, subtitle, setSubtitle}){
     const { map, settings, setCountSelectedFeatures, createFeatureStyle } = useContext(MapaContext);
     const { properties, layers} = contextMenu;
 
@@ -87,9 +87,9 @@ export default function ContextMenu({contextMenu, setContextMenu, showSubtitle, 
                             <ZoomOutOutlined />
                             <span className="ml-2 text-base">Afastar</span>
                         </li>
-                        <li className="flex items-center hover:bg-gray-100 px-2 py-1 hover:cursor-pointer" onClick={()=>{setShowSubtitle(pv=>!pv)}}>
+                        <li className="flex items-center hover:bg-gray-100 px-2 py-1 hover:cursor-pointer" onClick={()=>{setSubtitle(pv=>{return{...pv, status: !pv.status}})}}>
                             <UnorderedListOutlined />
-                            <span className="ml-2 text-base">{showSubtitle ? "Ocultar legenda" : "Exibir legenda" }</span>
+                            <span className="ml-2 text-base">{subtitle.status ? "Ocultar legenda" : "Exibir legenda" }</span>
                         </li>
                     </ul>
                 </div>

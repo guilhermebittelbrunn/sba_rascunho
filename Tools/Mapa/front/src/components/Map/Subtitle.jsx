@@ -110,9 +110,10 @@ export default function Subtitle({subtitle, setSubtitle, layersVisibles}){
     
 
     useEffect(()=>{
-        const subtitle = document.getElementById('subtitle');
-        const status = subtitle.getAttribute('status');
-        console.log('status', status);
+        console.log('subtitle', subtitle)
+        // const subtitle = document.getElementById('subtitle');
+        // const status = subtitle.getAttribute('status');
+        // console.log('status', status);
     }, [subtitle])
     
     function handleContextMenu(e){
@@ -152,7 +153,7 @@ export default function Subtitle({subtitle, setSubtitle, layersVisibles}){
                 id='subtitle' 
                 status={0}
                 className={`shadow-xl border-[2px] border-gray-400 min-w-[180px] max-w-[280px] z-30 
-                absolute ${(subtitle && layersVisibles.length > 0) ? 'opacity-100' : 'opacity-0'}`}
+                absolute ${(subtitle.status && layersVisibles.length > 0) ? 'opacity-100' : 'opacity-0'}`}
             >
                 <div className="relative">
                     <Table
@@ -185,7 +186,7 @@ function ContextMenu({showContextMenu, subtitle, setSubtitle}){
                 <ul className="flex flex-col gap-2">
                 <li className="flex items-center hover:bg-gray-100 px-2 py-1 hover:cursor-pointer" >
                     <UnorderedListOutlined />
-                    <span className="ml-2 text-base">{showSubtitle ? "Ocultar legenda" : "Exibir legenda" }</span>
+                    <span className="ml-2 text-base">{subtitle ? "Ocultar legenda" : "Exibir legenda" }</span>
                 </li>
             </ul>
             </div>

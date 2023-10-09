@@ -27,10 +27,10 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
     };
 
     function changeSubtitleStatus(){
-        const subtitle = document.getElementById('subtitle');
-        // showSubtitle.position 
+        const subtitleHTML = document.getElementById('subtitle');
         
-        const newStatus = status == 4 ? 0 : +status + 1;
+        // const newStatus = status == 4 ? 0 : +status + 1;
+        const position = subtitle.position == 4 ? 0 : +status + 1
         const pos = [
             [],
             ['', '', '4px', '4px'],
@@ -39,15 +39,15 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
             ['4px', '', '', '4px'],
         ];
         
-        subtitle.setAttribute('status', newStatus);
-
-        if(newStatus === 0) return setShowSubtitle(false);
         
-        setShowSubtitle(true);
-        subtitle.style.top = `${pos[newStatus][0]}`;
-        subtitle.style.right = `${pos[newStatus][1]}`;
-        subtitle.style.bottom = `${pos[newStatus][2]}`;
-        subtitle.style.left = `${pos[newStatus][3]}`;
+        if(position === 0) return setSubtitle({status: false, position: 0});
+        
+        setSubtitle({status: true, position});
+
+        subtitleHTML.style.top = `${pos[position][0]}`;
+        subtitleHTML.style.right = `${pos[position][1]}`;
+        subtitleHTML.style.bottom = `${pos[position][2]}`;
+        subtitleHTML.style.left = `${pos[position][3]}`;
     }
 
     useEffect(()=>{
@@ -141,10 +141,16 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
     },[map])
 
     useEffect(()=>{
-        const subtitle = document.getElementById('subtitle');
-        if(!subtitle)return
-        const status = subtitle.getAttribute('status');
-        subtitle.setAttribute('status', parseInt(status) - 1);
+        const subtitleHTML = document.getElementById('subtitle');
+        if(!subtitleHTML)return
+
+        setSubtitle(pv=>{
+            const position = +pv.position -1
+            return {...pv, position}
+        })
+
+        // subtitle.setAttribute('status', parseInt(status) - 1);
+        // subtitle.setAttribute('status', parseInt(status) - 1);
         changeSubtitleStatus();
     },[layers])
 
