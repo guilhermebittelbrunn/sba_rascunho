@@ -134,7 +134,7 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
                     return createFeatureStyle(feature, {...settings}, null, res);
                 },
                 zIndex: 4,
-                className: `custom_layer${layers.length + 1}`,
+                className: layerName || `Camada ${layers.length + 1}`,
             })
         }
 
@@ -158,8 +158,12 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
 
         if(layerName.trim() !== ''){
             layer.name = layerName;
+            layer.properties.className_ = layerName;
         }
-        layer.data = {...data}
+        layer.data = {...data};
+        
+        //atualiza a tabela
+        setLayers(pv=>[...pv]);
     }
     
     

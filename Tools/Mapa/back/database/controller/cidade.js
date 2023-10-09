@@ -148,7 +148,7 @@ const controller = {
                         LEFT JOIN CADCEP_001 c3 ON c3.CEP = e2.CEP
                         WHERE c3.COD_CID = c2.COD_CID
                         AND p2.CODREP = ${cod_rep}
-                        AND p2.DT_EMISSAO >= '2022-08-01'
+                        AND p2.DT_EMISSAO >= ?
                     ) AS QUANTIDADE_CLIENTES_CIDADE,
                     (
                         SELECT FIRST 1 e.CODCLI
@@ -190,7 +190,7 @@ const controller = {
                 GROUP BY c2.COD_CID, c2.COD_EST, c2.NOME_CID
                 ORDER BY c2.COD_CID;
                 `,
-                    [dateStart, dateEnd]
+                    [dateStart, dateStart, dateEnd]
                 );
                 db.detach();
 
@@ -309,30 +309,43 @@ const controller = {
             const cod_rep = req.params.id;
             const { dateStart, dateEnd } = req.query;
             const db = await attachFB(optionsFB);
+            const brands = JSON.parse(req.query.brands);
+            // const brands = ['01', '02', ' 03'];
+
             try {
+                if (!cod_rep || !brands) throw 'informações incompletas';
                 const rows = await db.queryFB(
                     `
-                SELECT
+               SELECT
                     c2.COD_CID,
                     c2.COD_EST,
                     c2.NOME_CID,
                     MAX(p.DT_EMISSAO) AS ULTIMA_VENDA,
                     COUNT(DISTINCT p.NUMERO) AS QUANTIDADE_VENDAS,
                     (
-                        SELECT COUNT(DISTINCT e2.CODCLI)
-                        FROM PEDIDO_001 p2
+                        SELECT r.NOME FROM REPRESEN_001 r
+                        WHERE r.CODREP = ${cod_rep}
+                    )AS NOME_REPRESENTANTE,
+                    (
+                        SELECT COUNT(DISTINCT e2.CODCLI) FROM PEDIDO_001 p2
                         LEFT JOIN ENTIDADE_001 e2 ON e2.CODCLI = p2.CODCLI
                         LEFT JOIN CADCEP_001 c3 ON c3.CEP = e2.CEP
+                        LEFT JOIN PED_ITEN_001 pi3 ON pi3.NUMERO = p2.NUMERO 
+                        LEFT JOIN PRODUTO_001 p6 ON p6.CODIGO = pi3.CODIGO 
                         WHERE c3.COD_CID = c2.COD_CID
+                        AND p6.MARCA IN (${brands})
                         AND p2.CODREP = ${cod_rep}
-                        AND p2.DT_EMISSAO >= '2022-08-01'
+                        AND p2.DT_EMISSAO >= ?
                     ) AS QUANTIDADE_CLIENTES_CIDADE,
                     (
                         SELECT FIRST 1 e.CODCLI
                         FROM PEDIDO_001 p3
                         LEFT JOIN ENTIDADE_001 e ON e.CODCLI = p3.CODCLI
                         LEFT JOIN CADCEP_001 c4 ON c4.CEP = e.CEP
+                        LEFT JOIN PED_ITEN_001 pi4 ON pi4.NUMERO = p3.NUMERO 
+                        LEFT JOIN PRODUTO_001 p7 ON p7.CODIGO = pi4.CODIGO 
                         WHERE c4.COD_CID = c2.COD_CID
+                        AND p7.MARCA IN (${brands})
                         AND p3.CODREP = ${cod_rep}
                         AND p3.DT_EMISSAO = MAX(p.DT_EMISSAO)
                         ORDER BY p3.DT_EMISSAO
@@ -342,37 +355,45 @@ const controller = {
                         FROM PEDIDO_001 p3
                         LEFT JOIN ENTIDADE_001 e ON e.CODCLI = p3.CODCLI
                         LEFT JOIN CADCEP_001 c4 ON c4.CEP = e.CEP
+                        LEFT JOIN PED_ITEN_001 pi5 ON pi5.NUMERO = p3.NUMERO 
+                        LEFT JOIN PRODUTO_001 p8 ON p8.CODIGO = pi5.CODIGO 
                         WHERE c4.COD_CID = c2.COD_CID
+                        AND p8.MARCA IN (${brands})
                         AND p3.CODREP = ${cod_rep}
                         AND p3.DT_EMISSAO = MAX(p.DT_EMISSAO)
                         ORDER BY p3.DT_EMISSAO
                     ) AS NUMERO_PEDIDO,
                     (
-                        SELECT FIRST 1 e.NOME
+                        SELECT FIRST 1 e3.NOME
                         FROM PEDIDO_001 p4
-                        LEFT JOIN ENTIDADE_001 e ON e.CODCLI = p4.CODCLI
-                        LEFT JOIN CADCEP_001 c5 ON c5.CEP = e.CEP
-                        WHERE c5.COD_CID = c2.COD_CID
+                        LEFT JOIN ENTIDADE_001 e3 ON e3.CODCLI = p4.CODCLI 
+                        LEFT JOIN CADCEP_001 c5 ON c5.CEP = e3.CEP 
+                        LEFT JOIN PED_ITEN_001 pi6 ON pi6.NUMERO = p4.NUMERO 
+                        LEFT JOIN PRODUTO_001 p9 ON p9.CODIGO = pi6.CODIGO 
+                        WHERE c5.COD_CID = c2.COD_CID 
+                        AND p9.MARCA IN (${brands})
                         AND p4.CODREP = ${cod_rep}
                         AND p4.DT_EMISSAO = MAX(p.DT_EMISSAO)
-                        ORDER BY p4.DT_EMISSAO
+                        ORDER BY p4.DT_EMISSAO 
                     ) AS NOME_CLIENTE
                 FROM PEDIDO_001 p
                 LEFT JOIN ENTIDADE_001 e ON e.CODCLI = p.CODCLI
                 LEFT JOIN CADCEP_001 c ON c.CEP = e.CEP
                 LEFT JOIN CIDADE_001 c2 ON c2.COD_CID = c.COD_CID
+                LEFT JOIN PED_ITEN_001 pi2 ON pi2.NUMERO = p.NUMERO 
+                LEFT JOIN PRODUTO_001 p5 ON p5.CODIGO = pi2.CODIGO 
                 WHERE p.CODREP = ${cod_rep}
+                AND p5.MARCA IN (${brands})
                 AND p.DT_EMISSAO >= ?
                 AND p.DT_EMISSAO <= ?
                 GROUP BY c2.COD_CID, c2.COD_EST, c2.NOME_CID
                 ORDER BY c2.COD_CID;
                 `,
-                    [dateStart, dateEnd]
+                    [dateStart, dateStart, dateEnd]
                 );
                 db.detach();
 
                 const cities_codes = rows.map((row) => row.COD_CID);
-                // console.log(cities_codes);
                 const cities = await Cidade.findAll({
                     raw: true,
                     attributes: ['GEO_JSON'],

@@ -17,7 +17,7 @@ export default function App() {
     const [isFullScreen ,setIsFullscreen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = useState(false); 
-
+    const [subtitle, setSubtitle] = useState({status: false, position: 0});
 
     function onSearch(value){
         const {dateStart, dateEnd, rc} = value
@@ -72,6 +72,7 @@ export default function App() {
                           setOpen={setOpen} handleFullScreenAction={handleFullScreenAction} 
                           setContextMenu={setContextMenu} isFullScreen={isFullScreen}
                           handleContext={handleContext} handleClick={handleClick}
+                          subtitle={subtitle} setSubtitle={setSubtitle}
                         />
                         <Drawer open={open} setOpen={setOpen}/>
                         
@@ -81,6 +82,8 @@ export default function App() {
                         contextMenu={contextMenu}
                         setContextMenu={setContextMenu} 
                         isFullScreen={isFullScreen}
+                        subtitle={subtitle}
+                        setSubtitle={setSubtitle}
                       />        
                   
               </main>

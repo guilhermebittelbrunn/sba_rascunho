@@ -253,10 +253,8 @@ export default function Drawer({open, setOpen}){
                       <div>
                           <h3 className='text-sm font-bold mb-1'>Camadas Matriz</h3>
                           <div className='flex flex-col gap-1'>
-                            {layers.map(layer=>{
-                              if(layer.value.slice(0,6) === 'custom'){
-                                return
-                              }
+                            {layers.map((layer, k)=>{
+                              if(k > 2) return
                               return(
                                     <div key={layer.key} className='flex w-full justify-between'>
                                       <span className='text-sm'>{layer.name}</span>

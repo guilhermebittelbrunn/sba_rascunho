@@ -118,20 +118,20 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
         const pdf = new jsPDF(data.orientation === 'Paisagem' ? 'landscape' : 'portrait', 'mm', dim);
       
 
+        if(data.overflow === 'on'){
+            layers.forEach(layer=>{
+                if(layer.properties.className_ === "baseLayer")return
+                const features = layer.properties.getSource().getFeatures();
+                features.forEach(feature=>{
+                    const newStyle = createFeatureStyle(feature, {...settings, overflow: true}, null);
+                    feature.setStyle(newStyle);
+                })
+            });
+        }
+        
         
         setIsLoading(true);
         map.once('rendercomplete', async function () {
-            if(data.overflow === 'on'){
-                layers.forEach(layer=>{
-                    if(layer.properties.className_ === "baseLayer")return
-                    const features = layer.properties.getSource().getFeatures();
-                    features.forEach(feature=>{
-                        const newStyle = createFeatureStyle(feature, {...settings, overflow: true}, null);
-                        feature.setStyle(newStyle);
-                    })
-                });
-            }
-            
             try{
                 const mapCanvas = document.createElement('canvas');
                 const mapContext = mapCanvas.getContext('2d');

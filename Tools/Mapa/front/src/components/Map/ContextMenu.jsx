@@ -1,12 +1,14 @@
 import { useContext } from "react";
 import { MapaContext } from "../../contexts/MapaContext";
-import { ZoomInOutlined, ZoomOutOutlined, InfoCircleOutlined, FormOutlined, RightOutlined } from '@ant-design/icons'
+import { ZoomInOutlined, ZoomOutOutlined, InfoCircleOutlined, FormOutlined, RightOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import moment from "moment";
 import numeral from 'numeral';
 
-export default function ContextMenu({contextMenu, setContextMenu}){
+export default function ContextMenu({contextMenu, setContextMenu, showSubtitle, setShowSubtitle}){
     const { map, settings, setCountSelectedFeatures, createFeatureStyle } = useContext(MapaContext);
-    const { properties } = contextMenu;
+    const { properties, layers} = contextMenu;
+
+    if(!layers)return
 
     function handleSelect(){
         if(contextMenu.pixel){
@@ -68,22 +70,26 @@ export default function ContextMenu({contextMenu, setContextMenu}){
                 id="contextMenu" 
                 onContextMenu={(e)=>{e.preventDefault()}}
                 style={{top: contextMenu.pageY + 'px', left: contextMenu.pageX + 'px'}}
-                className={`w-[175px] p-2 bg-white shadow-xl flex flex-col gap-2 rounded-lg absolute
+                className={`w-[190px] p-2 z-50 bg-white shadow-xl flex flex-col gap-2 rounded-lg absolute
                  ${(contextMenu.status && properties.NM_MUN) || 'hidden'}`} 
             >
                 <div>
                     <ul className="flex flex-col gap-2">
                         <li className="flex items-center hover:bg-gray-100 px-2 py-1 hover:cursor-pointer" onClick={(e)=>{handleSelect(e)}}>
                             <FormOutlined />
-                            <span className="ml-2 text-base">Select</span>
+                            <span className="ml-2 text-base">Selecionar</span>
                         </li>
                         <li className="flex items-center hover:bg-gray-100 px-2 py-1 hover:cursor-pointer" onClick={()=>{handleZoom(+.5)}}>
                             <ZoomInOutlined />
-                            <span className="ml-2 text-base">Zoom in</span>
+                            <span className="ml-2 text-base">Aproximar</span>
                         </li>
                         <li className="flex items-center hover:bg-gray-100 px-2 py-1 hover:cursor-pointer" onClick={()=>{handleZoom(-.5)}}>
                             <ZoomOutOutlined />
-                            <span className="ml-2 text-base">Zoom out</span>
+                            <span className="ml-2 text-base">Afastar</span>
+                        </li>
+                        <li className="flex items-center hover:bg-gray-100 px-2 py-1 hover:cursor-pointer" onClick={()=>{setShowSubtitle(pv=>!pv)}}>
+                            <UnorderedListOutlined />
+                            <span className="ml-2 text-base">{showSubtitle ? "Ocultar legenda" : "Exibir legenda" }</span>
                         </li>
                     </ul>
                 </div>
@@ -122,17 +128,21 @@ export default function ContextMenu({contextMenu, setContextMenu}){
                                     <li 
                                         key={k} className="relative flex items-center  
                                         justify-between hover:bg-gray-100 px-2 py-1" 
-                                        onMouseOut={()=>{hiddenSubMenu(`sub-menu-sales-rep-${layer.rc}`)}}
-                                        onMouseOver={()=>{showSubMenu(`sub-menu-sales-rep-${layer.rc}`)}}
+                                        onMouseOut={()=>{hiddenSubMenu(`sub-menu-sales-rep-${layer.rc}-${layer.layer}`)}}
+                                        onMouseOver={()=>{showSubMenu(`sub-menu-sales-rep-${layer.rc}-${layer.layer}`)}}
                                     >
                                         <div>
                                             <InfoCircleOutlined />
-                                            <span className="ml-2 text-base">Venda {String(layer.rc).padStart(4, 0)}</span>
+                                            <span 
+                                                className="ml-2 text-base">{layer.layer === 'stateLayer' ? 
+                                                `Vendas ${String(layer.rc).padStart(4, '0')}` 
+                                                : layer.layer}
+                                            </span>
                                         </div>
                                         <RightOutlined className="text-sm"/>
 
                                         <ul 
-                                            id={`sub-menu-sales-rep-${layer.rc}`} className="absolute w-[240px] 
+                                            id={`sub-menu-sales-rep-${layer.rc}-${layer.layer}`} className="absolute w-[240px] 
                                             hidden p-3 bg-white shadow-xl top-[-35px] rounded-xl flex-col"
                                         >
                                             
