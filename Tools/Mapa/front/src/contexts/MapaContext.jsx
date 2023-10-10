@@ -10,6 +10,7 @@ import Select from 'ol/interaction/Select.js';
 import useFetch from '../hooks/useFetch';
 import json from '../../geojson'
 import numeral from 'numeral';
+import dayjs from 'dayjs'
 
 function createAARotatedPattern(ang, color, resolution=1200) {
     const can = document.createElement('canvas');
@@ -66,10 +67,9 @@ function subtitleCategory(label, option){
     let res;
     switch(option){
         case 'ULTIMA_VENDA':
-            res = moment(label).format('DD/MM/YYYY');
+            res = dayjs(label).format('DD/MM/YYYY');
             break
         case 'AREA_KM2':
-            
             res = numeral(label).format(0.0).replace(',', '.') + " km²";
             break
         default: 

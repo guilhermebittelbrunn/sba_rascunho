@@ -17,9 +17,7 @@ export default function InputDate({initialDate, type, field, isLoading, classNam
 
     function handleInputChange(e){
         setDate('');
-        const {value} = e.target
-        const text = value
-        if(text[text.length - 1] !== 't' && text[text.length - 1] !== '+' && text[text.length - 1] !== '-') setInputValue(value)
+        setInputValue(e.target.value)
     }
 
     function handleBlurInput(){
@@ -31,23 +29,6 @@ export default function InputDate({initialDate, type, field, isLoading, classNam
             return setDate(date);
         }
         return message.error('Data inválida')
-    }
-
-    function pressKeyTonInput(e){
-        const {key} = e;
-        switch (key){
-            case 't':
-                setInputValue(dayjs().format('DD/MM/YYYY'))
-                break
-            case '+':
-                const datePlus = moment(inputValue, 'DD/MM/YYYY').add(1, 'day');
-                datePlus.isValid() && setInputValue(datePlus.format('DD/MM/YYYY'));
-                break
-            case '-':
-                const dateMinus = moment(inputValue, 'DD/MM/YYYY').add(-1, 'day');
-                dateMinus.isValid() && setInputValue(dateMinus.format('DD/MM/YYYY'));
-                break
-        }
     }
 
     useEffect(()=>{
@@ -67,11 +48,12 @@ export default function InputDate({initialDate, type, field, isLoading, classNam
             <Input 
                 disabled={isLoading} dsize="middle" defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue }
                 className={`w-48 rounded-none max-md:w-[400px] ${className}`} onChange={(e)=>{handleInputChange(e);}} 
-                value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue } onKeyDown={pressKeyTonInput}
+                value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue }
                 onBlur={handleBlurInput}
             />
             <DatePicker
                 disabled={isLoading}
+                placement="bottomRight"
                 open={!isLoading && open}
                 style={{ visibility: "hidden", width: 0, marginRight: '-28px'}}
                 onOpenChange={(open) => {setOpen(open)}}
@@ -79,7 +61,7 @@ export default function InputDate({initialDate, type, field, isLoading, classNam
                 value={date}
             />
    
-            <button className={`py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600 ${isLoading && 'cursor-not-allowed'}`} onClick={() =>{!isLoading && setOpen(!open)}}>
+            <button className={`py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600 ${isLoading && 'cursor-not-allowed'}`} onClick={()=>{setOpen(pv=>!pv)}}>
                 <CalendarOutlined/>
             </button>
         

@@ -20,9 +20,12 @@ export default function App() {
     const [subtitle, setSubtitle] = useState({status: false, position: 0});
 
     function onSearch(value){
-        const {dateStart, dateEnd, rc} = value
+        const {dateStart, dateEnd, rc} = value;
+        if(dateStart > dateEnd){
+          return message.error('Data inicial maior que a data final')
+        }
         handleClick();
-        setUrl({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc});
+        setUrl({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc: String(rc).padStart(4,0)});
     }
 
     async function handleFullScreenAction(){

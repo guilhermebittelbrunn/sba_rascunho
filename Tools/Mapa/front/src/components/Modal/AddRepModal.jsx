@@ -11,6 +11,7 @@ import {Vector as vector} from 'ol/layer'
 import {Vector} from 'ol/source';
 import {GeoJSON} from 'ol/format'
 import InputDate from '../Form/InputDate'
+import Teste from '../Form/Teste'
 
 const CheckBoxGroup = Checkbox.Group
 
@@ -48,17 +49,16 @@ export default function AddRepModal({isModalOpen, disableModal}){
 
 
     async function handleOk(data){
-        console.log('data',data);
+        const {dateStart, dateEnd} = data;
+        if(dateStart > dateEnd){
+            return message.error('Data inicial maior que a final');
+        }
+
         const url = {
             rc: data.rc,
             dateStart: data.dateStart.format('YYYY-MM-DD'),    
             dateEnd: data.dateEnd.format('YYYY-MM-DD'),    
         }
-
-        // if(rc === url.rc){
-        //     message.warning('Informe um representante diferente do já buscado');
-        //     return
-        // }
 
         const fillColor = generateRandomColor();
 
@@ -151,7 +151,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
                                 render={({field})=>{
                                     return(
                                         <Input 
-                                            {...field} size="middle" required={true} placeholder='Código do representante' 
+                                            {...field} size="middle" placeholder='Código do representante' 
                                             name='rc' onChange={(e)=>{field.onChange(e.target.value)}} maxLength={4}
                                             allowClear={false} className="w-full outline-none"
                                         />
@@ -183,6 +183,12 @@ export default function AddRepModal({isModalOpen, disableModal}){
                             > 
                             </Controller>
                         </div>    
+
+                        <div className="flex flex-col"> 
+                            <h3 className="text-sm font-semibold">Marcas</h3>
+                            <Teste name="dataEmissao" control={control} label="Data início"></Teste>
+                        </div>    
+                        
 
                         <div className='w-full flex flex-col justify-center items-center mt-2'>
                             {isLoading ?
