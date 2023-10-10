@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import React, { useState }  from 'react';
+import React, { useEffect, useState }  from 'react';
 import dayjs from "dayjs";
 import { useGeographic } from 'ol/proj';
 import Map from "./components/Map/Map"
@@ -9,7 +9,7 @@ import MapaProvider from "./contexts/MapaContext";
 import Form from "./components/Form/Form";
 
 export default function App() {
-
+    
     useGeographic();
 
     const [url, setUrl] = useState('');
@@ -49,43 +49,65 @@ export default function App() {
         });
     }
 
-    function handleClick(){
-      if(contextMenu.status){
-        // const contextMenuHTML = document.getElementById('contextMenu');
-        // contextMenuHTML.style.display = 'none';
-        setContextMenu((pv)=> {
-            return {...pv, status: false, pageX: 0, pageY: 0}
-        })
-      }
+    function handleClick(e){
+        const contextMenuHTML = document.getElementById('contextMenu');
+        if(contextMenuHTML && e.target){
+          if(e.target !== contextMenuHTML){
+            setContextMenu((pv)=> {
+                return {...pv, status: false, pageX: 0, pageY: 0}
+            })
+          }
+        }
     }
 
+    useEffect(()=>{
+
+      const subtitleHTML = document.getElementById('subtitle');
+      
+      if(subtitleHTML){
+          const { position } = subtitle
+          const pos = [
+                [],
+                ['', '', '4px', '4px'],
+                ['', '4px', '4px', ''],
+                ['4px', '4px', '', ''],
+                ['4px', '', '', '4px'],
+            ];
+
+          subtitleHTML.style.top = `${pos[position][0]}`;
+          subtitleHTML.style.right = `${pos[position][1]}`;
+          subtitleHTML.style.bottom = `${pos[position][2]}`;
+          subtitleHTML.style.left = `${pos[position][3]}`;
+      }
+    }, [subtitle])
+
     return(
-      <div>
+      <div onClick={handleClick}>
         <Form onSearch={onSearch} isLoading={isLoading}/>
         {url && 
             <MapaProvider url={url} setIsLoading={setIsLoading}>
               <main id="main_content" className={`m-auto w-[95%] ${isFullScreen ? 'absolute top-0 p-0 left-0 w-screen h-screen' : 'p-4'}`}> 
                       
-                      <div className={`w-full relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
+                  <div className={`w-full relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
 
-                        <Map 
-                          setOpen={setOpen} handleFullScreenAction={handleFullScreenAction} 
-                          setContextMenu={setContextMenu} isFullScreen={isFullScreen}
-                          handleContext={handleContext} handleClick={handleClick}
-                          subtitle={subtitle} setSubtitle={setSubtitle}
-                        />
-                        <Drawer open={open} setOpen={setOpen}/>
-                        
-                      </div>
-              
-                      <ContextMenu 
-                        contextMenu={contextMenu}
+                      <Map 
+                        setOpen={setOpen} handleFullScreenAction={handleFullScreenAction} 
                         setContextMenu={setContextMenu} 
-                        isFullScreen={isFullScreen}
-                        subtitle={subtitle}
-                        setSubtitle={setSubtitle}
-                      />        
-                  
+                        isFullScreen={isFullScreen} 
+                        handleContext={handleContext} 
+                        subtitle={subtitle} setSubtitle={setSubtitle}
+                      />
+                      <Drawer open={open} setOpen={setOpen}/>
+                    
+                    </div>
+          
+                  <ContextMenu 
+                    contextMenu={contextMenu}
+                    setContextMenu={setContextMenu} 
+                    isFullScreen={isFullScreen}
+                    subtitle={subtitle}
+                    setSubtitle={setSubtitle}
+                  />        
               </main>
             </MapaProvider>
         }

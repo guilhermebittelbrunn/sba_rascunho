@@ -1,5 +1,5 @@
 import { useEffect, useRef, useContext, useState } from 'react';
-import { Spin, Table } from 'antd';
+import { Spin } from 'antd';
 import { UnorderedListOutlined, SettingOutlined, SelectOutlined, FullscreenExitOutlined, PlusOutlined, FullscreenOutlined, UsergroupAddOutlined} from '@ant-design/icons';
 import { MapaContext } from '../../contexts/MapaContext';
 import ErrorModal from '../Modal/ErrorModal';
@@ -7,14 +7,20 @@ import LayerModal from '../Modal/LayerModal';
 import AddRepModal from '../Modal/AddRepModal';
 import Subtitle from './Subtitle';
 
-export default function MapPage({handleClick, handleFullScreenAction, isFullScreen, setContextMenu, setOpen, subtitle, setSubtitle}){
+export default function MapPage({ handleFullScreenAction, isFullScreen, setContextMenu, setOpen, subtitle, setSubtitle}){
 
-    const {map, loading, error, layers, settings, setSettings, createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures} = useContext(MapaContext);
-    const { interaction } = settings
+    const [showSubtitleContextMenu, setShowSubtitleContextMenu] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState({layerModal: false, addRepModal: false});
-    const layersVisibles = layers.slice(2).reverse().filter(lyr=>{return lyr.status})
-    
     const map1 = useRef(null);
+    
+    const {map, loading, error, layers, settings, setSettings, 
+        createFeatureStyle, countSelectedFeatures,
+        setCountSelectedFeatures} = useContext(MapaContext);
+        
+    const layersVisibles = layers.slice(2).reverse().filter(lyr=>{return lyr.status})
+    const { interaction } = settings
+    
+
 
     function showModal(modalName){
         setIsModalOpen((pv)=>{
@@ -27,27 +33,18 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
     };
 
     function changeSubtitleStatus(){
-        const subtitleHTML = document.getElementById('subtitle');
-        
-        // const newStatus = status == 4 ? 0 : +status + 1;
-        const position = subtitle.position == 4 ? 0 : +status + 1
-        const pos = [
-            [],
-            ['', '', '4px', '4px'],
-            ['', '4px', '4px', ''],
-            ['4px', '4px', '', ''],
-            ['4px', '', '', '4px'],
-        ];
-        
-        
-        if(position === 0) return setSubtitle({status: false, position: 0});
-        
-        setSubtitle({status: true, position});
+        const position = subtitle.position === 4 ? 0 : +subtitle.position + 1
+        setSubtitle({status: position != 0, position});
+    }
 
-        subtitleHTML.style.top = `${pos[position][0]}`;
-        subtitleHTML.style.right = `${pos[position][1]}`;
-        subtitleHTML.style.bottom = `${pos[position][2]}`;
-        subtitleHTML.style.left = `${pos[position][3]}`;
+    function handleClickOutContextMenu(e){
+        if(showSubtitleContextMenu){
+            const contextMenu = document.getElementById('subtitle-contextmenu');
+            const {target} = e;
+            if(target !== contextMenu){
+                setShowSubtitleContextMenu(false);
+            }
+        }
     }
 
     useEffect(()=>{
@@ -63,8 +60,9 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
 
     useEffect(()=>{
         if(!map)return
-
+        
             map.addEventListener('contextmenu', (e)=>{
+                setShowSubtitleContextMenu(false);
                 e.preventDefault();
                 const pixel = e.pixel;
                 const listLayers = [];
@@ -131,28 +129,12 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
                             return feature.setStyle(createFeatureStyle(feature, {...styleConfig, zIndex: 100, fillColor: 'rgb(255,238,0)'}));
                         }
                         setCountSelectedFeatures(pv=>pv-1);
-                        // console.log('map', countSelectedFeatures)
                         feature.setStyle(createFeatureStyle(feature, {...settings}))
                     }
                 })
             }
         });
-
     },[map])
-
-    useEffect(()=>{
-        const subtitleHTML = document.getElementById('subtitle');
-        if(!subtitleHTML)return
-
-        setSubtitle(pv=>{
-            const position = +pv.position -1
-            return {...pv, position}
-        })
-
-        // subtitle.setAttribute('status', parseInt(status) - 1);
-        // subtitle.setAttribute('status', parseInt(status) - 1);
-        changeSubtitleStatus();
-    },[layers])
 
   return (
    
@@ -222,9 +204,16 @@ export default function MapPage({handleClick, handleFullScreenAction, isFullScre
                         
                         <AddRepModal isModalOpen={isModalOpen.addRepModal} disableModal={disableModal}/>
                         <LayerModal  isModalOpen={isModalOpen.layerModal} disableModal={disableModal}/>
-                        <Subtitle subtitle={subtitle} setSubtitle={setSubtitle} layersVisibles={layersVisibles}/>
                         
-                        <div id='map' onMouseDown={handleClick} className='bg-white absolute top-0 bottom-0 w-full h-full'/>
+                        <Subtitle
+                            showSubtitleContextMenu={showSubtitleContextMenu}
+                            setShowSubtitleContextMenu={setShowSubtitleContextMenu}
+                            subtitle={subtitle} setSubtitle={setSubtitle}
+                            layersVisibles={layersVisibles}
+                            setContextMenu={setContextMenu}
+                        />
+                        
+                        <div id='map' onClick={handleClickOutContextMenu} className='bg-white absolute top-0 bottom-0 w-full h-full'/>
                     </>
                     }
                 </>

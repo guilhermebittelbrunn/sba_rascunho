@@ -8,14 +8,6 @@ import RadioInput from '../Form/RadioInput';
 import html2canvas from 'html2canvas';
 
 
-function Teste(){
-    return(
-        <>
-            <h3>Teste</h3>
-        </>
-    )
-}
-
 const sizeDataSet = [
     {
         type: 'pdf',

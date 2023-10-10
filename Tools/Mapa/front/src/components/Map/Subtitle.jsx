@@ -1,4 +1,4 @@
-import { Table, Input, Radio, Space } from "antd"
+import { Table, Radio, Space } from "antd"
 import { UnorderedListOutlined } from '@ant-design/icons'
 import React, { useEffect, useState } from "react"
 
@@ -105,51 +105,29 @@ const columns = [
     },
 ]
 
-export default function Subtitle({subtitle, setSubtitle, layersVisibles}){
-    const [showContextMenu, setShowContextMenu] = useState(false);
-    
+export default function Subtitle({subtitle, setSubtitle, layersVisibles, setContextMenu, showSubtitleContextMenu, setShowSubtitleContextMenu}){
 
-    useEffect(()=>{
-        console.log('subtitle', subtitle)
-        // const subtitle = document.getElementById('subtitle');
-        // const status = subtitle.getAttribute('status');
-        // console.log('status', status);
-    }, [subtitle])
-    
     function handleContextMenu(e){
         e.preventDefault();
-        setShowContextMenu(pv=>!pv);
-
-        if(showContextMenu){
-            const contextmenu = document.getElementById('subtitle-contextmenu');
-            const subtitle = document.getElementById('subtitle');
-            const status = subtitle.getAttribute('status');
-            const contextmenuWitdh = contextmenu.offsetWidth;
-            const contextmenuHeight = contextmenu.offsetHeight
-            
-            const mapHTML = document.getElementById('map');
-            // const mapWidth = mapHTML.offsetWidth; 
-            // const mapHeight = mapHTML.offsetHeight;
-    
-             const pos = [
-                [],
-                [`-${contextmenuHeight}px`, `-${contextmenuHeight}px`, '', ''],
-                [`-${contextmenuHeight}px`, '', '', `-${contextmenuHeight}px`],
-                ['', '', `-${contextmenuHeight}px`, `-${contextmenuHeight}px`],
-                ['', `-${contextmenuHeight}px`, `-${contextmenuHeight}px`, ''],
-            ];
-            console.log(contextmenu);
-            
-            contextmenu.style.top = `${pos[+status][0]}`;
-            contextmenu.style.right = `${pos[+status][1]}`;
-            contextmenu.style.bottom = `${pos[+status][2]}`;
-            contextmenu.style.left = `${pos[+status][3]}`;
+        setContextMenu(pv=>{return{...pv, status:false}});
+        setShowSubtitleContextMenu(pv=>!pv);
+        const contextMenu = document.getElementById('subtitle-contextmenu');
+        
+        if(contextMenu){
+            if(showSubtitleContextMenu){
+                return contextMenu.style.display = 'flex';
+            }   
+            return contextMenu.style.display = 'none';
         }
     }
+
+    useEffect(()=>{
+        !subtitle.status && setShowSubtitleContextMenu(false);
+    },[subtitle])
      
     return(
-         <div
-                onContextMenu={e=>handleContextMenu(e)} 
+            <div
+                onContextMenu={handleContextMenu} 
                 id='subtitle' 
                 status={0}
                 className={`shadow-xl border-[2px] border-gray-400 min-w-[180px] max-w-[280px] z-30 
@@ -166,38 +144,77 @@ export default function Subtitle({subtitle, setSubtitle, layersVisibles}){
                         showHeader={false}
                         rowClassName='flex items-center'
                     />
-                <ContextMenu showContextMenu={showContextMenu} subtitle={subtitle} setSubtitle={setSubtitle}/>                      
+                <ContextMenu
+                    showSubtitleContextMenu={showSubtitleContextMenu} setShowSubtitleContextMenu={setShowSubtitleContextMenu}
+                    subtitle={subtitle} setSubtitle={setSubtitle}
+                />                      
                 </div>   
             </div>
     )
 }
 
 
-function ContextMenu({showContextMenu, subtitle, setSubtitle}){
-    const [value, setValue] = useState();
-    const onChange = (e) => {
-        console.log('radio checked', e.target.value);
-        setValue(e.target.value);
-    };
+function ContextMenu({showSubtitleContextMenu, setShowSubtitleContextMenu, subtitle, setSubtitle}){
+    const { status, position } = subtitle
+
+    useEffect(()=>{
+        const { status, position } = subtitle;
+
+        if(status){
+            const contextMenu = document.getElementById('subtitle-contextmenu');
+            if(contextMenu){
+                const contextmenuHeight = contextMenu.offsetHeight * 0.9;
+                const pos = [
+                    [],
+                    [`-${contextmenuHeight}px`, `-${contextmenuHeight}px`, '', ''],
+                    [`-${contextmenuHeight}px`, '', '', `-${contextmenuHeight}px`],
+                    ['', '', `-${contextmenuHeight}px`, `-${contextmenuHeight}px`],
+                    ['', `-${contextmenuHeight}px`, `-${contextmenuHeight}px`, ''],
+                ];
+                contextMenu.style.top = `${pos[+position][0]}`;
+                contextMenu.style.right = `${pos[+position][1]}`;
+                contextMenu.style.bottom = `${pos[+position][2]}`;
+                contextMenu.style.left = `${pos[+position][3]}`;
+            }
+        }
+    }, [subtitle, showSubtitleContextMenu])
+ 
+    function handleClick(){
+        setSubtitle(pv=>{return{...pv, status: !pv.status}});
+        setShowSubtitleContextMenu(false);
+    }
+
+    function handleChange(e){
+        const { value } = e.target;
+        
+        setSubtitle(pv=>{
+            return {...pv, position: value};
+        });
+    }
     
+    if(!(showSubtitleContextMenu && status))return
     return (
-        <div id='subtitle-contextmenu' className={`w-[190px] p-2 z-50 bg-white shadow-xl flex flex-col gap-2 rounded-lg absolute ${showContextMenu ? 'opacity-95' : 'opacity-0'}`}>
+        <div 
+            id='subtitle-contextmenu' 
+            className={`w-[190px] p-2 z-50 bg-white shadow-xl flex flex-col 
+            gap-2 rounded-lg absolute`}
+        >
             <div>
                 <ul className="flex flex-col gap-2">
-                <li className="flex items-center hover:bg-gray-100 px-2 py-1 hover:cursor-pointer" >
+                <li className="flex items-center hover:bg-gray-100 px-2 py-1 hover:cursor-pointer" onClick={handleClick}>
                     <UnorderedListOutlined />
-                    <span className="ml-2 text-base">{subtitle ? "Ocultar legenda" : "Exibir legenda" }</span>
+                    <span className="ml-2 text-base">{status ? "Ocultar legenda" : "Exibir legenda" }</span>
                 </li>
             </ul>
             </div>
             <div className="border-t-[1px] border-gray-400 p-1">
                 <span className="font-semibold">Posição</span>
-                <Radio.Group onChange={onChange} value={value}>
+                <Radio.Group onChange={handleChange} value={position}>
                     <Space direction="vertical">
                         <Radio className="text-base w-full hover:bg-gray-100 " value={4}>Superior esquerdo</Radio>
                         <Radio className="text-base w-full hover:bg-gray-100 " value={3}>Superior direito</Radio>
-                        <Radio className="text-base w-full hover:bg-gray-100 " value={2}>Inferior esquerdo</Radio>
-                        <Radio className="text-base w-full hover:bg-gray-100 " value={1}>Inferior direito</Radio>
+                        <Radio className="text-base w-full hover:bg-gray-100 " value={1}>Inferior esquerdo</Radio>
+                        <Radio className="text-base w-full hover:bg-gray-100 " value={2}>Inferior direito</Radio>
                     </Space>
                 </Radio.Group>
             </div>
