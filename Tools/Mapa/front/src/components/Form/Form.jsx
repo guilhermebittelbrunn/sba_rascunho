@@ -14,7 +14,12 @@ export default function Form({onSearch, isLoading}){
                 <h3 className="text-sm font-semibold">Data inicial</h3>
                 <Controller
                   render={({field})=>{
-                    return <InputDate isLoading={isLoading} className={'max-md:w-full'} initialDate={dayjs().add(-1, 'y')} type={"start"} field={field}/>
+                    return <InputDate 
+                              isLoading={isLoading} 
+                              className={'max-md:w-full'} 
+                              initialDate={dayjs().add(-1, 'y')} 
+                              isStartDate={true} field={field}
+                            />
                   }}
                   name="dateStart"
                   control={control}
@@ -25,7 +30,12 @@ export default function Form({onSearch, isLoading}){
                 <h3 className="text-sm font-semibold">Data final</h3>
                 <Controller
                   render={({field})=>{
-                    return <InputDate isLoading={isLoading} initialDate={dayjs()} className={'max-md:w-full'}  field={field}/>
+                    return <InputDate 
+                            isLoading={isLoading} 
+                            initialDate={dayjs()} 
+                            className={'max-md:w-full'}  
+                            field={field}
+                          />
                   }}
                   name='dateEnd'
                   control={control}
@@ -36,7 +46,11 @@ export default function Form({onSearch, isLoading}){
                 <h3 className="text-sm font-semibold">Representante</h3>
                 <Controller
                     render={({field, fieldState})=>{
-                      return <Search disabled={isLoading} {...field} size="middle" placeholder='Código do representante' name='rc' onChange={(e)=>{field.onChange(e.target.value)}} onSearch={handleSubmit(onSearch)} maxLength={4} allowClear={false} className="w-[240px] outline-none max-md:w-full"/>
+                      return <Search disabled={isLoading} {...field} 
+                      size="middle" placeholder='Código do representante'
+                      name='rc' onChange={(e)=>{field.onChange(e.target.value)}}
+                      onSearch={handleSubmit(onSearch)} maxLength={4} allowClear={false}
+                      className="w-[240px] outline-none max-md:w-full"/>
                     }}
                     name="rc"
                     control={control}

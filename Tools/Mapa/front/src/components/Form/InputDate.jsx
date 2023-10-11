@@ -4,15 +4,14 @@ import { useState, useEffect } from "react";
 import { Input, DatePicker, message } from "antd";
 import { CalendarOutlined } from '@ant-design/icons'
 
-
-export default function InputDate({initialDate, type, field, isLoading, className}){
+export default function InputDate({initialDate, field, isLoading, className, isStartDate}){
     const dateFormat = 'DD/MM/YYYY';
     const [open, setOpen] = useState(false);
-    const [date, setDate] = useState(initialDate);
+    const [date, setDate] = useState(initialDate || dayjs().add(-1, 'y'));
     const [inputValue, setInputValue] = useState(dayjs(initialDate, dateFormat).format(dateFormat));
 
-    function handleClickDataPicker(e){
-        setDate(dayjs(e['$d']));
+    function handleChangeDataPicker(e){
+        setDate(dayjs(e));
     } 
 
     function handleInputChange(e){
@@ -21,26 +20,22 @@ export default function InputDate({initialDate, type, field, isLoading, classNam
     }
 
     function handleBlurInput(){
-
         const dateM =  moment(inputValue, dateFormat).format(dateFormat);
         const date =  dayjs(dateM, 'DD/MM/YYYY', true);
 
-        if(date.isValid()){
-            return setDate(date);
+        if(!date.isValid()){
+            return message.error('Data inválida')
         }
-        return message.error('Data inválida')
+        setDate(date);
     }
 
     useEffect(()=>{
-        const date1 = new Date(date);
-        const date2 = new Date();
-        if(type === 'start'){
-            date1 > date2 && message.error('Data inicial maior que a data atual');
-            field.onChange(date)
-        } 
-        if(type !== 'start') field.onChange(date);
+        if(isStartDate){ 
+            const currentDate = new Date();
+            new Date(date) > currentDate && message.error('Data inicial maior que a data atual');
+        }
+        field.onChange(date);
     },[date])
-
 
     return(
         <div className={`flex gap-1 ${isLoading && 'cursor-not-allowed'}`}>  
@@ -54,15 +49,15 @@ export default function InputDate({initialDate, type, field, isLoading, classNam
             <DatePicker
                 disabled={isLoading}
                 placement="bottomRight"
-                open={!isLoading && open}
+                open={open}
                 style={{ visibility: "hidden", width: 0, marginRight: '-28px'}}
                 onOpenChange={(open) => {setOpen(open)}}
-                onChange={(v)=>{handleClickDataPicker(v)}}
+                onChange={(v)=>{handleChangeDataPicker(v)}}
                 value={date}
             />
    
-            <button className={`py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600 ${isLoading && 'cursor-not-allowed'}`} onClick={()=>{setOpen(pv=>!pv)}}>
-                <CalendarOutlined/>
+            <button id="datePicker" className={`py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600 ${isLoading && 'cursor-not-allowed'}`} onClick={()=>{setOpen(pv=>!pv)}}>
+                <CalendarOutlined />
             </button>
         
         </div>

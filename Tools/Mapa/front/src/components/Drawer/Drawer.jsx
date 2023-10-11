@@ -85,7 +85,7 @@ const optionsSubtitle = [
 
 export default function Drawer({open, setOpen}){
 
-    const { map, layers, setLayers, settings, setSettings, createFeatureStyle } = useContext(MapaContext);
+    const { map, url, layers, setLayers, settings, setSettings, createFeatureStyle } = useContext(MapaContext);
     
     const {fontSize, subTitle, selectedOption} = settings;
     const [isModalOpen, setIsModalOpen] = useState({exportPDFModal: false,  reportModal: false});
@@ -106,14 +106,14 @@ export default function Drawer({open, setOpen}){
       }
 
       const centerOfFeature = feature.getGeometry().getInteriorPoint().getCoordinates()
-      feature.setStyle(createFeatureStyle(feature, {...settings, strokeColor: 'rgb(255,238,0)', strokeWidth: 4}));
+      feature.setStyle(createFeatureStyle(feature, {...settings, strokeColor: 'rgb(255,238,0)', strokeWidth: 4}, null, url));
 
       flyTo(centerOfFeature);
       setOpen(false);
       setSearchValue('');
 
       setTimeout(()=> {
-        feature.setStyle(createFeatureStyle(feature, settings));
+        feature.setStyle(createFeatureStyle(feature, settings, null, url));
       }, 5000);
 
     }

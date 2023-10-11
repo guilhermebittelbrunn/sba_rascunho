@@ -64,6 +64,10 @@ export default function App() {
     }
 
     useEffect(()=>{
+      setSubtitle({status: false, position: 0});
+    },[url])
+
+    useEffect(()=>{
 
       const subtitleHTML = document.getElementById('subtitle');
       

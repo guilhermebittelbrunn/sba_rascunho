@@ -9,7 +9,7 @@ import Subtitle from './Subtitle';
 
 export default function MapPage({ handleFullScreenAction, isFullScreen, setContextMenu, setOpen, subtitle, setSubtitle}){
 
-    const [showSubtitleContextMenu, setShowSubtitleContextMenu] = useState(false);
+    const [showSubtitleContextMenu, setShowSubtitleContextMenu] = useState({status: false, position: 0});
     const [isModalOpen, setIsModalOpen] = useState({layerModal: false, addRepModal: false});
     const map1 = useRef(null);
     

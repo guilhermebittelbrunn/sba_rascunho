@@ -33,33 +33,52 @@ function createAARotatedPattern(ang, color, resolution=1200) {
     return pat;
 }
 
-function colorCategory(label, option){
+function colorCategory(label, option, url){
+   
     if(!label[option]){
         return 'rgba(221,221,223,0.7)'
     }
-    const tailwindColors = {
-        0: 'rgba(221,221,223,0.8)',
-        1: 'rgba(240,253,244, 0.8)',
-        2: 'rgba(187,247,208, 0.8)',
-        3: 'rgba(74,222,128, 0.8)',
-        4: 'rgba(22,163,74, 0.8)',
-        5: 'rgba(28, 122, 64, 0.8)',
-    }
+    const tailwindColors = [
+        'rgba(221,221,223,0.8)',
+        'rgba(240,253,244, 0.8)',
+        'rgba(187,247,208, 0.8)',
+        'rgba(74,222,128, 0.8)',
+        'rgba(22,163,74, 0.8)',
+        'rgba(28, 122, 64, 0.8)',
+    ]
     let points;
     switch (option){
         case 'QUANTIDADE_VENDAS':
             points = label[option] / 2
             points = points > 5 ? 5 : points
             points = points > 0 && points < 1 ? 1 : points
+            console.log(tailwindColors[Math.floor(points)]);
             points = tailwindColors[Math.floor(points)]
+            break
         case 'QUANTIDADE_CLIENTES_CIDADE':
             points = label[option] / 1.5
             points = points > 5 ? 5 : points
             points = (points > 0 && points < 1) ? 1 : points
             points = tailwindColors[Math.floor(points)]
+            break
         case 'ULTIMA_VENDA':
-            return points
+            const date = dayjs(label[option]);
+            const dateStart = dayjs(url.dateStart, 'YYYY-MM-DD'); 
+            const dateEnd = dayjs(url.dateEnd, 'YYYY-MM-DD'); 
+            const numberOfWeeks = dateEnd.diff(dateStart, 'week');
+            const numberOfWeeksLabel = dateEnd.diff(date, 'week');
+            const tailwindColorsReverse = tailwindColors.reverse();
+            points = Math.floor(numberOfWeeksLabel / (numberOfWeeks / 5));
+            points = points > 5 ? 5 : points
+            points = (points > 0 && points < 1) ? 1 : points
+            points = tailwindColorsReverse[Math.floor(points)]
+            break
+            
+            // console.log('ds', url.dateStart)
+            // console.log('de', url.dateEnd)
+            // console.log(date.duration().weeks);
     }
+
     return points
 } 
 
@@ -99,14 +118,16 @@ function stringDivider(str, width, spaceReplacer) {
     return str;
 }
 
-function createColor(feature, selectedOption, layer, res){
-    let color;
+function createColor(feature, selectedOption, layer, res, url){
 
+    let color;
     if(feature.SELECTED) color = 'rgb(255,238,0)';
     else{
         if(feature.NUMERO_PEDIDO){
             if(layer?.value === 'stateLayer'){
-                if(selectedOption) color = colorCategory(feature, selectedOption);
+                if(selectedOption) {
+                    color = colorCategory(feature, selectedOption, url);
+                }
                 else color = "rgba(34, 156, 34, 0.7)";
             }
             else{
@@ -134,11 +155,10 @@ function createText(feature, subTitle){
     return stringDivider(feature.NM_MUN, 10, '\n');
 }
 
-function createFeatureStyle(feature, settings, layer, res=1200){
-
+function createFeatureStyle(feature, settings, layer, res=1200, url){
     const {selectedOption, fontSize, subTitle, fontColor, strokeColor, strokeWidth, overflow} = settings;
     const featureProperties = feature.getProperties();
-    const color = createColor(featureProperties, selectedOption, layer, res)
+    const color = createColor(featureProperties, selectedOption, layer, res, url)
     const text = createText(featureProperties, subTitle);
 
     const newStyle = new Style({
@@ -217,7 +237,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                         features: new GeoJSON().readFeatures(data),
                     }),
                     style: (feature)=>{
-                        return createFeatureStyle(feature, settings);
+                        return createFeatureStyle(feature, settings, null, null, url);
                     },
                     zIndex: 3,
                     className: 'stateLayer',
@@ -230,7 +250,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                         }),
                         style: (feature,res)=>{
                             feature.setProperties({fillColor: 'rgba(0,0,0,0)', strokeColor: 'rgba(30,30,30)', strokeWidth: 1});
-                            return createFeatureStyle(feature, {...settings});
+                            return createFeatureStyle(feature, {...settings}, null, null, url);
                         },
                         zIndex: 2,
                         className: 'countryLayer'
@@ -284,7 +304,7 @@ export default function MapaProvider({url, children, setIsLoading}){
         layers.forEach(layer=>{
             if(layer.properties.className_ !== 'baseLayer' && layer.properties.className_ !== 'countryLayer'){
                 layer.properties.getSource().getFeatures().forEach(feature=>{
-                    const newStyle = createFeatureStyle(feature, settings, layer);
+                    const newStyle = createFeatureStyle(feature, settings, layer, null, url);
                     feature.setStyle(newStyle);
                     feature.setProperties({stylesConfig: settings});
                 });
