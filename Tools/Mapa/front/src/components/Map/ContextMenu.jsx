@@ -156,8 +156,8 @@ export default function ContextMenu({contextMenu, setContextMenu, subtitle, setS
                                                 <p className="text-sm">{layer.properties.QUANTIDADE_CLIENTES_CIDADE}</p>
                                             </li>
 
-                                            <details>
-                                                <summary className="text-sm text-center font-semibold">Última venda</summary>
+                                            <details id="context-menu-details">
+                                                <summary id="context-menu-details-summary" className="text-sm text-center font-semibold">Última venda</summary>
 
                                                 <li className="px-1 w-full text-sm flex justify-between"> 
                                                     <span className="font-semibold">Cód. cliente</span>

@@ -54,8 +54,9 @@ export default function App() {
 
     function handleClick(e){
         const contextMenuHTML = document.getElementById('contextMenu');
-        if(contextMenuHTML && e.target){
-          if(e.target !== contextMenuHTML){
+        const summary = document.getElementById('context-menu-details-summary');
+        if(contextMenuHTML && e?.target){
+          if(e.target !== contextMenuHTML && e.target !== summary){
             setContextMenu((pv)=> {
                 return {...pv, status: false, pageX: 0, pageY: 0}
             })
@@ -106,7 +107,7 @@ export default function App() {
                       />
                       <Drawer open={open} setOpen={setOpen}/>
                     
-                    </div>
+                  </div>
           
                   <ContextMenu 
                     contextMenu={contextMenu}

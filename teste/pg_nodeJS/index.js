@@ -25,10 +25,6 @@
 // console.log(fn);
 
 const list = [10, 20, 30, 40];
+const [teste, ...list3] = list;
 
-const list2 = [...list];
-
-list2[4] = 50;
-
-console.log('list', list);
-console.log('list2', list2);
+console.log(list3.reverse());

@@ -19,7 +19,14 @@ export default function InputDate({initialDate, field, isLoading, className, isS
         setInputValue(e.target.value)
     }
 
-    function handleBlurInput(){
+    function handleClickDateBox(e){
+        const { pointerType } = e.nativeEvent 
+        if(pointerType === 'mouse'){
+            setOpen(pv=>!pv)
+        }
+    }
+
+    function handleBlurInput(e){
         const dateM =  moment(inputValue, dateFormat).format(dateFormat);
         const date =  dayjs(dateM, 'DD/MM/YYYY', true);
 
@@ -41,10 +48,10 @@ export default function InputDate({initialDate, field, isLoading, className, isS
         <div className={`flex gap-1 ${isLoading && 'cursor-not-allowed'}`}>  
 
             <Input 
-                disabled={isLoading} dsize="middle" defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue }
-                className={`w-48 rounded-none max-md:w-[400px] ${className}`} onChange={(e)=>{handleInputChange(e);}} 
+                disabled={isLoading} id="inputDate" defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue }
+                className={`w-48 rounded-none max-md:w-[400px] ${className}`} onChange={handleInputChange} 
                 value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue }
-                onBlur={handleBlurInput}
+                onBlur={(e)=>{handleBlurInput(e)}}
             />
             <DatePicker
                 disabled={isLoading}
@@ -56,7 +63,7 @@ export default function InputDate({initialDate, field, isLoading, className, isS
                 value={date}
             />
    
-            <button id="datePicker" className={`py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600 ${isLoading && 'cursor-not-allowed'}`} onClick={()=>{setOpen(pv=>!pv)}}>
+            <button id="datePicker" className={`py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600 ${isLoading && 'cursor-not-allowed'}`} onClick={handleClickDateBox}>
                 <CalendarOutlined />
             </button>
         

@@ -8,20 +8,13 @@ import AddRepModal from '../Modal/AddRepModal';
 import Subtitle from './Subtitle';
 
 export default function MapPage({ handleFullScreenAction, isFullScreen, setContextMenu, setOpen, subtitle, setSubtitle}){
-
+    
+    const {map,url,data,loading,error,layers,settings,setSettings,createFeatureStyle,countSelectedFeatures,setCountSelectedFeatures} = useContext(MapaContext);
     const [showSubtitleContextMenu, setShowSubtitleContextMenu] = useState({status: false, position: 0});
     const [isModalOpen, setIsModalOpen] = useState({layerModal: false, addRepModal: false});
+    const layersVisibles = layers.slice(2).reverse().filter(lyr=>{return lyr.status});
     const map1 = useRef(null);
     
-    const {map, loading, error, layers, settings, setSettings, 
-        createFeatureStyle, countSelectedFeatures,
-        setCountSelectedFeatures} = useContext(MapaContext);
-        
-    const layersVisibles = layers.slice(2).reverse().filter(lyr=>{return lyr.status})
-    const { interaction } = settings
-    
-
-
     function showModal(modalName){
         setIsModalOpen((pv)=>{
             return {...pv, [modalName]: true}
@@ -49,24 +42,24 @@ export default function MapPage({ handleFullScreenAction, isFullScreen, setConte
 
     useEffect(()=>{
         if(!map) return
-
         map.setTarget('map');
         map1.current = map;
+        
         return () => {  
             map1.current.setTarget(null);
         };
-    })
+    },[url, map, data])
 
 
     useEffect(()=>{
         if(!map)return
-        
+            map.setTarget('map');
+            map1.current = map;
             map.addEventListener('contextmenu', (e)=>{
                 setShowSubtitleContextMenu(false);
                 e.preventDefault();
                 const pixel = e.pixel;
                 const listLayers = [];
-
 
                 map.forEachFeatureAtPixel(pixel, (feature, layer)=>{
                     const properties = feature.getProperties();
@@ -83,7 +76,6 @@ export default function MapPage({ handleFullScreenAction, isFullScreen, setConte
                     }
                 });
 
-
                 const mapHTML = document.getElementById('map');
                 const mapWidth = mapHTML.offsetWidth; 
                 const mapHeight = mapHTML.offsetHeight; 
@@ -98,9 +90,7 @@ export default function MapPage({ handleFullScreenAction, isFullScreen, setConte
                 pageX = (pageX + contextWidth) >= mapWidth ? mapWidth - contextWidth + aditionalWidth : pageX 
                 pageY = (pageY + contextHeight) >= mapHeight ? mapHeight - contextHeight + aditonalHeight: pageY 
                 
-                
                 map.forEachFeatureAtPixel(pixel, (feature, layer)=>{
-
                     if(layer.getClassName() !== 'countryLayer'){
                         setContextMenu({
                             pageX, 
@@ -137,7 +127,6 @@ export default function MapPage({ handleFullScreenAction, isFullScreen, setConte
     },[map])
 
   return (
-   
             <>  
                 { loading ? <Spin size='large' className='spin'/> : 
                 <>
@@ -164,10 +153,10 @@ export default function MapPage({ handleFullScreenAction, isFullScreen, setConte
                         </button>
                         
                         <button 
-                            onClick={()=>setSettings(pv=>{return {...pv, interaction: !interaction}})} 
+                            onClick={()=>setSettings(pv=>{return {...pv, interaction: !settings.interaction}})} 
                             className={`absolute flex justify-center items-center left-50 top-50 h-[30px] 
                             border-[1.5px]rounded w-[30px] text-sm text-gray-800 z-50 hover:text-base outline-none 
-                            ${interaction ? 'bg-slate-200 border-slate-200' : 'bg-slate-100 border-slate-100 '}`} 
+                            ${settings.interaction ? 'bg-slate-200 border-slate-200' : 'bg-slate-100 border-slate-100 '}`} 
                             style={{transform: 'translate(20%, 150%)', transition: 'all .4s'}}
                         >
                             <SelectOutlined />

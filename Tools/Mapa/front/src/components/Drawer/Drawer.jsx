@@ -97,8 +97,8 @@ export default function Drawer({open, setOpen}){
       const stateLayer = layers[layers.findIndex(layer=>layer.value === 'stateLayer')].properties;
       const features = stateLayer.getSource().getFeatures();
       const index = features.findIndex(f => {
-        const f_name = f.values_['NM_MUN'].normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
-        return f_name === value.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
+          const f_name = f.values_['NM_MUN'].normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
+          return f_name === value.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
       });
       const feature = features[index];
       if(!feature) {
@@ -182,18 +182,15 @@ export default function Drawer({open, setOpen}){
 
 
     function handleDeleteLayer(layer){
-      
         map.getLayers().getArray().forEach(layerMap=>{
-          layerMap.getClassName() === layer.value && map.removeLayer(layerMap);
+          if(layerMap.values_.value === layer.value){
+            map.removeLayer(layerMap);
+          }
         });
         setLayers(pv=>{
             return pv.filter(l=>l.value !== layer.value)
         });
-
     }
-
-    
-
 
     return(
         <>

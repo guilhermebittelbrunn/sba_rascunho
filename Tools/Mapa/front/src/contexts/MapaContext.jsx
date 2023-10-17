@@ -39,26 +39,22 @@ function colorCategory(label, option, url){
         return 'rgba(221,221,223,0.7)'
     }
     const tailwindColors = [
-        'rgba(221,221,223,0.8)',
         'rgba(240,253,244, 0.8)',
         'rgba(187,247,208, 0.8)',
         'rgba(74,222,128, 0.8)',
         'rgba(22,163,74, 0.8)',
-        'rgba(28, 122, 64, 0.8)',
+        'rgb(22, 100, 52))',
     ]
     let points;
     switch (option){
         case 'QUANTIDADE_VENDAS':
             points = label[option] / 2
-            points = points > 5 ? 5 : points
-            points = points > 0 && points < 1 ? 1 : points
-            console.log(tailwindColors[Math.floor(points)]);
+            points = points > 4 ? 4 : points
             points = tailwindColors[Math.floor(points)]
             break
         case 'QUANTIDADE_CLIENTES_CIDADE':
             points = label[option] / 1.5
-            points = points > 5 ? 5 : points
-            points = (points > 0 && points < 1) ? 1 : points
+            points = points > 4 ? 4 : points
             points = tailwindColors[Math.floor(points)]
             break
         case 'ULTIMA_VENDA':
@@ -67,16 +63,11 @@ function colorCategory(label, option, url){
             const dateEnd = dayjs(url.dateEnd, 'YYYY-MM-DD'); 
             const numberOfWeeks = dateEnd.diff(dateStart, 'week');
             const numberOfWeeksLabel = dateEnd.diff(date, 'week');
-            const tailwindColorsReverse = tailwindColors.reverse();
-            points = Math.floor(numberOfWeeksLabel / (numberOfWeeks / 5));
-            points = points > 5 ? 5 : points
-            points = (points > 0 && points < 1) ? 1 : points
-            points = tailwindColorsReverse[Math.floor(points)]
+            const tailwindColorsDateReverse = tailwindColors.reverse();
+            points = Math.ceil(numberOfWeeksLabel / (numberOfWeeks / 5));
+            points = points > 4 ? 4 : points
+            points = tailwindColorsDateReverse[Math.floor(points)];
             break
-            
-            // console.log('ds', url.dateStart)
-            // console.log('de', url.dateEnd)
-            // console.log(date.duration().weeks);
     }
 
     return points
@@ -102,17 +93,17 @@ function stringDivider(str, width, spaceReplacer) {
     if (str.length > width) {
         let p = width;
         while (p > 0 && str[p] != ' ' && str[p] != '-') {
-        p--;
+            p--;
         }
         if (p > 0) {
         let left;
         if (str.substring(p, p + 1) == '-') {
-            left = str.substring(0, p + 1);
-        } else {
-            left = str.substring(0, p);
-        }
-        const right = str.substring(p + 1);
-        return left + spaceReplacer + stringDivider(right, width, spaceReplacer);
+                left = str.substring(0, p + 1);
+            } else {
+                left = str.substring(0, p);
+            }
+            const right = str.substring(p + 1);
+            return left + spaceReplacer + stringDivider(right, width, spaceReplacer);
         }
     }
     return str;
@@ -207,7 +198,7 @@ export default function MapaProvider({url, children, setIsLoading}){
     const [countSelectedFeatures, setCountSelectedFeatures] = useState(0);
 
     useEffect(()=>{
-
+        console.log('context')
         const view = new View({
             extent: [-75, -35, -32, 6],
             center: [-56, -14],
@@ -239,7 +230,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                     style: (feature)=>{
                         return createFeatureStyle(feature, settings, null, null, url);
                     },
-                    zIndex: 3,
+                    zIndex: 1,
                     className: 'stateLayer',
                     rc: url.rc
                 });
@@ -294,7 +285,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                 // setMap(null)
             }
         }
-    },[data])
+    },[data, url])
 
     useEffect(()=>{
 
@@ -323,7 +314,7 @@ export default function MapaProvider({url, children, setIsLoading}){
 
     return(
         <MapaContext.Provider value={{map, error, loading, error, layers, setLayers,subtitleCategory,rc: url.rc,  url, settings, setSettings,
-            createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures
+            createFeatureStyle, data, countSelectedFeatures, setCountSelectedFeatures
         }}>
             {children}
         </MapaContext.Provider>

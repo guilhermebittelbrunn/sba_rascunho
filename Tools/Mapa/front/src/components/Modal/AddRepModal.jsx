@@ -3,7 +3,7 @@
 
 import dayjs from "dayjs";
 import axios from 'axios';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {Spin, Button, Modal, Input, message, Checkbox} from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import { MapaContext } from '../../contexts/MapaContext';
@@ -11,10 +11,8 @@ import {Vector as vector} from 'ol/layer'
 import {Vector} from 'ol/source';
 import {GeoJSON} from 'ol/format'
 import InputDate from '../Form/InputDate'
-import Teste from '../Form/Teste'
 
 const CheckBoxGroup = Checkbox.Group
-
 
 const brandOptions = [
     {
@@ -33,8 +31,8 @@ const brandOptions = [
 
 export default function AddRepModal({isModalOpen, disableModal}){
     
-    const {layers, setLayers, settings, createFeatureStyle, map, rc} = useContext(MapaContext);
-    const {control, handleSubmit, reset} = useForm();
+    const {layers, setLayers, settings, createFeatureStyle, map, rc, url} = useContext(MapaContext);
+    const {control, handleSubmit, reset} = useForm({dateStart: dayjs(url.dateStart, 'YYYY-MM-DD'), dateEnd: dayjs(url.dateEnd, 'YYYY-MM-DD'), rc:null, brands: null});
     const [isLoading, setIsLoading] = useState(false);
 
     function generateRandomColor(){
@@ -47,8 +45,10 @@ export default function AddRepModal({isModalOpen, disableModal}){
         )
     }
 
-
     async function handleOk(data){
+
+        console.log(data);
+
         const {dateStart, dateEnd} = data;
         if(dateStart > dateEnd){
             return message.error('Data inicial maior que a final');
@@ -69,9 +69,10 @@ export default function AddRepModal({isModalOpen, disableModal}){
             if(res.data.features.length === 0){
                 throw `${url.rc} não possui features, features:${res.data.features.length}`
             }
+            const customID = `custom_layer${Math.random(0,1000) * 100}`
             const newLayer = {
                 name: `Vendas RC ${String(url.rc).padStart(4,0)}`,
-                value: `custom_layer${layers.length + 1}`,
+                value: customID,
                 status: true,
                 key: layers.length + 1,
                 data:{
@@ -91,7 +92,8 @@ export default function AddRepModal({isModalOpen, disableModal}){
                     },
                     zIndex: 4,
                     className: `Vendas RC ${String(url.rc).padStart(4,0)}`,
-                    rc: String(url.rc).padStart(4,0)
+                    rc: String(url.rc).padStart(4,0),
+                    value: customID
                 })
             }
 
@@ -116,10 +118,13 @@ export default function AddRepModal({isModalOpen, disableModal}){
                             <h3 className="text-sm font-semibold">Data inicial</h3>
                             <Controller
                                 render={({field})=>{
+                                    console.log(field);
                                     return (
                                         <InputDate 
-                                            className={'w-60'} initialDate={dayjs().add(-1, 'y')} 
-                                            type={"start"} field={field}
+                                            className={'w-60'} 
+                                            initialDate={field.value} 
+                                            type={"start"} 
+                                            field={field}
                                         />
                                     )
                                 }}
@@ -132,11 +137,12 @@ export default function AddRepModal({isModalOpen, disableModal}){
                             <h3 className="text-sm font-semibold">Data final</h3>
                             <Controller
                                 render={({field})=>{
+                                    console.log(field);
                                     return( 
                                         <InputDate 
                                             className={'w-60'}
                                             field={field}
-                                            initialDate={dayjs()}  
+                                            initialDate={field.value}  
                                         />
                                     )
                                 }}
@@ -183,12 +189,6 @@ export default function AddRepModal({isModalOpen, disableModal}){
                             > 
                             </Controller>
                         </div>    
-
-                        <div className="flex flex-col"> 
-                            <h3 className="text-sm font-semibold">Marcas</h3>
-                            <Teste name="dataEmissao" control={control} label="Data início"></Teste>
-                        </div>    
-                        
 
                         <div className='w-full flex flex-col justify-center items-center mt-2'>
                             {isLoading ?
