@@ -39,23 +39,23 @@ function colorCategory(label, option, url){
         return 'rgba(221,221,223,0.7)'
     }
     const tailwindColors = [
-        'rgba(240,253,244, 0.8)',
-        'rgba(187,247,208, 0.8)',
-        'rgba(74,222,128, 0.8)',
-        'rgba(22,163,74, 0.8)',
-        'rgb(22, 100, 52))',
+        '#E3FCEC',
+        '#A2F5BF',
+        '#38C172',
+        '#1c884b',
+        '#287950',
     ]
-    let points;
+    let color, points;
     switch (option){
         case 'QUANTIDADE_VENDAS':
             points = label[option] / 2
             points = points > 4 ? 4 : points
-            points = tailwindColors[Math.floor(points)]
+            color = tailwindColors[Math.floor(points)]
             break
         case 'QUANTIDADE_CLIENTES_CIDADE':
             points = label[option] / 1.5
             points = points > 4 ? 4 : points
-            points = tailwindColors[Math.floor(points)]
+            color = tailwindColors[Math.floor(points)]
             break
         case 'ULTIMA_VENDA':
             const date = dayjs(label[option]);
@@ -64,13 +64,12 @@ function colorCategory(label, option, url){
             const numberOfWeeks = dateEnd.diff(dateStart, 'week');
             const numberOfWeeksLabel = dateEnd.diff(date, 'week');
             const tailwindColorsDateReverse = tailwindColors.reverse();
-            points = Math.ceil(numberOfWeeksLabel / (numberOfWeeks / 5));
+            points = numberOfWeeksLabel / (numberOfWeeks / 5);
             points = points > 4 ? 4 : points
-            points = tailwindColorsDateReverse[Math.floor(points)];
+            color = tailwindColorsDateReverse[Math.floor(points)];
             break
     }
-
-    return points
+    return color
 } 
 
 function subtitleCategory(label, option){
@@ -110,16 +109,20 @@ function stringDivider(str, width, spaceReplacer) {
 }
 
 function createColor(feature, selectedOption, layer, res, url){
-
     let color;
+
     if(feature.SELECTED) color = 'rgb(255,238,0)';
     else{
         if(feature.NUMERO_PEDIDO){
             if(layer?.value === 'stateLayer'){
                 if(selectedOption) {
                     color = colorCategory(feature, selectedOption, url);
+                    layer.data.gradient = true
                 }
-                else color = "rgba(34, 156, 34, 0.7)";
+                else {
+                    color = "rgba(34, 156, 34, 0.7)";
+                    layer.data.gradient = false
+                }
             }
             else{
                 if(feature.fillStyle){

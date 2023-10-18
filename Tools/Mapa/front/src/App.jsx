@@ -54,9 +54,11 @@ export default function App() {
 
     function handleClick(e){
         const contextMenuHTML = document.getElementById('contextMenu');
-        const summary = document.getElementById('context-menu-details-summary');
+        
         if(contextMenuHTML && e?.target){
-          if(e.target !== contextMenuHTML && e.target !== summary){
+          const summary = document.getElementById('context-menu-details-summary');
+          const isChildren = e.target.getAttribute('childrenofcontextmenu');
+          if(e.target !== contextMenuHTML && e.target !== summary && isChildren !== 'true'){
             setContextMenu((pv)=> {
                 return {...pv, status: false, pageX: 0, pageY: 0}
             })
@@ -73,19 +75,20 @@ export default function App() {
       const subtitleHTML = document.getElementById('subtitle');
       
       if(subtitleHTML){
-          const { position } = subtitle
-          const pos = [
-                [],
-                ['', '', '4px', '4px'],
-                ['', '4px', '4px', ''],
-                ['4px', '4px', '', ''],
-                ['4px', '', '', '4px'],
-            ];
-
-          subtitleHTML.style.top = `${pos[position][0]}`;
-          subtitleHTML.style.right = `${pos[position][1]}`;
-          subtitleHTML.style.bottom = `${pos[position][2]}`;
-          subtitleHTML.style.left = `${pos[position][3]}`;
+        const { position } = subtitle
+        const pos = [
+          [],
+          ['', '', '4px', '4px'],
+          ['', '4px', '4px', ''],
+          ['4px', '4px', '', ''],
+          ['4px', '', '', '4px'],
+        ];
+        
+        subtitleHTML.setAttribute('status', subtitle.position)
+        subtitleHTML.style.top = `${pos[position][0]}`;
+        subtitleHTML.style.right = `${pos[position][1]}`;
+        subtitleHTML.style.bottom = `${pos[position][2]}`;
+        subtitleHTML.style.left = `${pos[position][3]}`;
       }
     }, [subtitle])
 

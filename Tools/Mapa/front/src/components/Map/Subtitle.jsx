@@ -72,7 +72,10 @@ const columns = [
     {
         render: (text,record)=>{
             return (
-                <p className='text-lg'>
+                <div className='text-lg'>
+                    {text.data.gradient ? 
+                    <div className="bg-gradient-to-t from-green-300 via-green-400 to-green-900 w-5 h-5"/>
+                    : 
                     <svg 
                         version="1.0" 
                         xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +93,8 @@ const columns = [
                             <path d={(svgList.filter(svg=> svg.name === text.data.fillStyle)[0].svgName)}/>
                         </g>
                     </svg>
-                </p>
+                    }
+                </div>
             )
         }
     },
@@ -124,7 +128,7 @@ export default function Subtitle({subtitle, setSubtitle, layersVisibles, setCont
     useEffect(()=>{
         !subtitle.status && setShowSubtitleContextMenu(false);
     },[subtitle])
-     
+
     return(
             <div
                 onContextMenu={handleContextMenu} 

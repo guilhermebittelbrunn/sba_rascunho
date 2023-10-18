@@ -92,10 +92,10 @@ export default function Drawer({open, setOpen}){
     const [searchValue, setSearchValue] = useState('');
     const [isEditModal, setEditModal] = useState({status: false, layer: null});
 
-    function handleSeach(value){
+    function handleSearch(value){
 
-      const stateLayer = layers[layers.findIndex(layer=>layer.value === 'stateLayer')].properties;
-      const features = stateLayer.getSource().getFeatures();
+      const stateLayer = layers[layers.findIndex(layer=>layer.value === 'stateLayer')];
+      const features = stateLayer.properties.getSource().getFeatures();
       const index = features.findIndex(f => {
           const f_name = f.values_['NM_MUN'].normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
           return f_name === value.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
@@ -106,14 +106,14 @@ export default function Drawer({open, setOpen}){
       }
 
       const centerOfFeature = feature.getGeometry().getInteriorPoint().getCoordinates()
-      feature.setStyle(createFeatureStyle(feature, {...settings, strokeColor: 'rgb(255,238,0)', strokeWidth: 4}, null, url));
+      feature.setStyle(createFeatureStyle(feature, {...settings, strokeColor: 'rgb(255,238,0)', strokeWidth: 4}, stateLayer, null, url));
 
       flyTo(centerOfFeature);
       setOpen(false);
       setSearchValue('');
 
       setTimeout(()=> {
-        feature.setStyle(createFeatureStyle(feature, settings, null, url));
+        feature.setStyle(createFeatureStyle(feature, settings, stateLayer, null, url));
       }, 5000);
 
     }
@@ -212,7 +212,7 @@ export default function Drawer({open, setOpen}){
                               placeholder="Nome do município"
                               value={searchValue}
                               onChange={(e)=>{setSearchValue(e.target.value);}}
-                              onSearch={(value)=>{handleSeach(value);}}
+                              onSearch={(value)=>{handleSearch(value);}}
                             />
                       </div>
 
@@ -236,9 +236,10 @@ export default function Drawer({open, setOpen}){
                           <div>
                               <h3 className='font-bold text-sm inline'>Tamanho da Fonte</h3>
                               <InputNumber
-                                min={6}
+                                min={4}
                                 max={36}
                                 maxLength={2}
+                                className='w-[65px]'
                                 bordered={false}
                                 value={fontSize}
                                 onChange={(value)=>{setSettings(pv=>{return {...pv, fontSize: value}})}}

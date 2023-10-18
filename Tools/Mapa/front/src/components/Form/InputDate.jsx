@@ -63,7 +63,7 @@ export default function InputDate({initialDate, field, isLoading, className, isS
                 value={date}
             />
    
-            <button id="datePicker" className={`py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600 ${isLoading && 'cursor-not-allowed'}`} onClick={handleClickDateBox}>
+            <button type="button" id="datePicker" className={`py-[3px] px-2 m outline-blue-700 text-blue-600 border-[1px] border-blue-600 ${isLoading && 'cursor-not-allowed'}`} onClick={handleClickDateBox}>
                 <CalendarOutlined />
             </button>
         

@@ -98,7 +98,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
     
     const [isLoading, setIsLoading] = useState(false);
     const { handleSubmit, control } = useForm({defaultValues:{paperSize: 'A3', dpiValue: 300, overflow: 'off', orientation: 'Paisagem'}});
-    const { map, rc, layers, createFeatureStyle, settings } = useContext(MapaContext);
+    const { map, rc, layers, createFeatureStyle, settings, url } = useContext(MapaContext);
 
     const sendForm = (data)=>{
 
@@ -108,14 +108,14 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
         const size = map.getSize();
         const viewResolution = map.getView().getResolution();
         const pdf = new jsPDF(data.orientation === 'Paisagem' ? 'landscape' : 'portrait', 'mm', dim);
-      
+        const stateLayer = layers[layers.findIndex(layer=>layer.value === 'stateLayer')];
 
         if(data.overflow === 'on'){
             layers.forEach(layer=>{
                 if(layer.properties.className_ === "baseLayer")return
                 const features = layer.properties.getSource().getFeatures();
                 features.forEach(feature=>{
-                    const newStyle = createFeatureStyle(feature, {...settings, overflow: true}, null);
+                    const newStyle = createFeatureStyle(feature, {...settings, overflow: true}, layer, null, url);
                     feature.setStyle(newStyle);
                 })
             });
@@ -163,6 +163,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                 );
                 
                 if (status > 0){
+
                     const subtitle = document.getElementById('subtitle');
                     const table = document.getElementById('subtitle-table');
                     
@@ -171,7 +172,8 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                     const canvasHeight = ((dim[0] * (table.offsetWidth * 100) / 3508) / 100) * 2;
                     const padding = 2
                     
-        
+                    // console.log(canvas.toDataURL());
+
                     let posX,posY
                     switch(parseInt(status)){
                         case 1:
@@ -221,7 +223,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                         if(layer.properties.className_ === "baseLayer")return
                         const features = layer.properties.getSource().getFeatures();
                         features.forEach(feature=>{
-                            const newStyle = createFeatureStyle(feature, {...settings, overflow: false}, null);
+                            const newStyle = createFeatureStyle(feature, {...settings, overflow: false}, layer, null, url);
                             feature.setStyle(newStyle);
                         })
                     });

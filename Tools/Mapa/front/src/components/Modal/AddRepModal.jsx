@@ -32,7 +32,7 @@ const brandOptions = [
 export default function AddRepModal({isModalOpen, disableModal}){
     
     const {layers, setLayers, settings, createFeatureStyle, map, rc, url} = useContext(MapaContext);
-    const {control, handleSubmit, reset} = useForm({dateStart: dayjs(url.dateStart, 'YYYY-MM-DD'), dateEnd: dayjs(url.dateEnd, 'YYYY-MM-DD'), rc:null, brands: null});
+    const {control, handleSubmit, reset} = useForm({defaultValues: {dateStart: dayjs(url.dateStart, 'YYYY-MM-DD'), dateEnd: dayjs(url.dateEnd, 'YYYY-MM-DD'), rc:null, brands: null}});
     const [isLoading, setIsLoading] = useState(false);
 
     function generateRandomColor(){
@@ -47,7 +47,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
 
     async function handleOk(data){
 
-        console.log(data);
+        // console.log(data);
 
         const {dateStart, dateEnd} = data;
         if(dateStart > dateEnd){
@@ -98,7 +98,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
             }
 
             setLayers(pv=>{return [...pv, newLayer]});
-            reset({rc:'', dateStart: dayjs().add(-1, 'y'), dateEnd: dayjs()});
+            reset({rc:'', dateStart: dayjs(url.dateStart, 'YYYY-MM-DD'), dateEnd: dayjs(url.dateEnd, 'YYYY-MM-DD')});
             map.addLayer(newLayer.properties);
             disableModal();
 
@@ -118,7 +118,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
                             <h3 className="text-sm font-semibold">Data inicial</h3>
                             <Controller
                                 render={({field})=>{
-                                    console.log(field);
+                                    // console.log('start', field);
                                     return (
                                         <InputDate 
                                             className={'w-60'} 
@@ -137,7 +137,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
                             <h3 className="text-sm font-semibold">Data final</h3>
                             <Controller
                                 render={({field})=>{
-                                    console.log(field);
+                                    // console.log('end', field);
                                     return( 
                                         <InputDate 
                                             className={'w-60'}
