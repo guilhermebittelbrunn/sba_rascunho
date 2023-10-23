@@ -135,61 +135,62 @@ export default function MapPage({ handleFullScreenAction, isFullScreen, setConte
                         
                         <div 
                             type="primary" id="settings" onClick={()=>{setOpen(true);}} 
-                            style={{transform: 'translateY(300%)', transition: 'all .4s'}} 
+                            style={{transform: 'translateY(-50%)', transition: 'all .4s'}} 
                             className={`hover:cursor-pointer hover:bg-slate-400  rounded-r-lg 
-                            hover:w-12 absolute left-50 top-50 h-28 p-2 flex justify-center items-center w-8
+                            hover:w-12 absolute left-0 top-50 h-28 p-2 flex justify-center items-center w-8
                             bg-slate-300 z-20 opacity-80`}
                         >
                             <SettingOutlined className='text-gray-900 text-lg font-black'/>
                         </div>
 
-                        <button 
-                            onClick={handleFullScreenAction} className={`absolute flex justify-center items-center 
-                            top-1 h-[30px] border-[1.5px]border-slate-100 outline-none rounded w-[30px] left-50 
-                            text-sm text-gray-800 bg-slate-100 z-50 hover:text-base`} 
-                            style={{transform: 'translate(20%, 10%)', transition: 'all .4s'}}
-                        >
-                            {isFullScreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
-                        </button>
-                        
-                        <button 
-                            onClick={()=>setSettings(pv=>{return {...pv, interaction: !settings.interaction}})} 
-                            className={`absolute flex justify-center items-center left-50 top-50 h-[30px] 
-                            border-[1.5px]rounded w-[30px] text-sm text-gray-800 z-50 hover:text-base outline-none 
-                            ${settings.interaction ? 'bg-slate-200 border-slate-200' : 'bg-slate-100 border-slate-100 '}`} 
-                            style={{transform: 'translate(20%, 150%)', transition: 'all .4s'}}
-                        >
-                            <SelectOutlined />
-                        </button>
-
-                        <button 
-                            onClick={()=>{showModal('addRepModal')}} className={`absolute flex 
-                            justify-center items-center left-50 top-50 h-[30px] border-[1.5px] border-slate-100 
-                            rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base outline-none`} 
-                            style={{transform: 'translate(20%, 275%)', transition: 'all .4s'}}
-                        >
-                            <UsergroupAddOutlined />
-                        </button>
-
-                        <button 
-                            onClick={()=>{(layersVisibles.length > 0) && changeSubtitleStatus()}} 
-                            className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px]
-                            border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 
-                            hover:text-base ${layersVisibles.length === 0 && 'opacity-60 cursor-not-allowed'} 
-                            outline-none`} style={{transform: 'translate(20%, 400%)', transition: 'all .4s'}}
-                        >
-                            <UnorderedListOutlined />
-                        </button>
+                        <div id='btns' className=' absolute z-50 top-1 left-1 flex flex-col gap-1'>
+                            <button 
+                                onClick={handleFullScreenAction} className={`flex justify-center items-center 
+                                h-[30px] border-[1.5px]border-slate-100 outline-none rounded w-[30px]  
+                                text-sm text-gray-800 bg-slate-100 z-50 hover:text-base`} 
+                            >
+                                {isFullScreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
+                            </button>
                             
-                        <button 
-                            onClick={()=>{countSelectedFeatures > 0 && showModal('layerModal')}} 
-                            className={`absolute flex justify-center items-center left-50 top-50 h-[30px] border-[1.5px]
-                            border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 
-                            hover:text-base ${countSelectedFeatures <= 0 && 'opacity-60 cursor-not-allowed'} 
-                            outline-none`} style={{transform: 'translate(20%, 525%)', transition: 'all .4s'}}
-                        >
-                            <PlusOutlined />
-                        </button>
+                            <button 
+                                onClick={()=>setSettings(pv=>{return {...pv, interaction: !settings.interaction}})} 
+                                className={`flex justify-center items-center     h-[30px] 
+                                border-[1.5px]rounded w-[30px] text-sm text-gray-800 z-50 hover:text-base outline-none 
+                                ${settings.interaction ? 'bg-slate-200 border-slate-200' : 'bg-slate-100 border-slate-100 '}`} 
+                            >
+                                <SelectOutlined />
+                            </button>
+
+                            <button 
+                                onClick={()=>{showModal('addRepModal')}} className={`flex 
+                                justify-center items-center      h-[30px] border-[1.5px] border-slate-100 
+                                rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 hover:text-base outline-none`} 
+                            >
+                                <UsergroupAddOutlined />
+                            </button>
+
+                            <button 
+                                onClick={()=>{(layersVisibles.length > 0) && changeSubtitleStatus()}} 
+                                className={`flex justify-center items-center     h-[30px] border-[1.5px]
+                                border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 
+                                hover:text-base ${layersVisibles.length === 0 && 'opacity-60 cursor-not-allowed'} 
+                                outline-none`} 
+                            >
+                                <UnorderedListOutlined />
+                            </button>
+                                
+                            <button 
+                                onClick={()=>{countSelectedFeatures > 0 && showModal('layerModal')}} 
+                                className={`flex justify-center items-center     h-[30px] border-[1.5px]
+                                border-slate-100 rounded w-[30px] text-sm text-gray-800 bg-slate-100 z-50 
+                                hover:text-base ${countSelectedFeatures <= 0 && 'opacity-60 cursor-not-allowed'} 
+                                outline-none`} 
+                            >
+                                <PlusOutlined />
+                            </button>
+                        </div>
+
+                        
                         
                         <AddRepModal isModalOpen={isModalOpen.addRepModal} disableModal={disableModal}/>
                         <LayerModal  isModalOpen={isModalOpen.layerModal} disableModal={disableModal}/>

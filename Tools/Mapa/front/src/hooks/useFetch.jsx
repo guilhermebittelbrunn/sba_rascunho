@@ -9,7 +9,6 @@ export default function useFetch(url){
   useEffect(()=>{
 
     (async()=>{
-      
       try{
         setLoading(true);
         const res = await axios.get(url);
@@ -22,7 +21,6 @@ export default function useFetch(url){
       
     })()
 
-    
   }, [url])
 
     return {loading, err:error, data}

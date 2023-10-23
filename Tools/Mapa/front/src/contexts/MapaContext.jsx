@@ -191,9 +191,9 @@ function handleSelectInteration(settings){
    
 export const MapaContext = createContext();
 
-export default function MapaProvider({url, children, setIsLoading}){
+export default function MapaProvider({url, setUrl, children, setIsLoading}){
 
-    const { data, err, loading } = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}`);
+    const { data, err, loading } = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}&randomValue${url.randomValue}`);
     const [settings, setSettings] = useState({fontSize: 10, subTitle: '', selectedOption: '', interaction: false});
     const [layers, setLayers] = useState([]);
     const [error,setError] = useState(err);
@@ -201,7 +201,6 @@ export default function MapaProvider({url, children, setIsLoading}){
     const [countSelectedFeatures, setCountSelectedFeatures] = useState(0);
 
     useEffect(()=>{
-        console.log('context')
         const view = new View({
             extent: [-75, -35, -32, 6],
             center: [-56, -14],
@@ -215,6 +214,7 @@ export default function MapaProvider({url, children, setIsLoading}){
             layers: [],
             controls: []
         });
+        setError(false);
         setLayers([]);
         setMap(mapObj);
 
@@ -288,7 +288,7 @@ export default function MapaProvider({url, children, setIsLoading}){
                 // setMap(null)
             }
         }
-    },[data, url])
+    },[data])
 
     useEffect(()=>{
 
@@ -316,8 +316,11 @@ export default function MapaProvider({url, children, setIsLoading}){
     },[loading])
 
     return(
-        <MapaContext.Provider value={{map, error, loading, error, layers, setLayers,subtitleCategory,rc: url.rc,  url, settings, setSettings,
-            createFeatureStyle, data, countSelectedFeatures, setCountSelectedFeatures
+        <MapaContext.Provider 
+            value={{
+            map, error, data, loading, error, layers, setLayers,
+            subtitleCategory,rc: url.rc,  url, settings, setSettings,
+            createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures
         }}>
             {children}
         </MapaContext.Provider>

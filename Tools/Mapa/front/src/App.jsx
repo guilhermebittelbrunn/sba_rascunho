@@ -9,7 +9,6 @@ import MapaProvider from "./contexts/MapaContext";
 import Form from "./components/Form/Form";
 
 export default function App() {
-    
     useGeographic();
 
     const [url, setUrl] = useState('');
@@ -25,7 +24,8 @@ export default function App() {
           return message.error('Data inicial maior que a data final')
         }
         handleClick();
-        setUrl({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc: String(rc).padStart(4,0)});
+        const randomValue = Math.random(0,1) * 100;
+        setUrl({dateStart: dayjs(dateStart).format('YYYY-MM-DD'), dateEnd: dayjs(dateEnd).format('YYYY-MM-DD'), rc: String(rc).padStart(4,0), randomValue});
     }
 
     async function handleFullScreenAction(){
@@ -96,10 +96,10 @@ export default function App() {
       <div onClick={handleClick}>
         <Form onSearch={onSearch} isLoading={isLoading}/>
         {url && 
-            <MapaProvider url={url} setIsLoading={setIsLoading}>
+            <MapaProvider url={url} setUrl={setUrl} setIsLoading={setIsLoading}>
               <main id="main_content" className={`m-auto w-[95%] ${isFullScreen ? 'absolute top-0 p-0 left-0 w-screen h-screen' : 'p-4'}`}> 
                       
-                  <div className={`w-full relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
+                  <div className={`w-full flex flex-col items-center justify-center relative ${isFullScreen ? 'h-full' : 'h-[90vh]'}`}>
 
                       <Map 
                         setOpen={setOpen} handleFullScreenAction={handleFullScreenAction} 
