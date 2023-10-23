@@ -31,8 +31,8 @@ export default function App() {
     async function handleFullScreenAction(){
 
         const main = document.getElementById('main_content');
-  
         setIsFullscreen(pv=>!pv);
+  
         if(isFullScreen){
           return document.exitFullscreen();
         }

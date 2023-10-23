@@ -125,17 +125,12 @@ function createColor(feature, selectedOption, layer, res, url){
                 }
             }
             else{
-                if(feature.fillStyle){
-                    color = createAARotatedPattern(feature.fillStyle, feature.fillColor, res) || "rgba(34, 156, 34, 0.7)";
-                }
-                else color = feature.fillColor || "rgba(34, 156, 34, 0.7)";
+                if(feature.fillStyle) color = createAARotatedPattern(feature.fillStyle, feature.fillColor, res) || "rgba(34, 156, 34, 0.7)";
+                else color = feature.fillColor || "rgba(34, 156, 34, 0.7)"; 
             }
         }
         else{
-            if(feature.fillStyle){
-                color = createAARotatedPattern(feature.fillStyle, feature.fillColor, res) || "rgba(221,221,223,0.7)";
-                // color = createAARotatedPattern(2, 10, 110, "rgba(221,221,223,0.7)") || "rgba(221,221,223,0.7)";
-            }
+            if(feature.fillStyle) color = createAARotatedPattern(feature.fillStyle, feature.fillColor, res) || "rgba(221,221,223,0.7)";
             else color = feature.fillColor || "rgba(221,221,223,0.7)";
         }
     }
@@ -152,20 +147,20 @@ function createText(feature, subTitle){
 function createFeatureStyle(feature, settings, layer, res=1200, url){
     const {selectedOption, fontSize, subTitle, fontColor, strokeColor, strokeWidth, overflow} = settings;
     const featureProperties = feature.getProperties();
-    const color = createColor(featureProperties, selectedOption, layer, res, url)
-    const text = createText(featureProperties, subTitle);
 
     const newStyle = new Style({
-        fill: new Fill({color}),
+        fill: new Fill({
+            color: createColor(featureProperties, selectedOption, layer, res, url) 
+        }),
         stroke: new Stroke({
             color: featureProperties.strokeColor || (strokeColor || "rgba(0,0,0, 1)"),
-            width: featureProperties.strokeWidth || (strokeWidth || 1),
+            width: strokeWidth || (featureProperties.strokeWidth || 1),
         }),
         text: new Text({
-            text,  
-            overflow,
+            text: createText(featureProperties, subTitle),  
             font: `bold ${fontSize}px ${"Segoe UI"}`,
             fill: new Fill({color: (featureProperties.fontColor || fontColor) || 'rgb(0, 0, 0)'}),
+            overflow,
             // backgroundFill: new Stroke({
             //   color: "rgba(255,255,255)",
             //   width: 1,
@@ -175,23 +170,27 @@ function createFeatureStyle(feature, settings, layer, res=1200, url){
     return newStyle
 }
 
-function handleSelectInteration(settings){
+function handleSelectInteration(settings, layer, url){
     return new Select({
         condition: pointerMove,
-        style: (feature)=> {
+        filter: (f,l)=>{
+            return l.getClassName() === 'stateLayer'
+        },
+        style: (feature, res)=> {
+            
             const newStyle = createFeatureStyle(
                 feature, 
-                {...settings, strokeWidth: 3, fontSize: settings.fontSize + 0.5},
-                {value: 'stateLayer'}
+                {...settings, strokeWidth: 3, fontColor: 'rgba(255,0,0,1)'},
+                layer, res, url
             );
             return newStyle
         },
     });
 }
-   
+
 export const MapaContext = createContext();
 
-export default function MapaProvider({url, setUrl, children, setIsLoading}){
+export default function MapaProvider({url, children, setIsLoading}){
 
     const { data, err, loading } = useFetch(`http://localhost:3535/api/${url.rc}?dateStart=${url.dateStart}&dateEnd=${url.dateEnd}&randomValue${url.randomValue}`);
     const [settings, setSettings] = useState({fontSize: 10, subTitle: '', selectedOption: '', interaction: false});
@@ -217,6 +216,7 @@ export default function MapaProvider({url, setUrl, children, setIsLoading}){
         setError(false);
         setLayers([]);
         setMap(mapObj);
+        setSettings(pv=>{return {...pv, interaction: false}});
 
     },[url])
 
@@ -233,7 +233,7 @@ export default function MapaProvider({url, setUrl, children, setIsLoading}){
                     style: (feature)=>{
                         return createFeatureStyle(feature, settings, null, null, url);
                     },
-                    zIndex: 1,
+                    zIndex: 3,
                     className: 'stateLayer',
                     rc: url.rc
                 });
@@ -242,7 +242,7 @@ export default function MapaProvider({url, setUrl, children, setIsLoading}){
                         source: new Vector({
                             features: new GeoJSON().readFeatures(json),
                         }),
-                        style: (feature,res)=>{
+                        style: (feature, res)=>{
                             feature.setProperties({fillColor: 'rgba(0,0,0,0)', strokeColor: 'rgba(30,30,30)', strokeWidth: 1});
                             return createFeatureStyle(feature, {...settings}, null, null, url);
                         },
@@ -292,8 +292,9 @@ export default function MapaProvider({url, setUrl, children, setIsLoading}){
 
     useEffect(()=>{
 
-        const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
-        if(!map || stateLayer === -1)return
+        const stateLayer = layers[layers.findIndex(layer=>layer.value === 'stateLayer')];
+    
+        if(!map || !stateLayer) return
 
         layers.forEach(layer=>{
             if(layer.properties.className_ !== 'baseLayer' && layer.properties.className_ !== 'countryLayer'){
@@ -306,8 +307,7 @@ export default function MapaProvider({url, setUrl, children, setIsLoading}){
         })
 
         map.getInteractions().remove(map.getInteractions().item(9));
-        settings.interaction && map.addInteraction(handleSelectInteration(settings))
-
+        settings.interaction && map.addInteraction(handleSelectInteration(settings, stateLayer, url));
     },[settings])
 
 
@@ -319,8 +319,9 @@ export default function MapaProvider({url, setUrl, children, setIsLoading}){
         <MapaContext.Provider 
             value={{
             map, error, data, loading, error, layers, setLayers,
-            subtitleCategory,rc: url.rc,  url, settings, setSettings,
-            createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures
+            subtitleCategory, url, settings, setSettings,
+            createFeatureStyle, countSelectedFeatures, 
+            setCountSelectedFeatures, rc: url.rc
         }}>
             {children}
         </MapaContext.Provider>

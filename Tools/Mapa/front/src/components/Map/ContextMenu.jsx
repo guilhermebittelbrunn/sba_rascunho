@@ -5,7 +5,7 @@ import moment from "moment";
 import numeral from 'numeral';
 
 export default function ContextMenu({contextMenu, setContextMenu, subtitle, setSubtitle}){
-    const { map, settings, setCountSelectedFeatures, createFeatureStyle } = useContext(MapaContext);
+    const { map, settings, setSettings, setCountSelectedFeatures, createFeatureStyle } = useContext(MapaContext);
     const { properties, layers} = contextMenu;
 
     if(!layers)return
@@ -14,7 +14,7 @@ export default function ContextMenu({contextMenu, setContextMenu, subtitle, setS
         if(contextMenu.pixel){
             map.forEachFeatureAtPixel(contextMenu.pixel, (feature, layer)=>{
                 if(layer.className_ === "stateLayer"){
-                    
+                    setSettings(pv=>{return{...pv, interation: false}});
                     const featureProperties = feature.getProperties();
                     const styleConfig = featureProperties.stylesConfig || settings;
                     

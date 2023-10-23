@@ -48,7 +48,7 @@ export default function InputDate({initialDate, field, isLoading, className, isS
         <div className={`flex gap-1 ${isLoading && 'cursor-not-allowed'}`}>  
 
             <Input 
-                disabled={isLoading} id="inputDate" defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue }
+                disabled={isLoading} defaultValue={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue }
                 className={`w-48 rounded-none max-md:w-[400px] ${className}`} onChange={handleInputChange} 
                 value={date ? dayjs(date, dateFormat).format(dateFormat) : inputValue }
                 onBlur={(e)=>{handleBlurInput(e)}}

@@ -37,11 +37,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
 
     function generateRandomColor(){
         return (
-            `rgba(
-            ${Math.floor(Math.random() * (255 - 0) + 0)}, 
-            ${Math.floor(Math.random() * (255 - 0) + 0)}, 
-            ${Math.floor(Math.random() * (255 - 0) + 0)}, 
-            1)`
+            `rgba(${Math.floor(Math.random() * (255 - 0) + 0)},${Math.floor(Math.random() * (255 - 0) + 0)},${Math.floor(Math.random() * (255 - 0) + 0)},1)`
         )
     }
 

@@ -106,10 +106,10 @@ export default function MapPage({ handleFullScreenAction, isFullScreen, setConte
     
         map.on('click', (e)=>{
             if(e.originalEvent.ctrlKey){
+                setSettings(pv=>{return{...pv, interaction: false}});            
                 map.forEachFeatureAtPixel(e.pixel, (feature, layer)=>{
                     if(layer.className_ === "stateLayer"){
-                        
-                        const featureProperties = feature.getProperties() 
+                        const featureProperties = feature.getProperties();
                         const styleConfig = featureProperties.stylesConfig || settings;
                         
                         feature.setProperties({SELECTED: !featureProperties.SELECTED});
