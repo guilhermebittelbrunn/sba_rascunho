@@ -73,6 +73,7 @@ export default function AddRepModal({isModalOpen, disableModal}){
                 key: layers.length + 1,
                 data:{
                     layerName: `Vendas RC ${String(url.rc).padStart(4,0)}`,
+                    // fontColor: '#ffffff00',
                     fontColor: '#000000',
                     borderColor: '#000000',
                     fillStyle: 45,

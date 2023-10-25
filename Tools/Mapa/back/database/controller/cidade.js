@@ -579,10 +579,10 @@ const controller = {
             };
 
             setTimeout(() => {
-                console.log(rows);
+                // console.log(rows);
                 const pdf = jasper.pdf(report);
                 console.log(`Pdf gerado, tamanho: ${Math.ceil(pdf.length / 1000)} KB's`);
-                fs.writeFileSync('./' + `relatorio_pgmt.pdf`, Buffer.from(pdf));
+                // fs.writeFileSync('./' + `relatorio_pgmt.pdf`, Buffer.from(pdf));
                 res.contentType('application/pdf');
                 res.send(Buffer.from(pdf));
             }, 1000);
@@ -712,10 +712,10 @@ const controller = {
         };
 
         setTimeout(() => {
-            console.log(rows);
+            // console.log(rows);
             const pdf = jasper2.pdf(report2);
             console.log(`Pdf gerado, tamanho: ${Math.ceil(pdf.length / 1000)} KB's`);
-            fs.writeFileSync('./' + `relatorio_detalhadoS.pdf`, Buffer.from(pdf));
+            // fs.writeFileSync('./' + `relatorio_detalhadoS.pdf`, Buffer.from(pdf));
             res.contentType('application/pdf');
             res.send(Buffer.from(pdf));
         }, 1000);

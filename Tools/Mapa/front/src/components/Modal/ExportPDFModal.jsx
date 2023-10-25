@@ -101,7 +101,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
     const { map, rc, layers, createFeatureStyle, settings, url } = useContext(MapaContext);
 
     const sendForm = (data)=>{
-
+        setIsLoading(true);
         const dim = data.orientation === 'Paisagem' ? dims[data.paperSize] : [...dims[data.paperSize]].reverse();
         const width = Math.round((dim[0] * data.dpiValue) / 25.4);
         const height = Math.round((dim[1] * data.dpiValue) / 25.4);
@@ -121,8 +121,6 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
             });
         }
         
-        
-        setIsLoading(true);
         map.once('rendercomplete', async function () {
             try{
                 const mapCanvas = document.createElement('canvas');

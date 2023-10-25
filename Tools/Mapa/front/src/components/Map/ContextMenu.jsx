@@ -133,9 +133,10 @@ export default function ContextMenu({contextMenu, setContextMenu, subtitle, setS
                                     >
                                         <div>
                                             <InfoCircleOutlined />
-                                            <span 
-                                                className="ml-2 text-base">{layer.layer === 'stateLayer' ? 
-                                                `Vendas ${String(layer.rc).padStart(4, '0')}` 
+                                            <span className="ml-2 text-base"> 
+                                                
+                                                {layer.layer === 'stateLayer' ? 
+                                                `Vendas RC ${String(layer.rc).padStart(4, '0')}` 
                                                 : layer.layer}
                                             </span>
                                         </div>

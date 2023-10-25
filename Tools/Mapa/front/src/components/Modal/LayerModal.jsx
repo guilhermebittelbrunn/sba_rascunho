@@ -78,7 +78,7 @@ const svgList = [
 const defaultValue = 45
 
 export default function LayerModal({layer, isModalOpen, disableModal}){
-    const { map, settings, layers, setLayers, createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures, setSettings } = useContext(MapaContext);
+    const { map, settings, layers, setLayers, createFeatureStyle, countSelectedFeatures, setCountSelectedFeatures } = useContext(MapaContext);
     const {control, handleSubmit, reset} = useForm({
         defaultValues: {
             layerName: layer?.data.layerName || '', 
@@ -89,6 +89,10 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
         }
     });
     
+
+    useEffect(()=>{
+        console.log(layer?.data.fontColor);
+    },[layer])
 
     function addLayer(data){
 
@@ -214,11 +218,11 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
                                 <Controller name='fontColor' control={control} render={({field})=>{
                                     return (
                                             <ColorPicker
-                                                value={(field?.value?.metaColor?.originalInput || layer?.data.fontColor) || '#000000'}
-                                                onChange={(v)=>{field.onChange(v);}}
+                                                value={(layer?.data.fontColor || field?.value?.metaColor?.originalInput) || '#000000'}
+                                                onChange={(v)=>{field.onChange(v);console.log(v.toHexString())}}
                                                 showText={()=>{return <p>Fonte</p>}}
                                                 styles={{popupOverlayInner: {width: 288 + 40}}}
-                                                presets={[{label: 'Recommended',colors: recomendColors}]}
+                                                presets={[{label: 'Recomendado',colors: recomendColors}]}
                                                 panelRender={(_, { components: { Picker, Presets } }) => (
                                                 <div className="custom-panel" style={{display: 'flex', width: 298,}}>
                                                     
@@ -244,7 +248,7 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
                                                 onChange={(v)=>{field.onChange(v);}}
                                                 showText={()=>{return <p>Borda</p>}}
                                                 styles={{popupOverlayInner: {width: 288 + 40}}}
-                                                presets={[{label: 'Recommended',colors: recomendColors}]}
+                                                presets={[{label: 'Recomendado',colors: recomendColors}]}
                                                 panelRender={(_, { components: { Picker, Presets } }) => (
                                                 <div className="custom-panel" style={{display: 'flex', width: 298,}}>
                                                     
@@ -270,7 +274,7 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
                                                 onChange={(v)=>{field.onChange(v);}}
                                                 showText={()=>{return <p>Fundo</p>}}
                                                 styles={{popupOverlayInner: {width: 288 + 40}}}
-                                                presets={[{label: 'Recommended',colors: recomendColors}]}
+                                                presets={[{label: 'Recomendado',colors: recomendColors}]}
                                                 panelRender={(_, { components: { Picker, Presets } }) => (
                                                 <div className="custom-panel" style={{display: 'flex', width: 298,}}>
                                                     
