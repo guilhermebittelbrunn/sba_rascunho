@@ -89,11 +89,6 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
         }
     });
     
-
-    useEffect(()=>{
-        console.log(layer?.data.fontColor);
-    },[layer])
-
     function addLayer(data){
 
         const stateLayer = layers.findIndex(layer=>layer.value === 'stateLayer');
@@ -195,7 +190,7 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
 
     return (
         <>
-               <Modal centered={true} title={layer ? "Editar camada" : "Nova camada"} open={isModalOpen} onCancel={disableModal} width={350} okButtonProps={{hidden:true}} cancelButtonProps={{hidden: true}}>
+               <Modal className='fullscreen' id='fullscreen' centered={true} title={layer ? "Editar camada" : "Nova camada"} open={isModalOpen} onCancel={disableModal} width={350} okButtonProps={{hidden:true}} cancelButtonProps={{hidden: true}}>
                     <form className='flex flex-col gap-1' onSubmit={handleSubmit(handleOk)}>
 
                         <div>
