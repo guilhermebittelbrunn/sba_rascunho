@@ -1,10 +1,15 @@
 import { Student, Period, Status } from './App'
+import { Context, IContextProps } from './Context'
+import { useContext } from 'react'
 
 type Props = {
     e: Student
 }
 
 const Card = ({e}:Props) => {
+  const {setCount} = useContext(Context);
+  
+  
   return (
     <div style={{width: '240px', border: '1px solid black', textAlign: 'center'}}>
             <h1>{e.name} - {e.age}</h1>
