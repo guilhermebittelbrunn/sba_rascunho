@@ -1,14 +1,14 @@
-import Header from "./components/Header"
-import Button from "./components/Button"
-import MainProvider from "./context/MainContext"
+import MainProvider from "./context/MainContext";
+import Button from './components/Button'
+import Header from './components/Header'
 
-export default function App() {
-  return (
+export default function App(){
+
+  return(
     <MainProvider>
-      <h1>Hello World</h1>
       <Header/>
       <Button/>
     </MainProvider>
   )
-}
 
+}

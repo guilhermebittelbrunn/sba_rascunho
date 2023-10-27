@@ -1,19 +1,22 @@
-import { createContext, useState, PropsWithChildren } from "react";
+import React, {createContext, useState, PropsWithChildren} from 'react'
 
-interface IMaincontext{
+
+interface IMainContext{
     count: number,
-    setCount: (number:number)=>void
+    setCount: React.Dispatch<React.SetStateAction<number>>
 }
 
 
-export const MainContext = createContext<IMaincontext>({} as IMaincontext);
+export const MainContext = createContext<IMainContext>({} as IMainContext);
+
 
 export default function MainProvider({children}:PropsWithChildren){
-    const [count,setCount] = useState<number>(0)
-
+    const [count, setCount] = useState<number>(0);
+    
     return(
         <MainContext.Provider value={{count, setCount}}>
             {children}
         </MainContext.Provider>
     )
 }
+

@@ -1,13 +1,14 @@
-import { useContext } from "react"
-import { MainContext } from "../context/MainContext"
+import {useContext} from 'react'
+import {MainContext} from '../context/MainContext'
+import HeaderChildren from './HeaderChildren'
 
-export default function Header() {
-    const {count} = useContext(MainContext);
-  
-    return (
+export default function Header(){
+    const {count, setCount} = useContext(MainContext)
+    
+    return(
         <>
-            <div>Header</div>    
-            <h3>{count}</h3>
+            <h2>Contagem atual: {count}</h2>
+            <HeaderChildren setCount={setCount}/> 
         </>
     )
 }
