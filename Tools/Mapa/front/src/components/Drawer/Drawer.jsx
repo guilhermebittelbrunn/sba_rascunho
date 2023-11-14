@@ -178,6 +178,7 @@ export default function Drawer({open, setOpen}){
           layer.properties.setZIndex(index);
         })
 
+
     },[layers])
 
 

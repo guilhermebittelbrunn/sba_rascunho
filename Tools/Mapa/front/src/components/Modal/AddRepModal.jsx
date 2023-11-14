@@ -43,8 +43,6 @@ export default function AddRepModal({isModalOpen, disableModal}){
 
     async function handleOk(data){
 
-        // console.log(data);
-
         const {dateStart, dateEnd} = data;
         if(dateStart > dateEnd){
             return message.error('Data inicial maior que a final');

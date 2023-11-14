@@ -134,6 +134,7 @@ export default function LayerModal({layer, isModalOpen, disableModal}){
                 },
                 zIndex: 4,
                 className: layerName || `Camada ${layers.length + 1}`,
+                value: `custom_layer${layers.length + 1}`,
             })
         }
 

@@ -48,13 +48,13 @@ export default function MapPage({ handleFullScreenAction, isFullScreen, setConte
         return () => {  
             map1.current.setTarget(null);
         };
-    },[url, map, data])
+    },[map, data])
 
 
     useEffect(()=>{
         if(!map)return
-            map.setTarget('map');
-            map1.current = map;
+            // map.setTarget('map');
+            // map1.current = map;
             map.addEventListener('contextmenu', (e)=>{
                 setShowSubtitleContextMenu(false);
                 e.preventDefault();

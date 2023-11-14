@@ -108,7 +108,8 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
         const size = map.getSize();
         const viewResolution = map.getView().getResolution();
         const pdf = new jsPDF(data.orientation === 'Paisagem' ? 'landscape' : 'portrait', 'mm', dim);
-        const stateLayer = layers[layers.findIndex(layer=>layer.value === 'stateLayer')];
+        const baseLayer = (layers[layers.findIndex(layer=>layer.value === 'baseLayer')]).properties;
+        const initialVisibility = baseLayer.getVisible() 
 
         if(data.overflow === 'on'){
             layers.forEach(layer=>{
@@ -119,8 +120,9 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                     feature.setStyle(newStyle);
                 })
             });
-        }
         
+        }
+        baseLayer.setVisible(false);
         map.once('rendercomplete', async function () {
             try{
                 const mapCanvas = document.createElement('canvas');
@@ -215,7 +217,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                 message.error('Ocorreu um erro durante a exportação do arquivo');
                 throw err
             }finally{
-
+                baseLayer.setVisible(initialVisibility);
                 if(data.overflow === 'on'){
                     layers.forEach(layer=>{
                         if(layer.properties.className_ === "baseLayer")return
@@ -226,6 +228,7 @@ export default function ExportPDFModal({ handleCancel, isModalOpen}){
                         })
                     });
                 }
+                
                 setIsLoading(false);
             }
             
