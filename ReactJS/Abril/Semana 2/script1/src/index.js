@@ -1,90 +1,90 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import { CountButton, CountButtonSyncron, ListaDeAlunos } from './App';
+import React, { useState } from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import { CountButton, CountButtonSyncron, ListaDeAlunos } from "./App";
 
 const alunos = [
     {
         id: 1,
-        nome: 'Douglas',
+        nome: "Douglas",
         idade: 20,
         aprovado: true,
     },
     {
         id: 2,
-        nome: 'Matheus',
+        nome: "Matheus",
         idade: 20,
         aprovado: true,
     },
     {
         id: 3,
-        nome: 'Ricardo',
+        nome: "Ricardo",
         idade: 20,
         aprovado: false,
     },
     {
         id: 4,
-        nome: 'Ana',
+        nome: "Ana",
         idade: 20,
         aprovado: true,
     },
     {
         id: 5,
-        nome: 'Julia',
+        nome: "Julia",
         idade: 20,
         aprovado: false,
     },
 ];
 const produtos = [
     {
-        nome: 'Camiseta',
+        nome: "Camiseta",
         preco: 20.0,
-        colecao: '2A',
+        colecao: "2A",
         status: {
             estoque: false,
             ativo: true,
         },
     },
     {
-        nome: 'Calça',
+        nome: "Calça",
         preco: 20.0,
-        colecao: '2A',
+        colecao: "2A",
         status: {
             estoque: false,
             ativo: true,
         },
     },
     {
-        nome: 'Moletom',
+        nome: "Moletom",
         preco: 20.0,
-        colecao: '2A',
+        colecao: "2A",
         status: {
             estoque: false,
             ativo: true,
         },
     },
     {
-        nome: 'Jaqueta',
+        nome: "Jaqueta",
         preco: 20.0,
-        colecao: '2A',
+        colecao: "2A",
         status: {
             estoque: false,
             ativo: true,
         },
     },
     {
-        nome: 'Bolsa',
+        nome: "Bolsa",
         preco: 20.0,
-        colecao: '2A',
+        colecao: "2A",
         status: {
             estoque: false,
             ativo: true,
         },
     },
     {
-        nome: 'Shorts',
+        nome: "Shorts",
         preco: 20.0,
-        colecao: '2A',
+        colecao: "2A",
         status: {
             estoque: false,
             ativo: true,
@@ -92,16 +92,19 @@ const produtos = [
     },
 ];
 
-const lista_links = ['Home', 'Products', 'Contacts', 'More'];
+const lista_links = ["Home", "Products", "Contacts", "More"];
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
 function Pai() {
     const [count, setCount] = useState(0);
 
-    let addCount = () => {
-        setCount(count + 1);
-    };
+    function incressValue() {
+        console.log(count);
+        setCount((prev) => {
+            return prev + 1;
+        });
+    }
 
     return (
         <>
@@ -111,8 +114,8 @@ function Pai() {
             <CountButton />
             <hr></hr>
             <h3>Buttons conhecidos pelo pai</h3>
-            <CountButtonSyncron count={count} addCount={addCount} />
-            <CountButtonSyncron count={count} addCount={addCount} />
+            <CountButtonSyncron count={count} addCount={incressValue} />
+            <CountButtonSyncron count={count} addCount={incressValue} />
             <hr></hr>
             <ListaDeAlunos alunos={alunos} listanome="alunos" />
         </>

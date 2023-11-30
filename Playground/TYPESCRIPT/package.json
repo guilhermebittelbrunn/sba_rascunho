@@ -1,0 +1,13 @@
+{
+  "name": "tscback",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc && node ./dist/index.js",
+    "watch" : "tsc --watch"
+  },
+  "dependencies": {
+    "typescript": "^5.3.2"
+  }
+}
